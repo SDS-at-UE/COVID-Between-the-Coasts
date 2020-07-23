@@ -1,0 +1,195 @@
+checkTimeEt
+    Field type: string
+
+    Deprecated
+commercialScore
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+dataQualityGrade
+    Field type: string
+
+    The COVID Tracking Project grade of the completeness of the data reporting by a state.
+date
+    Field type: integer
+
+    Date on which data was collected by The COVID Tracking Project.
+dateChecked
+    Field type: string
+
+    Deprecated
+dateModified
+    Field type: string
+
+    Deprecated, use lastUpdateEt instead
+death
+    Field type: integer
+
+    Total fatalities with confirmed OR probable COVID-19 case diagnosis (per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/)). In states where the information is available, it only tracks fatalities with confirmed OR probable COVID-19 case diagnosis where COVID-19 is an underlying cause of death according to the death certificate based on [WHO guidelines](https://www.who.int/classifications/icd/Guidelines_Cause_of_Death_COVID-19.pdf?ua=1).
+    Returns null if no data is available
+deathConfirmed
+    Field type: integer
+
+    Total fatalities with confirmed COVID-19 case diagnosis (per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/)). In states where the information is available, it only tracks fatalities with confirmed COVID-19 case diagnosis where COVID-19 is an underlying cause of death according to the death certificate based on [WHO guidelines](https://www.who.int/classifications/icd/Guidelines_Cause_of_Death_COVID-19.pdf?ua=1).
+    Returns null if no data is available
+deathIncrease
+    Field type: integer
+
+    Daily difference in death
+    Returns null if no data is available
+deathProbable
+    Field type: integer
+
+    Total fatalities with probable COVID-19 case diagnosis (per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/)). In states where the information is available, it only tracks fatalities with confirmed OR probable COVID-19 case diagnosis where COVID-19 is an underlying cause of death according to the death certificate based on [WHO guidelines](https://www.who.int/classifications/icd/Guidelines_Cause_of_Death_COVID-19.pdf?ua=1).
+    Returns null if no data is available
+fips
+    Field type: string
+
+    Federal Information Processing Standards (FIPS) code for the state or territory.
+grade
+    Field type: string
+
+    Deprecated
+hash
+    Field type: string
+
+    Deprecated - A hash of the current record.
+hospitalized
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+hospitalizedCumulative
+    Field type: integer
+
+    Total number of individuals who have ever been hospitalized with COVID-19. Definitions vary by state / territory. Where possible, we report hospitalizations with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+hospitalizedCurrently
+    Field type: integer
+
+    Individuals who are currently hospitalized with COVID-19. Definitions vary by state / territory. Where possible, we report hospitalizations with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+hospitalizedIncrease
+    Field type: integer
+
+    Daily difference in hospitalized
+    Returns null if no data is available
+inIcuCumulative
+    Field type: integer
+
+    Total number of individuals who have ever been hospitalized in the Intensive Care Unit with COVID-19. Definitions vary by state / territory. Where possible, we report patients in the ICU with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+inIcuCurrently
+    Field type: integer
+
+    Individuals who are currently hospitalized in the Intensive Care Unit with COVID-19. Definitions vary by state / territory. Where possible, we report patients in the ICU with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+lastUpdateEt
+    Field type: string
+
+    Date and time in Eastern time the state or territory last updated the data.
+negative
+    Field type: integer
+
+    Individuals with a completed viral test that returned a negative result. For states / territories that do not report this number directly, we compute it using one of several methods, depending on which data points the state provides.
+    Returns null if no data is available
+negativeIncrease
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+negativeRegularScore
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+negativeScore
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+negativeTestsViral
+    Field type: integer
+
+    Completed viral tests that returned negative results.
+    Returns null if no data is available
+onVentilatorCumulative
+    Field type: integer
+
+    Total number of individuals who have ever been hospitalized under advanced ventilation with COVID-19. Definitions vary by state / territory. Where possible, we report patients on ventilation with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+onVentilatorCurrently
+    Field type: integer
+
+    Individuals who are currently hospitalized under advanced ventilation with COVID-19. Definitions vary by state / territory. Where possible, we report patients on ventilation with confirmed or probable COVID-19 cases per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+pending
+    Field type: integer
+
+    Tests whose results have not yet been reported.
+    Returns null if no data is available
+posNeg
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+positive
+    Field type: integer
+
+    Individuals with confirmed or probable COVID-19 per the expanded [CSTE case definition](https://cdn.ymaws.com/www.cste.org/resource/resmgr/2020ps/Interim-20-ID-01_COVID-19.pdf) of April 5th, 2020 [approved by the CDC](https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/).
+    Returns null if no data is available
+positiveCasesViral
+    Field type: integer
+
+    Individuals with a completed viral test that returned a positive result.
+    Returns null if no data is available
+positiveIncrease
+    Field type: integer
+
+    Increase in *positive* computed by subtracting the value of *positive* from the previous day from the value of *positive* for the current day.
+    Returns null if no data is available
+positiveScore
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+positiveTestsViral
+    Field type: integer
+
+    Completed viral tests that returned positive results.
+    Returns null if no data is available
+recovered
+    Field type: integer
+
+    Individuals who have recovered from COVID-19. Definitions vary by state / territory.
+    Returns null if no data is available
+score
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+state
+    Field type: string
+
+    Two-letter abbreviation for the state or territory.
+total
+    Field type: integer
+
+    Deprecated
+    Returns null if no data is available
+totalTestResults
+    Field type: integer
+
+    Currently computed by adding *positive* and *negative* values to work around reporting lags between positives and total tests and because some states do not report totals.
+    Returns null if no data is available
+totalTestResultsIncrease
+    Field type: integer
+
+    Daily Difference in totalTestResults
+    Returns null if no data is available
+totalTestsViral
+    Field type: integer
+
+    Completed viral tests.
+    Returns null if no data is available
