@@ -7,6 +7,10 @@ library(tidyverse)
 library(tidycensus)
 
 census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
+
+# Do not need to run next line all of the time. Since it's
+# cached, it should already be loaded whenever you start R.
+# Just run once per computer.
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE)
 
 ######################################
