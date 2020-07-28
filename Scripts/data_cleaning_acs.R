@@ -1,5 +1,8 @@
 # Data Cleaning of ACS Files
 
+## Run/store all functions from functions.R script
+source("Scripts/functions.R")
+
 library(tidyverse)
 library(tidycensus)
 
