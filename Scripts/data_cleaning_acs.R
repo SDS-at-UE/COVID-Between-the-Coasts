@@ -1,6 +1,16 @@
 # Data Cleaning of ACS Files
 
 library(tidyverse)
+library(tidycensus)
+
+census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE)
+
+# Retrieve Income data for Indiana
+IN_income_test <- get_data("IN", "B06010") %>% 
+  filter(variable %in% c(str_c("B06010_00", 1:9),
+                         str_c("B06010_0", 10:11)))
+
 
 ######################################
 # Read in ACS Demographic/Housing Data
