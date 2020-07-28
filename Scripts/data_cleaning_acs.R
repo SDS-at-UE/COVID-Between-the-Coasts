@@ -6,10 +6,73 @@ library(tidycensus)
 census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE)
 
-# Retrieve Income data for Indiana
-IN_income_test <- get_data("IN", "B06010") %>% 
+######################################
+# Retrieve Income data
+######################################
+
+IN_income <- get_data("IN", "B06010") %>% 
   filter(variable %in% c(str_c("B06010_00", 1:9),
                          str_c("B06010_0", 10:11)))
+
+
+######################################
+# Retrieve Sex, Age data
+# Health insurance coverage also obtained
+######################################
+
+IN_sex_age <- get_data("IN", "B27001")
+
+
+######################################
+# Retrieve Type of Health Insurance data
+######################################
+
+IN_health_private <- get_data("IN", "B27002")
+IN_health_public <- get_data("IN", "B27003")
+
+
+######################################
+# Retrieve Race data
+######################################
+
+IN_race <- get_data("IN", "B02001")
+
+
+######################################
+# Retrieve Education data
+######################################
+
+IN_edu <- get_data("IN", "B15001")
+
+
+######################################
+# Retrieve Employment data
+######################################
+
+IN_employ <- get_data("IN", "B23001")
+
+
+######################################
+# Retrieve Ethnic data
+######################################
+
+IN_ethnic <- get_data("IN", "B03002")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ######################################
