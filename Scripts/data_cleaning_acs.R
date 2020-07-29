@@ -1,12 +1,14 @@
 # Data Cleaning of ACS Files
 
-## Run/store all functions from functions.R script
-source("Scripts/functions.R")
-
 library(tidyverse)
 library(tidycensus)
 
-census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
+## Run/store all functions from functions.R script
+source("Scripts/functions.R")
+
+
+census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5",
+               install = TRUE)
 
 # Do not need to run next line all of the time. Since it's
 # cached, it should already be loaded whenever you start R.
@@ -22,8 +24,6 @@ census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 IN_income <- get_data("IN", "B19101") %>% 
   filter(!variable %in% c("B19101_001"))
 
-IN_income <- left_join(IN_income, variables_2018[, 1:2], by = "variable")
-
 IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
 
 
@@ -35,8 +35,6 @@ IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
 ######################################
 
 IN_sex_age <- get_data("IN", "B27001")
-
-IN_sex_age <- left_join(IN_sex_age, variables_2018[, 1:2], by = "variable")
 
 IN_sex_age <- IN_sex_age %>% filter(str_count(label, "!!") >= 4)
   
@@ -60,9 +58,6 @@ IN_sex_age$HI_Coverage <- as_factor(IN_sex_age$HI_Coverage)
 
 IN_health_private <- get_data("IN", "B27002")
 IN_health_public <- get_data("IN", "B27003")
-
-IN_health_private <- left_join(IN_health_private, variables_2018[, 1:2], by = "variable")
-IN_health_public <- left_join(IN_health_public, variables_2018[, 1:2], by = "variable")
 
 IN_health_private <- IN_health_private %>% filter(str_count(label, "!!") >= 4)
 IN_health_public <- IN_health_public %>% filter(str_count(label, "!!") >= 4)
@@ -96,8 +91,6 @@ IN_health_public$Public_HI <- as_factor(IN_health_public$Public_HI)
 
 IN_race <- get_data("IN", "B02001")
 
-IN_race<- left_join(IN_race, variables_2018[, 1:2], by = "variable")
-
 IN_race <- IN_race %>% filter(str_count(label, "!!") == 2)
 
 IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
@@ -108,8 +101,6 @@ IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
 ######################################
 
 IN_edu <- get_data("IN", "B15001")
-
-IN_edu <- left_join(IN_edu, variables_2018[, 1:2], by = "variable")
 
 IN_edu <- IN_edu %>% filter(str_count(label, "!!") == 4)
 
@@ -131,8 +122,6 @@ IN_edu$Education <- as_factor(IN_edu$Education)
 
 IN_employ <- get_data("IN", "B23001")
 
-IN_employ <- left_join(IN_employ, variables_2018[, 1:2], by = "variable")
-
 IN_employ <- IN_employ %>% filter(str_count(label, "!!") >= 4,
                                   str_count(label, "!!In labor force$") < 1,
                                   str_count(label, "!!Civilian$") < 1)
@@ -153,8 +142,6 @@ IN_employ <- separate(IN_employ,
 ######################################
 
 IN_ethnic <- get_data("IN", "B03002")
-
-IN_ethnic <- left_join(IN_ethnic, variables_2018[, 1:2], by = "variable")
 
 IN_ethnic <- IN_ethnic %>% filter(str_count(label, "!!") == 3)
 
