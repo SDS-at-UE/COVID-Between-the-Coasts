@@ -11,7 +11,7 @@ get_data <- function(state, table){
                   state = state,
                   year = 2018)
   data <- data %>% select(NAME, variable, estimate) %>% 
-    separate(NAME, into = c("County", "State"), sep = ",")
+    separate(NAME, into = c("County", "State"), sep = " County,")
   return(data)
 }
 
