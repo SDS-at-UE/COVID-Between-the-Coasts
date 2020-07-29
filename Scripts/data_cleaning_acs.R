@@ -176,7 +176,7 @@ IN_ethnic$Race <- as_factor(IN_ethnic$Race)
 
 IN_gini <- get_data("IN", "B19083")
 
-
+IN_gini$variable <- "Gini index"
 
 
 
