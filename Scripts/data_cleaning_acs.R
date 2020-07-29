@@ -75,7 +75,11 @@ IN_employ <- get_data("IN", "B23001")
 IN_ethnic <- get_data("IN", "B03002")
 
 
+######################################
+# Retrieve Gini Index data (income inequality)
+######################################
 
+IN_gini <- get_data("IN", "B19083")
 
 
 
