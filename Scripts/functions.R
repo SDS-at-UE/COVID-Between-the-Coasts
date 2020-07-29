@@ -18,6 +18,7 @@ get_data <- function(state, table){
                   year = 2018)
   data <- data %>% select(NAME, variable, estimate) %>% 
     separate(NAME, into = c("County", "State"), sep = " County,")
+  data <- left_join(data, variables_2018[, 1:2], by = "variable")
   return(data)
 }
 
