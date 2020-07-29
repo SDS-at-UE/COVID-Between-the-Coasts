@@ -3,6 +3,12 @@
 ## This script should be run first in order to store the functions
 
 
+### This loads the necessary variable-to-table data to connect table
+### numbers in the Census dataset to their actual meanings. It should
+### only need to run once on a computer.
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+
 ### This function retrieves the 5-year ACS data from the Census Bureau
 ### for the given state and defined data/table.
 get_data <- function(state, table){
