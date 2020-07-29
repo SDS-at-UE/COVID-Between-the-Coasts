@@ -36,6 +36,23 @@ IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
 
 IN_sex_age <- get_data("IN", "B27001")
 
+IN_sex_age <- left_join(IN_sex_age, variables_2018[,1:2], by = "variable")
+
+IN_sex_age <- IN_sex_age %>% filter(str_count(label, "!!") >= 4)
+  
+IN_sex_age$label <- str_remove(IN_sex_age$label, "Estimate!!Total!!")
+
+IN_sex_age <- separate(IN_sex_age, 
+                            label, 
+                            sep = "!!", 
+                            into = c("Sex", "Age", "HI_Coverage"))
+
+IN_sex_age$HI_Coverage <- if_else(IN_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
+
+IN_sex_age$Sex <- as_factor(IN_sex_age$Sex)
+IN_sex_age$Age <- as_factor(IN_sex_age$Age)
+IN_sex_age$HI_Coverage <- as_factor(IN_sex_age$HI_Coverage)  
+
 
 ######################################
 # Retrieve Type of Health Insurance data
