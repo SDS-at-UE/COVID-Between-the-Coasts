@@ -61,12 +61,46 @@ IN_sex_age$HI_Coverage <- as_factor(IN_sex_age$HI_Coverage)
 IN_health_private <- get_data("IN", "B27002")
 IN_health_public <- get_data("IN", "B27003")
 
+IN_health_private <- left_join(IN_health_private, variables_2018[,1:2], by = "variable")
+IN_health_public <- left_join(IN_health_public, variables_2018[,1:2], by = "variable")
+
+IN_health_private <- IN_health_private %>% filter(str_count(label, "!!") >= 4)
+IN_health_public <- IN_health_public %>% filter(str_count(label, "!!") >= 4)
+
+IN_health_private$label <- str_remove(IN_health_private$label, "Estimate!!Total!!")
+IN_health_public$label <- str_remove(IN_health_public$label, "Estimate!!Total!!")
+
+IN_health_private <- separate(IN_health_private, 
+                       label, 
+                       sep = "!!", 
+                       into = c("Sex", "Age", "Private_HI"))
+IN_health_public <- separate(IN_health_public, 
+                              label, 
+                              sep = "!!", 
+                              into = c("Sex", "Age", "Public_HI"))
+
+IN_health_private$Private_HI <- if_else(IN_health_private$Private_HI == "No private health insurance", "No", "Yes")
+IN_health_public$Public_HI <- if_else(IN_health_public$Public_HI == "No public coverage", "No", "Yes")
+
+IN_health_private$Sex <- as_factor(IN_health_private$Sex)
+IN_health_public$Sex <- as_factor(IN_health_public$Sex)
+IN_health_private$Age <- as_factor(IN_health_private$Age)
+IN_health_public$Age <- as_factor(IN_health_public$Age)
+IN_health_private$Private_HI <- as_factor(IN_health_private$Private_HI)
+IN_health_public$Public_HI <- as_factor(IN_health_public$Public_HI) 
+
 
 ######################################
 # Retrieve Race data
 ######################################
 
 IN_race <- get_data("IN", "B02001")
+
+IN_race<- left_join(IN_race, variables_2018[,1:2], by = "variable")
+
+IN_race <- IN_race %>% filter(str_count(label, "!!") == 2)
+
+IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
 
 
 ######################################
