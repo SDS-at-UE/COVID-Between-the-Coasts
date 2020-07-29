@@ -1,0 +1,3313 @@
+County,State,variable,estimate,Sex,Age,Public_HI
+Adams, Indiana,B27003_004,548,Male,Under 6 years,Yes
+Adams, Indiana,B27003_005,1552,Male,Under 6 years,No
+Adams, Indiana,B27003_007,809,Male,6 to 18 years,Yes
+Adams, Indiana,B27003_008,3048,Male,6 to 18 years,No
+Adams, Indiana,B27003_010,111,Male,19 to 25 years,Yes
+Adams, Indiana,B27003_011,1414,Male,19 to 25 years,No
+Adams, Indiana,B27003_013,170,Male,26 to 34 years,Yes
+Adams, Indiana,B27003_014,1765,Male,26 to 34 years,No
+Adams, Indiana,B27003_016,156,Male,35 to 44 years,Yes
+Adams, Indiana,B27003_017,1661,Male,35 to 44 years,No
+Adams, Indiana,B27003_019,287,Male,45 to 54 years,Yes
+Adams, Indiana,B27003_020,1696,Male,45 to 54 years,No
+Adams, Indiana,B27003_022,220,Male,55 to 64 years,Yes
+Adams, Indiana,B27003_023,1776,Male,55 to 64 years,No
+Adams, Indiana,B27003_025,1204,Male,65 to 74 years,Yes
+Adams, Indiana,B27003_026,78,Male,65 to 74 years,No
+Adams, Indiana,B27003_028,902,Male,75 years and over,Yes
+Adams, Indiana,B27003_029,5,Male,75 years and over,No
+Adams, Indiana,B27003_032,346,Female,Under 6 years,Yes
+Adams, Indiana,B27003_033,1371,Female,Under 6 years,No
+Adams, Indiana,B27003_035,724,Female,6 to 18 years,Yes
+Adams, Indiana,B27003_036,3030,Female,6 to 18 years,No
+Adams, Indiana,B27003_038,211,Female,19 to 25 years,Yes
+Adams, Indiana,B27003_039,1185,Female,19 to 25 years,No
+Adams, Indiana,B27003_041,282,Female,26 to 34 years,Yes
+Adams, Indiana,B27003_042,1529,Female,26 to 34 years,No
+Adams, Indiana,B27003_044,122,Female,35 to 44 years,Yes
+Adams, Indiana,B27003_045,1760,Female,35 to 44 years,No
+Adams, Indiana,B27003_047,250,Female,45 to 54 years,Yes
+Adams, Indiana,B27003_048,1703,Female,45 to 54 years,No
+Adams, Indiana,B27003_050,442,Female,55 to 64 years,Yes
+Adams, Indiana,B27003_051,1673,Female,55 to 64 years,No
+Adams, Indiana,B27003_053,1373,Female,65 to 74 years,Yes
+Adams, Indiana,B27003_054,97,Female,65 to 74 years,No
+Adams, Indiana,B27003_056,1232,Female,75 years and over,Yes
+Adams, Indiana,B27003_057,28,Female,75 years and over,No
+Allen, Indiana,B27003_004,7084,Male,Under 6 years,Yes
+Allen, Indiana,B27003_005,8826,Male,Under 6 years,No
+Allen, Indiana,B27003_007,12490,Male,6 to 18 years,Yes
+Allen, Indiana,B27003_008,22891,Male,6 to 18 years,No
+Allen, Indiana,B27003_010,1976,Male,19 to 25 years,Yes
+Allen, Indiana,B27003_011,15216,Male,19 to 25 years,No
+Allen, Indiana,B27003_013,2626,Male,26 to 34 years,Yes
+Allen, Indiana,B27003_014,18832,Male,26 to 34 years,No
+Allen, Indiana,B27003_016,3222,Male,35 to 44 years,Yes
+Allen, Indiana,B27003_017,19074,Male,35 to 44 years,No
+Allen, Indiana,B27003_019,3215,Male,45 to 54 years,Yes
+Allen, Indiana,B27003_020,19535,Male,45 to 54 years,No
+Allen, Indiana,B27003_022,4390,Male,55 to 64 years,Yes
+Allen, Indiana,B27003_023,17636,Male,55 to 64 years,No
+Allen, Indiana,B27003_025,13247,Male,65 to 74 years,Yes
+Allen, Indiana,B27003_026,627,Male,65 to 74 years,No
+Allen, Indiana,B27003_028,7670,Male,75 years and over,Yes
+Allen, Indiana,B27003_029,139,Male,75 years and over,No
+Allen, Indiana,B27003_032,6733,Female,Under 6 years,Yes
+Allen, Indiana,B27003_033,8987,Female,Under 6 years,No
+Allen, Indiana,B27003_035,11240,Female,6 to 18 years,Yes
+Allen, Indiana,B27003_036,22557,Female,6 to 18 years,No
+Allen, Indiana,B27003_038,3343,Female,19 to 25 years,Yes
+Allen, Indiana,B27003_039,14121,Female,19 to 25 years,No
+Allen, Indiana,B27003_041,4585,Female,26 to 34 years,Yes
+Allen, Indiana,B27003_042,18043,Female,26 to 34 years,No
+Allen, Indiana,B27003_044,3794,Female,35 to 44 years,Yes
+Allen, Indiana,B27003_045,19527,Female,35 to 44 years,No
+Allen, Indiana,B27003_047,3465,Female,45 to 54 years,Yes
+Allen, Indiana,B27003_048,20039,Female,45 to 54 years,No
+Allen, Indiana,B27003_050,4053,Female,55 to 64 years,Yes
+Allen, Indiana,B27003_051,19500,Female,55 to 64 years,No
+Allen, Indiana,B27003_053,15231,Female,65 to 74 years,Yes
+Allen, Indiana,B27003_054,629,Female,65 to 74 years,No
+Allen, Indiana,B27003_056,11642,Female,75 years and over,Yes
+Allen, Indiana,B27003_057,174,Female,75 years and over,No
+Bartholomew, Indiana,B27003_004,1165,Male,Under 6 years,Yes
+Bartholomew, Indiana,B27003_005,2163,Male,Under 6 years,No
+Bartholomew, Indiana,B27003_007,2025,Male,6 to 18 years,Yes
+Bartholomew, Indiana,B27003_008,5219,Male,6 to 18 years,No
+Bartholomew, Indiana,B27003_010,356,Male,19 to 25 years,Yes
+Bartholomew, Indiana,B27003_011,3352,Male,19 to 25 years,No
+Bartholomew, Indiana,B27003_013,647,Male,26 to 34 years,Yes
+Bartholomew, Indiana,B27003_014,4717,Male,26 to 34 years,No
+Bartholomew, Indiana,B27003_016,479,Male,35 to 44 years,Yes
+Bartholomew, Indiana,B27003_017,4773,Male,35 to 44 years,No
+Bartholomew, Indiana,B27003_019,755,Male,45 to 54 years,Yes
+Bartholomew, Indiana,B27003_020,4657,Male,45 to 54 years,No
+Bartholomew, Indiana,B27003_022,878,Male,55 to 64 years,Yes
+Bartholomew, Indiana,B27003_023,3993,Male,55 to 64 years,No
+Bartholomew, Indiana,B27003_025,3201,Male,65 to 74 years,Yes
+Bartholomew, Indiana,B27003_026,224,Male,65 to 74 years,No
+Bartholomew, Indiana,B27003_028,2135,Male,75 years and over,Yes
+Bartholomew, Indiana,B27003_029,12,Male,75 years and over,No
+Bartholomew, Indiana,B27003_032,1088,Female,Under 6 years,Yes
+Bartholomew, Indiana,B27003_033,2080,Female,Under 6 years,No
+Bartholomew, Indiana,B27003_035,1774,Female,6 to 18 years,Yes
+Bartholomew, Indiana,B27003_036,5085,Female,6 to 18 years,No
+Bartholomew, Indiana,B27003_038,498,Female,19 to 25 years,Yes
+Bartholomew, Indiana,B27003_039,2937,Female,19 to 25 years,No
+Bartholomew, Indiana,B27003_041,751,Female,26 to 34 years,Yes
+Bartholomew, Indiana,B27003_042,3892,Female,26 to 34 years,No
+Bartholomew, Indiana,B27003_044,538,Female,35 to 44 years,Yes
+Bartholomew, Indiana,B27003_045,4648,Female,35 to 44 years,No
+Bartholomew, Indiana,B27003_047,804,Female,45 to 54 years,Yes
+Bartholomew, Indiana,B27003_048,4301,Female,45 to 54 years,No
+Bartholomew, Indiana,B27003_050,847,Female,55 to 64 years,Yes
+Bartholomew, Indiana,B27003_051,4289,Female,55 to 64 years,No
+Bartholomew, Indiana,B27003_053,3632,Female,65 to 74 years,Yes
+Bartholomew, Indiana,B27003_054,183,Female,65 to 74 years,No
+Bartholomew, Indiana,B27003_056,2954,Female,75 years and over,Yes
+Bartholomew, Indiana,B27003_057,27,Female,75 years and over,No
+Benton, Indiana,B27003_004,211,Male,Under 6 years,Yes
+Benton, Indiana,B27003_005,227,Male,Under 6 years,No
+Benton, Indiana,B27003_007,232,Male,6 to 18 years,Yes
+Benton, Indiana,B27003_008,539,Male,6 to 18 years,No
+Benton, Indiana,B27003_010,39,Male,19 to 25 years,Yes
+Benton, Indiana,B27003_011,311,Male,19 to 25 years,No
+Benton, Indiana,B27003_013,62,Male,26 to 34 years,Yes
+Benton, Indiana,B27003_014,392,Male,26 to 34 years,No
+Benton, Indiana,B27003_016,86,Male,35 to 44 years,Yes
+Benton, Indiana,B27003_017,392,Male,35 to 44 years,No
+Benton, Indiana,B27003_019,107,Male,45 to 54 years,Yes
+Benton, Indiana,B27003_020,465,Male,45 to 54 years,No
+Benton, Indiana,B27003_022,95,Male,55 to 64 years,Yes
+Benton, Indiana,B27003_023,493,Male,55 to 64 years,No
+Benton, Indiana,B27003_025,387,Male,65 to 74 years,Yes
+Benton, Indiana,B27003_026,17,Male,65 to 74 years,No
+Benton, Indiana,B27003_028,237,Male,75 years and over,Yes
+Benton, Indiana,B27003_029,0,Male,75 years and over,No
+Benton, Indiana,B27003_032,183,Female,Under 6 years,Yes
+Benton, Indiana,B27003_033,115,Female,Under 6 years,No
+Benton, Indiana,B27003_035,355,Female,6 to 18 years,Yes
+Benton, Indiana,B27003_036,422,Female,6 to 18 years,No
+Benton, Indiana,B27003_038,142,Female,19 to 25 years,Yes
+Benton, Indiana,B27003_039,170,Female,19 to 25 years,No
+Benton, Indiana,B27003_041,99,Female,26 to 34 years,Yes
+Benton, Indiana,B27003_042,281,Female,26 to 34 years,No
+Benton, Indiana,B27003_044,81,Female,35 to 44 years,Yes
+Benton, Indiana,B27003_045,452,Female,35 to 44 years,No
+Benton, Indiana,B27003_047,117,Female,45 to 54 years,Yes
+Benton, Indiana,B27003_048,455,Female,45 to 54 years,No
+Benton, Indiana,B27003_050,149,Female,55 to 64 years,Yes
+Benton, Indiana,B27003_051,479,Female,55 to 64 years,No
+Benton, Indiana,B27003_053,428,Female,65 to 74 years,Yes
+Benton, Indiana,B27003_054,4,Female,65 to 74 years,No
+Benton, Indiana,B27003_056,354,Female,75 years and over,Yes
+Benton, Indiana,B27003_057,7,Female,75 years and over,No
+Blackford, Indiana,B27003_004,187,Male,Under 6 years,Yes
+Blackford, Indiana,B27003_005,206,Male,Under 6 years,No
+Blackford, Indiana,B27003_007,387,Male,6 to 18 years,Yes
+Blackford, Indiana,B27003_008,635,Male,6 to 18 years,No
+Blackford, Indiana,B27003_010,84,Male,19 to 25 years,Yes
+Blackford, Indiana,B27003_011,443,Male,19 to 25 years,No
+Blackford, Indiana,B27003_013,160,Male,26 to 34 years,Yes
+Blackford, Indiana,B27003_014,412,Male,26 to 34 years,No
+Blackford, Indiana,B27003_016,95,Male,35 to 44 years,Yes
+Blackford, Indiana,B27003_017,517,Male,35 to 44 years,No
+Blackford, Indiana,B27003_019,147,Male,45 to 54 years,Yes
+Blackford, Indiana,B27003_020,689,Male,45 to 54 years,No
+Blackford, Indiana,B27003_022,249,Male,55 to 64 years,Yes
+Blackford, Indiana,B27003_023,642,Male,55 to 64 years,No
+Blackford, Indiana,B27003_025,676,Male,65 to 74 years,Yes
+Blackford, Indiana,B27003_026,7,Male,65 to 74 years,No
+Blackford, Indiana,B27003_028,401,Male,75 years and over,Yes
+Blackford, Indiana,B27003_029,10,Male,75 years and over,No
+Blackford, Indiana,B27003_032,211,Female,Under 6 years,Yes
+Blackford, Indiana,B27003_033,176,Female,Under 6 years,No
+Blackford, Indiana,B27003_035,249,Female,6 to 18 years,Yes
+Blackford, Indiana,B27003_036,639,Female,6 to 18 years,No
+Blackford, Indiana,B27003_038,146,Female,19 to 25 years,Yes
+Blackford, Indiana,B27003_039,301,Female,19 to 25 years,No
+Blackford, Indiana,B27003_041,99,Female,26 to 34 years,Yes
+Blackford, Indiana,B27003_042,451,Female,26 to 34 years,No
+Blackford, Indiana,B27003_044,69,Female,35 to 44 years,Yes
+Blackford, Indiana,B27003_045,586,Female,35 to 44 years,No
+Blackford, Indiana,B27003_047,127,Female,45 to 54 years,Yes
+Blackford, Indiana,B27003_048,700,Female,45 to 54 years,No
+Blackford, Indiana,B27003_050,319,Female,55 to 64 years,Yes
+Blackford, Indiana,B27003_051,613,Female,55 to 64 years,No
+Blackford, Indiana,B27003_053,685,Female,65 to 74 years,Yes
+Blackford, Indiana,B27003_054,18,Female,65 to 74 years,No
+Blackford, Indiana,B27003_056,633,Female,75 years and over,Yes
+Blackford, Indiana,B27003_057,0,Female,75 years and over,No
+Boone, Indiana,B27003_004,454,Male,Under 6 years,Yes
+Boone, Indiana,B27003_005,2251,Male,Under 6 years,No
+Boone, Indiana,B27003_007,941,Male,6 to 18 years,Yes
+Boone, Indiana,B27003_008,5727,Male,6 to 18 years,No
+Boone, Indiana,B27003_010,243,Male,19 to 25 years,Yes
+Boone, Indiana,B27003_011,2121,Male,19 to 25 years,No
+Boone, Indiana,B27003_013,275,Male,26 to 34 years,Yes
+Boone, Indiana,B27003_014,2905,Male,26 to 34 years,No
+Boone, Indiana,B27003_016,322,Male,35 to 44 years,Yes
+Boone, Indiana,B27003_017,3861,Male,35 to 44 years,No
+Boone, Indiana,B27003_019,324,Male,45 to 54 years,Yes
+Boone, Indiana,B27003_020,4486,Male,45 to 54 years,No
+Boone, Indiana,B27003_022,554,Male,55 to 64 years,Yes
+Boone, Indiana,B27003_023,3451,Male,55 to 64 years,No
+Boone, Indiana,B27003_025,2171,Male,65 to 74 years,Yes
+Boone, Indiana,B27003_026,85,Male,65 to 74 years,No
+Boone, Indiana,B27003_028,1259,Male,75 years and over,Yes
+Boone, Indiana,B27003_029,0,Male,75 years and over,No
+Boone, Indiana,B27003_032,618,Female,Under 6 years,Yes
+Boone, Indiana,B27003_033,2113,Female,Under 6 years,No
+Boone, Indiana,B27003_035,833,Female,6 to 18 years,Yes
+Boone, Indiana,B27003_036,5155,Female,6 to 18 years,No
+Boone, Indiana,B27003_038,275,Female,19 to 25 years,Yes
+Boone, Indiana,B27003_039,1937,Female,19 to 25 years,No
+Boone, Indiana,B27003_041,437,Female,26 to 34 years,Yes
+Boone, Indiana,B27003_042,3024,Female,26 to 34 years,No
+Boone, Indiana,B27003_044,437,Female,35 to 44 years,Yes
+Boone, Indiana,B27003_045,4053,Female,35 to 44 years,No
+Boone, Indiana,B27003_047,340,Female,45 to 54 years,Yes
+Boone, Indiana,B27003_048,4534,Female,45 to 54 years,No
+Boone, Indiana,B27003_050,407,Female,55 to 64 years,Yes
+Boone, Indiana,B27003_051,3758,Female,55 to 64 years,No
+Boone, Indiana,B27003_053,2483,Female,65 to 74 years,Yes
+Boone, Indiana,B27003_054,30,Female,65 to 74 years,No
+Boone, Indiana,B27003_056,1751,Female,75 years and over,Yes
+Boone, Indiana,B27003_057,13,Female,75 years and over,No
+Brown, Indiana,B27003_004,57,Male,Under 6 years,Yes
+Brown, Indiana,B27003_005,345,Male,Under 6 years,No
+Brown, Indiana,B27003_007,270,Male,6 to 18 years,Yes
+Brown, Indiana,B27003_008,750,Male,6 to 18 years,No
+Brown, Indiana,B27003_010,111,Male,19 to 25 years,Yes
+Brown, Indiana,B27003_011,404,Male,19 to 25 years,No
+Brown, Indiana,B27003_013,166,Male,26 to 34 years,Yes
+Brown, Indiana,B27003_014,514,Male,26 to 34 years,No
+Brown, Indiana,B27003_016,33,Male,35 to 44 years,Yes
+Brown, Indiana,B27003_017,803,Male,35 to 44 years,No
+Brown, Indiana,B27003_019,141,Male,45 to 54 years,Yes
+Brown, Indiana,B27003_020,897,Male,45 to 54 years,No
+Brown, Indiana,B27003_022,304,Male,55 to 64 years,Yes
+Brown, Indiana,B27003_023,991,Male,55 to 64 years,No
+Brown, Indiana,B27003_025,1068,Male,65 to 74 years,Yes
+Brown, Indiana,B27003_026,28,Male,65 to 74 years,No
+Brown, Indiana,B27003_028,509,Male,75 years and over,Yes
+Brown, Indiana,B27003_029,0,Male,75 years and over,No
+Brown, Indiana,B27003_032,148,Female,Under 6 years,Yes
+Brown, Indiana,B27003_033,233,Female,Under 6 years,No
+Brown, Indiana,B27003_035,314,Female,6 to 18 years,Yes
+Brown, Indiana,B27003_036,704,Female,6 to 18 years,No
+Brown, Indiana,B27003_038,106,Female,19 to 25 years,Yes
+Brown, Indiana,B27003_039,393,Female,19 to 25 years,No
+Brown, Indiana,B27003_041,78,Female,26 to 34 years,Yes
+Brown, Indiana,B27003_042,517,Female,26 to 34 years,No
+Brown, Indiana,B27003_044,64,Female,35 to 44 years,Yes
+Brown, Indiana,B27003_045,673,Female,35 to 44 years,No
+Brown, Indiana,B27003_047,93,Female,45 to 54 years,Yes
+Brown, Indiana,B27003_048,985,Female,45 to 54 years,No
+Brown, Indiana,B27003_050,280,Female,55 to 64 years,Yes
+Brown, Indiana,B27003_051,1150,Female,55 to 64 years,No
+Brown, Indiana,B27003_053,1121,Female,65 to 74 years,Yes
+Brown, Indiana,B27003_054,31,Female,65 to 74 years,No
+Brown, Indiana,B27003_056,621,Female,75 years and over,Yes
+Brown, Indiana,B27003_057,0,Female,75 years and over,No
+Carroll, Indiana,B27003_004,183,Male,Under 6 years,Yes
+Carroll, Indiana,B27003_005,575,Male,Under 6 years,No
+Carroll, Indiana,B27003_007,574,Male,6 to 18 years,Yes
+Carroll, Indiana,B27003_008,1272,Male,6 to 18 years,No
+Carroll, Indiana,B27003_010,62,Male,19 to 25 years,Yes
+Carroll, Indiana,B27003_011,624,Male,19 to 25 years,No
+Carroll, Indiana,B27003_013,127,Male,26 to 34 years,Yes
+Carroll, Indiana,B27003_014,779,Male,26 to 34 years,No
+Carroll, Indiana,B27003_016,132,Male,35 to 44 years,Yes
+Carroll, Indiana,B27003_017,1116,Male,35 to 44 years,No
+Carroll, Indiana,B27003_019,163,Male,45 to 54 years,Yes
+Carroll, Indiana,B27003_020,1185,Male,45 to 54 years,No
+Carroll, Indiana,B27003_022,210,Male,55 to 64 years,Yes
+Carroll, Indiana,B27003_023,1295,Male,55 to 64 years,No
+Carroll, Indiana,B27003_025,1003,Male,65 to 74 years,Yes
+Carroll, Indiana,B27003_026,48,Male,65 to 74 years,No
+Carroll, Indiana,B27003_028,619,Male,75 years and over,Yes
+Carroll, Indiana,B27003_029,0,Male,75 years and over,No
+Carroll, Indiana,B27003_032,206,Female,Under 6 years,Yes
+Carroll, Indiana,B27003_033,449,Female,Under 6 years,No
+Carroll, Indiana,B27003_035,426,Female,6 to 18 years,Yes
+Carroll, Indiana,B27003_036,1168,Female,6 to 18 years,No
+Carroll, Indiana,B27003_038,82,Female,19 to 25 years,Yes
+Carroll, Indiana,B27003_039,609,Female,19 to 25 years,No
+Carroll, Indiana,B27003_041,217,Female,26 to 34 years,Yes
+Carroll, Indiana,B27003_042,733,Female,26 to 34 years,No
+Carroll, Indiana,B27003_044,132,Female,35 to 44 years,Yes
+Carroll, Indiana,B27003_045,1106,Female,35 to 44 years,No
+Carroll, Indiana,B27003_047,102,Female,45 to 54 years,Yes
+Carroll, Indiana,B27003_048,1182,Female,45 to 54 years,No
+Carroll, Indiana,B27003_050,205,Female,55 to 64 years,Yes
+Carroll, Indiana,B27003_051,1276,Female,55 to 64 years,No
+Carroll, Indiana,B27003_053,1137,Female,65 to 74 years,Yes
+Carroll, Indiana,B27003_054,8,Female,65 to 74 years,No
+Carroll, Indiana,B27003_056,872,Female,75 years and over,Yes
+Carroll, Indiana,B27003_057,5,Female,75 years and over,No
+Cass, Indiana,B27003_004,647,Male,Under 6 years,Yes
+Cass, Indiana,B27003_005,818,Male,Under 6 years,No
+Cass, Indiana,B27003_007,1045,Male,6 to 18 years,Yes
+Cass, Indiana,B27003_008,2257,Male,6 to 18 years,No
+Cass, Indiana,B27003_010,97,Male,19 to 25 years,Yes
+Cass, Indiana,B27003_011,1514,Male,19 to 25 years,No
+Cass, Indiana,B27003_013,143,Male,26 to 34 years,Yes
+Cass, Indiana,B27003_014,1630,Male,26 to 34 years,No
+Cass, Indiana,B27003_016,482,Male,35 to 44 years,Yes
+Cass, Indiana,B27003_017,1859,Male,35 to 44 years,No
+Cass, Indiana,B27003_019,445,Male,45 to 54 years,Yes
+Cass, Indiana,B27003_020,2153,Male,45 to 54 years,No
+Cass, Indiana,B27003_022,452,Male,55 to 64 years,Yes
+Cass, Indiana,B27003_023,2146,Male,55 to 64 years,No
+Cass, Indiana,B27003_025,1633,Male,65 to 74 years,Yes
+Cass, Indiana,B27003_026,149,Male,65 to 74 years,No
+Cass, Indiana,B27003_028,1021,Male,75 years and over,Yes
+Cass, Indiana,B27003_029,9,Male,75 years and over,No
+Cass, Indiana,B27003_032,609,Female,Under 6 years,Yes
+Cass, Indiana,B27003_033,707,Female,Under 6 years,No
+Cass, Indiana,B27003_035,1201,Female,6 to 18 years,Yes
+Cass, Indiana,B27003_036,2055,Female,6 to 18 years,No
+Cass, Indiana,B27003_038,264,Female,19 to 25 years,Yes
+Cass, Indiana,B27003_039,1075,Female,19 to 25 years,No
+Cass, Indiana,B27003_041,341,Female,26 to 34 years,Yes
+Cass, Indiana,B27003_042,1606,Female,26 to 34 years,No
+Cass, Indiana,B27003_044,446,Female,35 to 44 years,Yes
+Cass, Indiana,B27003_045,1875,Female,35 to 44 years,No
+Cass, Indiana,B27003_047,278,Female,45 to 54 years,Yes
+Cass, Indiana,B27003_048,2190,Female,45 to 54 years,No
+Cass, Indiana,B27003_050,457,Female,55 to 64 years,Yes
+Cass, Indiana,B27003_051,2160,Female,55 to 64 years,No
+Cass, Indiana,B27003_053,1738,Female,65 to 74 years,Yes
+Cass, Indiana,B27003_054,93,Female,65 to 74 years,No
+Cass, Indiana,B27003_056,1657,Female,75 years and over,Yes
+Cass, Indiana,B27003_057,14,Female,75 years and over,No
+Clark, Indiana,B27003_004,1783,Male,Under 6 years,Yes
+Clark, Indiana,B27003_005,2581,Male,Under 6 years,No
+Clark, Indiana,B27003_007,2468,Male,6 to 18 years,Yes
+Clark, Indiana,B27003_008,7420,Male,6 to 18 years,No
+Clark, Indiana,B27003_010,396,Male,19 to 25 years,Yes
+Clark, Indiana,B27003_011,4024,Male,19 to 25 years,No
+Clark, Indiana,B27003_013,1235,Male,26 to 34 years,Yes
+Clark, Indiana,B27003_014,5687,Male,26 to 34 years,No
+Clark, Indiana,B27003_016,1009,Male,35 to 44 years,Yes
+Clark, Indiana,B27003_017,6587,Male,35 to 44 years,No
+Clark, Indiana,B27003_019,1142,Male,45 to 54 years,Yes
+Clark, Indiana,B27003_020,6488,Male,45 to 54 years,No
+Clark, Indiana,B27003_022,1956,Male,55 to 64 years,Yes
+Clark, Indiana,B27003_023,5322,Male,55 to 64 years,No
+Clark, Indiana,B27003_025,4484,Male,65 to 74 years,Yes
+Clark, Indiana,B27003_026,197,Male,65 to 74 years,No
+Clark, Indiana,B27003_028,2512,Male,75 years and over,Yes
+Clark, Indiana,B27003_029,59,Male,75 years and over,No
+Clark, Indiana,B27003_032,1703,Female,Under 6 years,Yes
+Clark, Indiana,B27003_033,2661,Female,Under 6 years,No
+Clark, Indiana,B27003_035,2597,Female,6 to 18 years,Yes
+Clark, Indiana,B27003_036,6676,Female,6 to 18 years,No
+Clark, Indiana,B27003_038,831,Female,19 to 25 years,Yes
+Clark, Indiana,B27003_039,4186,Female,19 to 25 years,No
+Clark, Indiana,B27003_041,1107,Female,26 to 34 years,Yes
+Clark, Indiana,B27003_042,5806,Female,26 to 34 years,No
+Clark, Indiana,B27003_044,909,Female,35 to 44 years,Yes
+Clark, Indiana,B27003_045,6962,Female,35 to 44 years,No
+Clark, Indiana,B27003_047,980,Female,45 to 54 years,Yes
+Clark, Indiana,B27003_048,6709,Female,45 to 54 years,No
+Clark, Indiana,B27003_050,1870,Female,55 to 64 years,Yes
+Clark, Indiana,B27003_051,6149,Female,55 to 64 years,No
+Clark, Indiana,B27003_053,5712,Female,65 to 74 years,Yes
+Clark, Indiana,B27003_054,158,Female,65 to 74 years,No
+Clark, Indiana,B27003_056,3804,Female,75 years and over,Yes
+Clark, Indiana,B27003_057,20,Female,75 years and over,No
+Clay, Indiana,B27003_004,246,Male,Under 6 years,Yes
+Clay, Indiana,B27003_005,543,Male,Under 6 years,No
+Clay, Indiana,B27003_007,978,Male,6 to 18 years,Yes
+Clay, Indiana,B27003_008,1402,Male,6 to 18 years,No
+Clay, Indiana,B27003_010,182,Male,19 to 25 years,Yes
+Clay, Indiana,B27003_011,824,Male,19 to 25 years,No
+Clay, Indiana,B27003_013,114,Male,26 to 34 years,Yes
+Clay, Indiana,B27003_014,1210,Male,26 to 34 years,No
+Clay, Indiana,B27003_016,110,Male,35 to 44 years,Yes
+Clay, Indiana,B27003_017,1481,Male,35 to 44 years,No
+Clay, Indiana,B27003_019,305,Male,45 to 54 years,Yes
+Clay, Indiana,B27003_020,1410,Male,45 to 54 years,No
+Clay, Indiana,B27003_022,373,Male,55 to 64 years,Yes
+Clay, Indiana,B27003_023,1477,Male,55 to 64 years,No
+Clay, Indiana,B27003_025,1194,Male,65 to 74 years,Yes
+Clay, Indiana,B27003_026,48,Male,65 to 74 years,No
+Clay, Indiana,B27003_028,718,Male,75 years and over,Yes
+Clay, Indiana,B27003_029,8,Male,75 years and over,No
+Clay, Indiana,B27003_032,347,Female,Under 6 years,Yes
+Clay, Indiana,B27003_033,562,Female,Under 6 years,No
+Clay, Indiana,B27003_035,839,Female,6 to 18 years,Yes
+Clay, Indiana,B27003_036,1399,Female,6 to 18 years,No
+Clay, Indiana,B27003_038,251,Female,19 to 25 years,Yes
+Clay, Indiana,B27003_039,835,Female,19 to 25 years,No
+Clay, Indiana,B27003_041,216,Female,26 to 34 years,Yes
+Clay, Indiana,B27003_042,1104,Female,26 to 34 years,No
+Clay, Indiana,B27003_044,229,Female,35 to 44 years,Yes
+Clay, Indiana,B27003_045,1362,Female,35 to 44 years,No
+Clay, Indiana,B27003_047,301,Female,45 to 54 years,Yes
+Clay, Indiana,B27003_048,1453,Female,45 to 54 years,No
+Clay, Indiana,B27003_050,377,Female,55 to 64 years,Yes
+Clay, Indiana,B27003_051,1506,Female,55 to 64 years,No
+Clay, Indiana,B27003_053,1302,Female,65 to 74 years,Yes
+Clay, Indiana,B27003_054,29,Female,65 to 74 years,No
+Clay, Indiana,B27003_056,1073,Female,75 years and over,Yes
+Clay, Indiana,B27003_057,0,Female,75 years and over,No
+Clinton, Indiana,B27003_004,529,Male,Under 6 years,Yes
+Clinton, Indiana,B27003_005,794,Male,Under 6 years,No
+Clinton, Indiana,B27003_007,1095,Male,6 to 18 years,Yes
+Clinton, Indiana,B27003_008,2148,Male,6 to 18 years,No
+Clinton, Indiana,B27003_010,86,Male,19 to 25 years,Yes
+Clinton, Indiana,B27003_011,1123,Male,19 to 25 years,No
+Clinton, Indiana,B27003_013,296,Male,26 to 34 years,Yes
+Clinton, Indiana,B27003_014,1493,Male,26 to 34 years,No
+Clinton, Indiana,B27003_016,158,Male,35 to 44 years,Yes
+Clinton, Indiana,B27003_017,1734,Male,35 to 44 years,No
+Clinton, Indiana,B27003_019,194,Male,45 to 54 years,Yes
+Clinton, Indiana,B27003_020,1828,Male,45 to 54 years,No
+Clinton, Indiana,B27003_022,435,Male,55 to 64 years,Yes
+Clinton, Indiana,B27003_023,1663,Male,55 to 64 years,No
+Clinton, Indiana,B27003_025,1269,Male,65 to 74 years,Yes
+Clinton, Indiana,B27003_026,25,Male,65 to 74 years,No
+Clinton, Indiana,B27003_028,773,Male,75 years and over,Yes
+Clinton, Indiana,B27003_029,0,Male,75 years and over,No
+Clinton, Indiana,B27003_032,659,Female,Under 6 years,Yes
+Clinton, Indiana,B27003_033,682,Female,Under 6 years,No
+Clinton, Indiana,B27003_035,1066,Female,6 to 18 years,Yes
+Clinton, Indiana,B27003_036,1893,Female,6 to 18 years,No
+Clinton, Indiana,B27003_038,219,Female,19 to 25 years,Yes
+Clinton, Indiana,B27003_039,987,Female,19 to 25 years,No
+Clinton, Indiana,B27003_041,371,Female,26 to 34 years,Yes
+Clinton, Indiana,B27003_042,1408,Female,26 to 34 years,No
+Clinton, Indiana,B27003_044,288,Female,35 to 44 years,Yes
+Clinton, Indiana,B27003_045,1589,Female,35 to 44 years,No
+Clinton, Indiana,B27003_047,214,Female,45 to 54 years,Yes
+Clinton, Indiana,B27003_048,1775,Female,45 to 54 years,No
+Clinton, Indiana,B27003_050,443,Female,55 to 64 years,Yes
+Clinton, Indiana,B27003_051,1733,Female,55 to 64 years,No
+Clinton, Indiana,B27003_053,1379,Female,65 to 74 years,Yes
+Clinton, Indiana,B27003_054,48,Female,65 to 74 years,No
+Clinton, Indiana,B27003_056,1307,Female,75 years and over,Yes
+Clinton, Indiana,B27003_057,14,Female,75 years and over,No
+Crawford, Indiana,B27003_004,86,Male,Under 6 years,Yes
+Crawford, Indiana,B27003_005,270,Male,Under 6 years,No
+Crawford, Indiana,B27003_007,331,Male,6 to 18 years,Yes
+Crawford, Indiana,B27003_008,607,Male,6 to 18 years,No
+Crawford, Indiana,B27003_010,86,Male,19 to 25 years,Yes
+Crawford, Indiana,B27003_011,289,Male,19 to 25 years,No
+Crawford, Indiana,B27003_013,170,Male,26 to 34 years,Yes
+Crawford, Indiana,B27003_014,350,Male,26 to 34 years,No
+Crawford, Indiana,B27003_016,87,Male,35 to 44 years,Yes
+Crawford, Indiana,B27003_017,518,Male,35 to 44 years,No
+Crawford, Indiana,B27003_019,179,Male,45 to 54 years,Yes
+Crawford, Indiana,B27003_020,571,Male,45 to 54 years,No
+Crawford, Indiana,B27003_022,236,Male,55 to 64 years,Yes
+Crawford, Indiana,B27003_023,604,Male,55 to 64 years,No
+Crawford, Indiana,B27003_025,614,Male,65 to 74 years,Yes
+Crawford, Indiana,B27003_026,34,Male,65 to 74 years,No
+Crawford, Indiana,B27003_028,319,Male,75 years and over,Yes
+Crawford, Indiana,B27003_029,0,Male,75 years and over,No
+Crawford, Indiana,B27003_032,105,Female,Under 6 years,Yes
+Crawford, Indiana,B27003_033,221,Female,Under 6 years,No
+Crawford, Indiana,B27003_035,330,Female,6 to 18 years,Yes
+Crawford, Indiana,B27003_036,567,Female,6 to 18 years,No
+Crawford, Indiana,B27003_038,77,Female,19 to 25 years,Yes
+Crawford, Indiana,B27003_039,313,Female,19 to 25 years,No
+Crawford, Indiana,B27003_041,110,Female,26 to 34 years,Yes
+Crawford, Indiana,B27003_042,340,Female,26 to 34 years,No
+Crawford, Indiana,B27003_044,126,Female,35 to 44 years,Yes
+Crawford, Indiana,B27003_045,494,Female,35 to 44 years,No
+Crawford, Indiana,B27003_047,220,Female,45 to 54 years,Yes
+Crawford, Indiana,B27003_048,480,Female,45 to 54 years,No
+Crawford, Indiana,B27003_050,175,Female,55 to 64 years,Yes
+Crawford, Indiana,B27003_051,634,Female,55 to 64 years,No
+Crawford, Indiana,B27003_053,592,Female,65 to 74 years,Yes
+Crawford, Indiana,B27003_054,0,Female,65 to 74 years,No
+Crawford, Indiana,B27003_056,381,Female,75 years and over,Yes
+Crawford, Indiana,B27003_057,0,Female,75 years and over,No
+Daviess, Indiana,B27003_004,593,Male,Under 6 years,Yes
+Daviess, Indiana,B27003_005,1023,Male,Under 6 years,No
+Daviess, Indiana,B27003_007,1125,Male,6 to 18 years,Yes
+Daviess, Indiana,B27003_008,2599,Male,6 to 18 years,No
+Daviess, Indiana,B27003_010,242,Male,19 to 25 years,Yes
+Daviess, Indiana,B27003_011,1109,Male,19 to 25 years,No
+Daviess, Indiana,B27003_013,199,Male,26 to 34 years,Yes
+Daviess, Indiana,B27003_014,1684,Male,26 to 34 years,No
+Daviess, Indiana,B27003_016,279,Male,35 to 44 years,Yes
+Daviess, Indiana,B27003_017,1467,Male,35 to 44 years,No
+Daviess, Indiana,B27003_019,257,Male,45 to 54 years,Yes
+Daviess, Indiana,B27003_020,1658,Male,45 to 54 years,No
+Daviess, Indiana,B27003_022,363,Male,55 to 64 years,Yes
+Daviess, Indiana,B27003_023,1666,Male,55 to 64 years,No
+Daviess, Indiana,B27003_025,1248,Male,65 to 74 years,Yes
+Daviess, Indiana,B27003_026,117,Male,65 to 74 years,No
+Daviess, Indiana,B27003_028,763,Male,75 years and over,Yes
+Daviess, Indiana,B27003_029,12,Male,75 years and over,No
+Daviess, Indiana,B27003_032,563,Female,Under 6 years,Yes
+Daviess, Indiana,B27003_033,980,Female,Under 6 years,No
+Daviess, Indiana,B27003_035,767,Female,6 to 18 years,Yes
+Daviess, Indiana,B27003_036,2457,Female,6 to 18 years,No
+Daviess, Indiana,B27003_038,329,Female,19 to 25 years,Yes
+Daviess, Indiana,B27003_039,1084,Female,19 to 25 years,No
+Daviess, Indiana,B27003_041,201,Female,26 to 34 years,Yes
+Daviess, Indiana,B27003_042,1520,Female,26 to 34 years,No
+Daviess, Indiana,B27003_044,225,Female,35 to 44 years,Yes
+Daviess, Indiana,B27003_045,1538,Female,35 to 44 years,No
+Daviess, Indiana,B27003_047,162,Female,45 to 54 years,Yes
+Daviess, Indiana,B27003_048,1720,Female,45 to 54 years,No
+Daviess, Indiana,B27003_050,326,Female,55 to 64 years,Yes
+Daviess, Indiana,B27003_051,1622,Female,55 to 64 years,No
+Daviess, Indiana,B27003_053,1310,Female,65 to 74 years,Yes
+Daviess, Indiana,B27003_054,67,Female,65 to 74 years,No
+Daviess, Indiana,B27003_056,1115,Female,75 years and over,Yes
+Daviess, Indiana,B27003_057,76,Female,75 years and over,No
+Dearborn, Indiana,B27003_004,629,Male,Under 6 years,Yes
+Dearborn, Indiana,B27003_005,1037,Male,Under 6 years,No
+Dearborn, Indiana,B27003_007,1428,Male,6 to 18 years,Yes
+Dearborn, Indiana,B27003_008,3102,Male,6 to 18 years,No
+Dearborn, Indiana,B27003_010,153,Male,19 to 25 years,Yes
+Dearborn, Indiana,B27003_011,1795,Male,19 to 25 years,No
+Dearborn, Indiana,B27003_013,261,Male,26 to 34 years,Yes
+Dearborn, Indiana,B27003_014,2104,Male,26 to 34 years,No
+Dearborn, Indiana,B27003_016,558,Male,35 to 44 years,Yes
+Dearborn, Indiana,B27003_017,2350,Male,35 to 44 years,No
+Dearborn, Indiana,B27003_019,521,Male,45 to 54 years,Yes
+Dearborn, Indiana,B27003_020,3178,Male,45 to 54 years,No
+Dearborn, Indiana,B27003_022,746,Male,55 to 64 years,Yes
+Dearborn, Indiana,B27003_023,2824,Male,55 to 64 years,No
+Dearborn, Indiana,B27003_025,2348,Male,65 to 74 years,Yes
+Dearborn, Indiana,B27003_026,54,Male,65 to 74 years,No
+Dearborn, Indiana,B27003_028,1353,Male,75 years and over,Yes
+Dearborn, Indiana,B27003_029,20,Male,75 years and over,No
+Dearborn, Indiana,B27003_032,584,Female,Under 6 years,Yes
+Dearborn, Indiana,B27003_033,887,Female,Under 6 years,No
+Dearborn, Indiana,B27003_035,962,Female,6 to 18 years,Yes
+Dearborn, Indiana,B27003_036,3421,Female,6 to 18 years,No
+Dearborn, Indiana,B27003_038,338,Female,19 to 25 years,Yes
+Dearborn, Indiana,B27003_039,1462,Female,19 to 25 years,No
+Dearborn, Indiana,B27003_041,283,Female,26 to 34 years,Yes
+Dearborn, Indiana,B27003_042,2059,Female,26 to 34 years,No
+Dearborn, Indiana,B27003_044,458,Female,35 to 44 years,Yes
+Dearborn, Indiana,B27003_045,2468,Female,35 to 44 years,No
+Dearborn, Indiana,B27003_047,396,Female,45 to 54 years,Yes
+Dearborn, Indiana,B27003_048,3221,Female,45 to 54 years,No
+Dearborn, Indiana,B27003_050,616,Female,55 to 64 years,Yes
+Dearborn, Indiana,B27003_051,3069,Female,55 to 64 years,No
+Dearborn, Indiana,B27003_053,2412,Female,65 to 74 years,Yes
+Dearborn, Indiana,B27003_054,37,Female,65 to 74 years,No
+Dearborn, Indiana,B27003_056,1830,Female,75 years and over,Yes
+Dearborn, Indiana,B27003_057,0,Female,75 years and over,No
+Decatur, Indiana,B27003_004,248,Male,Under 6 years,Yes
+Decatur, Indiana,B27003_005,793,Male,Under 6 years,No
+Decatur, Indiana,B27003_007,762,Male,6 to 18 years,Yes
+Decatur, Indiana,B27003_008,1708,Male,6 to 18 years,No
+Decatur, Indiana,B27003_010,113,Male,19 to 25 years,Yes
+Decatur, Indiana,B27003_011,1039,Male,19 to 25 years,No
+Decatur, Indiana,B27003_013,117,Male,26 to 34 years,Yes
+Decatur, Indiana,B27003_014,1334,Male,26 to 34 years,No
+Decatur, Indiana,B27003_016,186,Male,35 to 44 years,Yes
+Decatur, Indiana,B27003_017,1385,Male,35 to 44 years,No
+Decatur, Indiana,B27003_019,266,Male,45 to 54 years,Yes
+Decatur, Indiana,B27003_020,1547,Male,45 to 54 years,No
+Decatur, Indiana,B27003_022,334,Male,55 to 64 years,Yes
+Decatur, Indiana,B27003_023,1413,Male,55 to 64 years,No
+Decatur, Indiana,B27003_025,1075,Male,65 to 74 years,Yes
+Decatur, Indiana,B27003_026,12,Male,65 to 74 years,No
+Decatur, Indiana,B27003_028,682,Male,75 years and over,Yes
+Decatur, Indiana,B27003_029,26,Male,75 years and over,No
+Decatur, Indiana,B27003_032,451,Female,Under 6 years,Yes
+Decatur, Indiana,B27003_033,555,Female,Under 6 years,No
+Decatur, Indiana,B27003_035,760,Female,6 to 18 years,Yes
+Decatur, Indiana,B27003_036,1591,Female,6 to 18 years,No
+Decatur, Indiana,B27003_038,178,Female,19 to 25 years,Yes
+Decatur, Indiana,B27003_039,868,Female,19 to 25 years,No
+Decatur, Indiana,B27003_041,145,Female,26 to 34 years,Yes
+Decatur, Indiana,B27003_042,1219,Female,26 to 34 years,No
+Decatur, Indiana,B27003_044,240,Female,35 to 44 years,Yes
+Decatur, Indiana,B27003_045,1313,Female,35 to 44 years,No
+Decatur, Indiana,B27003_047,320,Female,45 to 54 years,Yes
+Decatur, Indiana,B27003_048,1511,Female,45 to 54 years,No
+Decatur, Indiana,B27003_050,350,Female,55 to 64 years,Yes
+Decatur, Indiana,B27003_051,1438,Female,55 to 64 years,No
+Decatur, Indiana,B27003_053,1145,Female,65 to 74 years,Yes
+Decatur, Indiana,B27003_054,93,Female,65 to 74 years,No
+Decatur, Indiana,B27003_056,1001,Female,75 years and over,Yes
+Decatur, Indiana,B27003_057,0,Female,75 years and over,No
+DeKalb, Indiana,B27003_004,612,Male,Under 6 years,Yes
+DeKalb, Indiana,B27003_005,992,Male,Under 6 years,No
+DeKalb, Indiana,B27003_007,1149,Male,6 to 18 years,Yes
+DeKalb, Indiana,B27003_008,3027,Male,6 to 18 years,No
+DeKalb, Indiana,B27003_010,140,Male,19 to 25 years,Yes
+DeKalb, Indiana,B27003_011,1475,Male,19 to 25 years,No
+DeKalb, Indiana,B27003_013,300,Male,26 to 34 years,Yes
+DeKalb, Indiana,B27003_014,2158,Male,26 to 34 years,No
+DeKalb, Indiana,B27003_016,264,Male,35 to 44 years,Yes
+DeKalb, Indiana,B27003_017,2283,Male,35 to 44 years,No
+DeKalb, Indiana,B27003_019,396,Male,45 to 54 years,Yes
+DeKalb, Indiana,B27003_020,2572,Male,45 to 54 years,No
+DeKalb, Indiana,B27003_022,375,Male,55 to 64 years,Yes
+DeKalb, Indiana,B27003_023,2497,Male,55 to 64 years,No
+DeKalb, Indiana,B27003_025,1826,Male,65 to 74 years,Yes
+DeKalb, Indiana,B27003_026,66,Male,65 to 74 years,No
+DeKalb, Indiana,B27003_028,1036,Male,75 years and over,Yes
+DeKalb, Indiana,B27003_029,0,Male,75 years and over,No
+DeKalb, Indiana,B27003_032,532,Female,Under 6 years,Yes
+DeKalb, Indiana,B27003_033,1015,Female,Under 6 years,No
+DeKalb, Indiana,B27003_035,727,Female,6 to 18 years,Yes
+DeKalb, Indiana,B27003_036,2985,Female,6 to 18 years,No
+DeKalb, Indiana,B27003_038,407,Female,19 to 25 years,Yes
+DeKalb, Indiana,B27003_039,1367,Female,19 to 25 years,No
+DeKalb, Indiana,B27003_041,467,Female,26 to 34 years,Yes
+DeKalb, Indiana,B27003_042,1753,Female,26 to 34 years,No
+DeKalb, Indiana,B27003_044,318,Female,35 to 44 years,Yes
+DeKalb, Indiana,B27003_045,2218,Female,35 to 44 years,No
+DeKalb, Indiana,B27003_047,368,Female,45 to 54 years,Yes
+DeKalb, Indiana,B27003_048,2588,Female,45 to 54 years,No
+DeKalb, Indiana,B27003_050,500,Female,55 to 64 years,Yes
+DeKalb, Indiana,B27003_051,2451,Female,55 to 64 years,No
+DeKalb, Indiana,B27003_053,1964,Female,65 to 74 years,Yes
+DeKalb, Indiana,B27003_054,23,Female,65 to 74 years,No
+DeKalb, Indiana,B27003_056,1509,Female,75 years and over,Yes
+DeKalb, Indiana,B27003_057,8,Female,75 years and over,No
+Delaware, Indiana,B27003_004,1979,Male,Under 6 years,Yes
+Delaware, Indiana,B27003_005,1694,Male,Under 6 years,No
+Delaware, Indiana,B27003_007,3055,Male,6 to 18 years,Yes
+Delaware, Indiana,B27003_008,5357,Male,6 to 18 years,No
+Delaware, Indiana,B27003_010,700,Male,19 to 25 years,Yes
+Delaware, Indiana,B27003_011,9857,Male,19 to 25 years,No
+Delaware, Indiana,B27003_013,724,Male,26 to 34 years,Yes
+Delaware, Indiana,B27003_014,4965,Male,26 to 34 years,No
+Delaware, Indiana,B27003_016,926,Male,35 to 44 years,Yes
+Delaware, Indiana,B27003_017,4754,Male,35 to 44 years,No
+Delaware, Indiana,B27003_019,1387,Male,45 to 54 years,Yes
+Delaware, Indiana,B27003_020,5319,Male,45 to 54 years,No
+Delaware, Indiana,B27003_022,1876,Male,55 to 64 years,Yes
+Delaware, Indiana,B27003_023,4665,Male,55 to 64 years,No
+Delaware, Indiana,B27003_025,4665,Male,65 to 74 years,Yes
+Delaware, Indiana,B27003_026,116,Male,65 to 74 years,No
+Delaware, Indiana,B27003_028,3219,Male,75 years and over,Yes
+Delaware, Indiana,B27003_029,0,Male,75 years and over,No
+Delaware, Indiana,B27003_032,1738,Female,Under 6 years,Yes
+Delaware, Indiana,B27003_033,1849,Female,Under 6 years,No
+Delaware, Indiana,B27003_035,2660,Female,6 to 18 years,Yes
+Delaware, Indiana,B27003_036,5743,Female,6 to 18 years,No
+Delaware, Indiana,B27003_038,1236,Female,19 to 25 years,Yes
+Delaware, Indiana,B27003_039,9946,Female,19 to 25 years,No
+Delaware, Indiana,B27003_041,1439,Female,26 to 34 years,Yes
+Delaware, Indiana,B27003_042,4256,Female,26 to 34 years,No
+Delaware, Indiana,B27003_044,1132,Female,35 to 44 years,Yes
+Delaware, Indiana,B27003_045,4799,Female,35 to 44 years,No
+Delaware, Indiana,B27003_047,1314,Female,45 to 54 years,Yes
+Delaware, Indiana,B27003_048,5660,Female,45 to 54 years,No
+Delaware, Indiana,B27003_050,1580,Female,55 to 64 years,Yes
+Delaware, Indiana,B27003_051,5429,Female,55 to 64 years,No
+Delaware, Indiana,B27003_053,5587,Female,65 to 74 years,Yes
+Delaware, Indiana,B27003_054,157,Female,65 to 74 years,No
+Delaware, Indiana,B27003_056,4380,Female,75 years and over,Yes
+Delaware, Indiana,B27003_057,33,Female,75 years and over,No
+Dubois, Indiana,B27003_004,212,Male,Under 6 years,Yes
+Dubois, Indiana,B27003_005,1473,Male,Under 6 years,No
+Dubois, Indiana,B27003_007,1039,Male,6 to 18 years,Yes
+Dubois, Indiana,B27003_008,2997,Male,6 to 18 years,No
+Dubois, Indiana,B27003_010,67,Male,19 to 25 years,Yes
+Dubois, Indiana,B27003_011,1557,Male,19 to 25 years,No
+Dubois, Indiana,B27003_013,179,Male,26 to 34 years,Yes
+Dubois, Indiana,B27003_014,1876,Male,26 to 34 years,No
+Dubois, Indiana,B27003_016,199,Male,35 to 44 years,Yes
+Dubois, Indiana,B27003_017,2262,Male,35 to 44 years,No
+Dubois, Indiana,B27003_019,235,Male,45 to 54 years,Yes
+Dubois, Indiana,B27003_020,2813,Male,45 to 54 years,No
+Dubois, Indiana,B27003_022,278,Male,55 to 64 years,Yes
+Dubois, Indiana,B27003_023,2681,Male,55 to 64 years,No
+Dubois, Indiana,B27003_025,1725,Male,65 to 74 years,Yes
+Dubois, Indiana,B27003_026,54,Male,65 to 74 years,No
+Dubois, Indiana,B27003_028,1131,Male,75 years and over,Yes
+Dubois, Indiana,B27003_029,0,Male,75 years and over,No
+Dubois, Indiana,B27003_032,581,Female,Under 6 years,Yes
+Dubois, Indiana,B27003_033,1188,Female,Under 6 years,No
+Dubois, Indiana,B27003_035,799,Female,6 to 18 years,Yes
+Dubois, Indiana,B27003_036,2740,Female,6 to 18 years,No
+Dubois, Indiana,B27003_038,111,Female,19 to 25 years,Yes
+Dubois, Indiana,B27003_039,1580,Female,19 to 25 years,No
+Dubois, Indiana,B27003_041,95,Female,26 to 34 years,Yes
+Dubois, Indiana,B27003_042,1965,Female,26 to 34 years,No
+Dubois, Indiana,B27003_044,84,Female,35 to 44 years,Yes
+Dubois, Indiana,B27003_045,2460,Female,35 to 44 years,No
+Dubois, Indiana,B27003_047,233,Female,45 to 54 years,Yes
+Dubois, Indiana,B27003_048,2522,Female,45 to 54 years,No
+Dubois, Indiana,B27003_050,322,Female,55 to 64 years,Yes
+Dubois, Indiana,B27003_051,2607,Female,55 to 64 years,No
+Dubois, Indiana,B27003_053,1942,Female,65 to 74 years,Yes
+Dubois, Indiana,B27003_054,14,Female,65 to 74 years,No
+Dubois, Indiana,B27003_056,1605,Female,75 years and over,Yes
+Dubois, Indiana,B27003_057,2,Female,75 years and over,No
+Elkhart, Indiana,B27003_004,3952,Male,Under 6 years,Yes
+Elkhart, Indiana,B27003_005,5046,Male,Under 6 years,No
+Elkhart, Indiana,B27003_007,7500,Male,6 to 18 years,Yes
+Elkhart, Indiana,B27003_008,13765,Male,6 to 18 years,No
+Elkhart, Indiana,B27003_010,1030,Male,19 to 25 years,Yes
+Elkhart, Indiana,B27003_011,8337,Male,19 to 25 years,No
+Elkhart, Indiana,B27003_013,1157,Male,26 to 34 years,Yes
+Elkhart, Indiana,B27003_014,9886,Male,26 to 34 years,No
+Elkhart, Indiana,B27003_016,1251,Male,35 to 44 years,Yes
+Elkhart, Indiana,B27003_017,10984,Male,35 to 44 years,No
+Elkhart, Indiana,B27003_019,1505,Male,45 to 54 years,Yes
+Elkhart, Indiana,B27003_020,11217,Male,45 to 54 years,No
+Elkhart, Indiana,B27003_022,2030,Male,55 to 64 years,Yes
+Elkhart, Indiana,B27003_023,9492,Male,55 to 64 years,No
+Elkhart, Indiana,B27003_025,6812,Male,65 to 74 years,Yes
+Elkhart, Indiana,B27003_026,557,Male,65 to 74 years,No
+Elkhart, Indiana,B27003_028,4511,Male,75 years and over,Yes
+Elkhart, Indiana,B27003_029,46,Male,75 years and over,No
+Elkhart, Indiana,B27003_032,3582,Female,Under 6 years,Yes
+Elkhart, Indiana,B27003_033,5132,Female,Under 6 years,No
+Elkhart, Indiana,B27003_035,7030,Female,6 to 18 years,Yes
+Elkhart, Indiana,B27003_036,13359,Female,6 to 18 years,No
+Elkhart, Indiana,B27003_038,1776,Female,19 to 25 years,Yes
+Elkhart, Indiana,B27003_039,6859,Female,19 to 25 years,No
+Elkhart, Indiana,B27003_041,2191,Female,26 to 34 years,Yes
+Elkhart, Indiana,B27003_042,9265,Female,26 to 34 years,No
+Elkhart, Indiana,B27003_044,2078,Female,35 to 44 years,Yes
+Elkhart, Indiana,B27003_045,10567,Female,35 to 44 years,No
+Elkhart, Indiana,B27003_047,1514,Female,45 to 54 years,Yes
+Elkhart, Indiana,B27003_048,11042,Female,45 to 54 years,No
+Elkhart, Indiana,B27003_050,2058,Female,55 to 64 years,Yes
+Elkhart, Indiana,B27003_051,10150,Female,55 to 64 years,No
+Elkhart, Indiana,B27003_053,8039,Female,65 to 74 years,Yes
+Elkhart, Indiana,B27003_054,442,Female,65 to 74 years,No
+Elkhart, Indiana,B27003_056,6874,Female,75 years and over,Yes
+Elkhart, Indiana,B27003_057,29,Female,75 years and over,No
+Fayette, Indiana,B27003_004,209,Male,Under 6 years,Yes
+Fayette, Indiana,B27003_005,552,Male,Under 6 years,No
+Fayette, Indiana,B27003_007,748,Male,6 to 18 years,Yes
+Fayette, Indiana,B27003_008,1230,Male,6 to 18 years,No
+Fayette, Indiana,B27003_010,126,Male,19 to 25 years,Yes
+Fayette, Indiana,B27003_011,850,Male,19 to 25 years,No
+Fayette, Indiana,B27003_013,194,Male,26 to 34 years,Yes
+Fayette, Indiana,B27003_014,892,Male,26 to 34 years,No
+Fayette, Indiana,B27003_016,218,Male,35 to 44 years,Yes
+Fayette, Indiana,B27003_017,1221,Male,35 to 44 years,No
+Fayette, Indiana,B27003_019,393,Male,45 to 54 years,Yes
+Fayette, Indiana,B27003_020,1190,Male,45 to 54 years,No
+Fayette, Indiana,B27003_022,529,Male,55 to 64 years,Yes
+Fayette, Indiana,B27003_023,1054,Male,55 to 64 years,No
+Fayette, Indiana,B27003_025,1152,Male,65 to 74 years,Yes
+Fayette, Indiana,B27003_026,53,Male,65 to 74 years,No
+Fayette, Indiana,B27003_028,692,Male,75 years and over,Yes
+Fayette, Indiana,B27003_029,0,Male,75 years and over,No
+Fayette, Indiana,B27003_032,354,Female,Under 6 years,Yes
+Fayette, Indiana,B27003_033,247,Female,Under 6 years,No
+Fayette, Indiana,B27003_035,864,Female,6 to 18 years,Yes
+Fayette, Indiana,B27003_036,1171,Female,6 to 18 years,No
+Fayette, Indiana,B27003_038,268,Female,19 to 25 years,Yes
+Fayette, Indiana,B27003_039,611,Female,19 to 25 years,No
+Fayette, Indiana,B27003_041,284,Female,26 to 34 years,Yes
+Fayette, Indiana,B27003_042,783,Female,26 to 34 years,No
+Fayette, Indiana,B27003_044,297,Female,35 to 44 years,Yes
+Fayette, Indiana,B27003_045,1140,Female,35 to 44 years,No
+Fayette, Indiana,B27003_047,333,Female,45 to 54 years,Yes
+Fayette, Indiana,B27003_048,1254,Female,45 to 54 years,No
+Fayette, Indiana,B27003_050,468,Female,55 to 64 years,Yes
+Fayette, Indiana,B27003_051,1248,Female,55 to 64 years,No
+Fayette, Indiana,B27003_053,1306,Female,65 to 74 years,Yes
+Fayette, Indiana,B27003_054,8,Female,65 to 74 years,No
+Fayette, Indiana,B27003_056,982,Female,75 years and over,Yes
+Fayette, Indiana,B27003_057,0,Female,75 years and over,No
+Floyd, Indiana,B27003_004,906,Male,Under 6 years,Yes
+Floyd, Indiana,B27003_005,1727,Male,Under 6 years,No
+Floyd, Indiana,B27003_007,1662,Male,6 to 18 years,Yes
+Floyd, Indiana,B27003_008,5140,Male,6 to 18 years,No
+Floyd, Indiana,B27003_010,277,Male,19 to 25 years,Yes
+Floyd, Indiana,B27003_011,3127,Male,19 to 25 years,No
+Floyd, Indiana,B27003_013,316,Male,26 to 34 years,Yes
+Floyd, Indiana,B27003_014,3458,Male,26 to 34 years,No
+Floyd, Indiana,B27003_016,386,Male,35 to 44 years,Yes
+Floyd, Indiana,B27003_017,4153,Male,35 to 44 years,No
+Floyd, Indiana,B27003_019,753,Male,45 to 54 years,Yes
+Floyd, Indiana,B27003_020,4571,Male,45 to 54 years,No
+Floyd, Indiana,B27003_022,948,Male,55 to 64 years,Yes
+Floyd, Indiana,B27003_023,4327,Male,55 to 64 years,No
+Floyd, Indiana,B27003_025,3060,Male,65 to 74 years,Yes
+Floyd, Indiana,B27003_026,142,Male,65 to 74 years,No
+Floyd, Indiana,B27003_028,1693,Male,75 years and over,Yes
+Floyd, Indiana,B27003_029,0,Male,75 years and over,No
+Floyd, Indiana,B27003_032,960,Female,Under 6 years,Yes
+Floyd, Indiana,B27003_033,1744,Female,Under 6 years,No
+Floyd, Indiana,B27003_035,2004,Female,6 to 18 years,Yes
+Floyd, Indiana,B27003_036,4522,Female,6 to 18 years,No
+Floyd, Indiana,B27003_038,633,Female,19 to 25 years,Yes
+Floyd, Indiana,B27003_039,2758,Female,19 to 25 years,No
+Floyd, Indiana,B27003_041,856,Female,26 to 34 years,Yes
+Floyd, Indiana,B27003_042,3328,Female,26 to 34 years,No
+Floyd, Indiana,B27003_044,784,Female,35 to 44 years,Yes
+Floyd, Indiana,B27003_045,4244,Female,35 to 44 years,No
+Floyd, Indiana,B27003_047,756,Female,45 to 54 years,Yes
+Floyd, Indiana,B27003_048,4748,Female,45 to 54 years,No
+Floyd, Indiana,B27003_050,978,Female,55 to 64 years,Yes
+Floyd, Indiana,B27003_051,4608,Female,55 to 64 years,No
+Floyd, Indiana,B27003_053,3656,Female,65 to 74 years,Yes
+Floyd, Indiana,B27003_054,7,Female,65 to 74 years,No
+Floyd, Indiana,B27003_056,2457,Female,75 years and over,Yes
+Floyd, Indiana,B27003_057,26,Female,75 years and over,No
+Fountain, Indiana,B27003_004,319,Male,Under 6 years,Yes
+Fountain, Indiana,B27003_005,424,Male,Under 6 years,No
+Fountain, Indiana,B27003_007,427,Male,6 to 18 years,Yes
+Fountain, Indiana,B27003_008,909,Male,6 to 18 years,No
+Fountain, Indiana,B27003_010,61,Male,19 to 25 years,Yes
+Fountain, Indiana,B27003_011,624,Male,19 to 25 years,No
+Fountain, Indiana,B27003_013,147,Male,26 to 34 years,Yes
+Fountain, Indiana,B27003_014,709,Male,26 to 34 years,No
+Fountain, Indiana,B27003_016,97,Male,35 to 44 years,Yes
+Fountain, Indiana,B27003_017,793,Male,35 to 44 years,No
+Fountain, Indiana,B27003_019,175,Male,45 to 54 years,Yes
+Fountain, Indiana,B27003_020,1015,Male,45 to 54 years,No
+Fountain, Indiana,B27003_022,180,Male,55 to 64 years,Yes
+Fountain, Indiana,B27003_023,901,Male,55 to 64 years,No
+Fountain, Indiana,B27003_025,779,Male,65 to 74 years,Yes
+Fountain, Indiana,B27003_026,18,Male,65 to 74 years,No
+Fountain, Indiana,B27003_028,569,Male,75 years and over,Yes
+Fountain, Indiana,B27003_029,0,Male,75 years and over,No
+Fountain, Indiana,B27003_032,204,Female,Under 6 years,Yes
+Fountain, Indiana,B27003_033,339,Female,Under 6 years,No
+Fountain, Indiana,B27003_035,366,Female,6 to 18 years,Yes
+Fountain, Indiana,B27003_036,890,Female,6 to 18 years,No
+Fountain, Indiana,B27003_038,176,Female,19 to 25 years,Yes
+Fountain, Indiana,B27003_039,467,Female,19 to 25 years,No
+Fountain, Indiana,B27003_041,162,Female,26 to 34 years,Yes
+Fountain, Indiana,B27003_042,553,Female,26 to 34 years,No
+Fountain, Indiana,B27003_044,144,Female,35 to 44 years,Yes
+Fountain, Indiana,B27003_045,847,Female,35 to 44 years,No
+Fountain, Indiana,B27003_047,239,Female,45 to 54 years,Yes
+Fountain, Indiana,B27003_048,947,Female,45 to 54 years,No
+Fountain, Indiana,B27003_050,247,Female,55 to 64 years,Yes
+Fountain, Indiana,B27003_051,889,Female,55 to 64 years,No
+Fountain, Indiana,B27003_053,887,Female,65 to 74 years,Yes
+Fountain, Indiana,B27003_054,0,Female,65 to 74 years,No
+Fountain, Indiana,B27003_056,815,Female,75 years and over,Yes
+Fountain, Indiana,B27003_057,0,Female,75 years and over,No
+Franklin, Indiana,B27003_004,216,Male,Under 6 years,Yes
+Franklin, Indiana,B27003_005,645,Male,Under 6 years,No
+Franklin, Indiana,B27003_007,345,Male,6 to 18 years,Yes
+Franklin, Indiana,B27003_008,1764,Male,6 to 18 years,No
+Franklin, Indiana,B27003_010,71,Male,19 to 25 years,Yes
+Franklin, Indiana,B27003_011,860,Male,19 to 25 years,No
+Franklin, Indiana,B27003_013,195,Male,26 to 34 years,Yes
+Franklin, Indiana,B27003_014,809,Male,26 to 34 years,No
+Franklin, Indiana,B27003_016,113,Male,35 to 44 years,Yes
+Franklin, Indiana,B27003_017,1258,Male,35 to 44 years,No
+Franklin, Indiana,B27003_019,186,Male,45 to 54 years,Yes
+Franklin, Indiana,B27003_020,1460,Male,45 to 54 years,No
+Franklin, Indiana,B27003_022,339,Male,55 to 64 years,Yes
+Franklin, Indiana,B27003_023,1361,Male,55 to 64 years,No
+Franklin, Indiana,B27003_025,1093,Male,65 to 74 years,Yes
+Franklin, Indiana,B27003_026,32,Male,65 to 74 years,No
+Franklin, Indiana,B27003_028,629,Male,75 years and over,Yes
+Franklin, Indiana,B27003_029,9,Male,75 years and over,No
+Franklin, Indiana,B27003_032,309,Female,Under 6 years,Yes
+Franklin, Indiana,B27003_033,467,Female,Under 6 years,No
+Franklin, Indiana,B27003_035,328,Female,6 to 18 years,Yes
+Franklin, Indiana,B27003_036,1645,Female,6 to 18 years,No
+Franklin, Indiana,B27003_038,188,Female,19 to 25 years,Yes
+Franklin, Indiana,B27003_039,645,Female,19 to 25 years,No
+Franklin, Indiana,B27003_041,366,Female,26 to 34 years,Yes
+Franklin, Indiana,B27003_042,694,Female,26 to 34 years,No
+Franklin, Indiana,B27003_044,110,Female,35 to 44 years,Yes
+Franklin, Indiana,B27003_045,1272,Female,35 to 44 years,No
+Franklin, Indiana,B27003_047,92,Female,45 to 54 years,Yes
+Franklin, Indiana,B27003_048,1516,Female,45 to 54 years,No
+Franklin, Indiana,B27003_050,308,Female,55 to 64 years,Yes
+Franklin, Indiana,B27003_051,1332,Female,55 to 64 years,No
+Franklin, Indiana,B27003_053,1125,Female,65 to 74 years,Yes
+Franklin, Indiana,B27003_054,7,Female,65 to 74 years,No
+Franklin, Indiana,B27003_056,929,Female,75 years and over,Yes
+Franklin, Indiana,B27003_057,18,Female,75 years and over,No
+Fulton, Indiana,B27003_004,220,Male,Under 6 years,Yes
+Fulton, Indiana,B27003_005,604,Male,Under 6 years,No
+Fulton, Indiana,B27003_007,614,Male,6 to 18 years,Yes
+Fulton, Indiana,B27003_008,1097,Male,6 to 18 years,No
+Fulton, Indiana,B27003_010,57,Male,19 to 25 years,Yes
+Fulton, Indiana,B27003_011,759,Male,19 to 25 years,No
+Fulton, Indiana,B27003_013,144,Male,26 to 34 years,Yes
+Fulton, Indiana,B27003_014,878,Male,26 to 34 years,No
+Fulton, Indiana,B27003_016,163,Male,35 to 44 years,Yes
+Fulton, Indiana,B27003_017,986,Male,35 to 44 years,No
+Fulton, Indiana,B27003_019,168,Male,45 to 54 years,Yes
+Fulton, Indiana,B27003_020,1131,Male,45 to 54 years,No
+Fulton, Indiana,B27003_022,382,Male,55 to 64 years,Yes
+Fulton, Indiana,B27003_023,1043,Male,55 to 64 years,No
+Fulton, Indiana,B27003_025,961,Male,65 to 74 years,Yes
+Fulton, Indiana,B27003_026,15,Male,65 to 74 years,No
+Fulton, Indiana,B27003_028,614,Male,75 years and over,Yes
+Fulton, Indiana,B27003_029,0,Male,75 years and over,No
+Fulton, Indiana,B27003_032,235,Female,Under 6 years,Yes
+Fulton, Indiana,B27003_033,536,Female,Under 6 years,No
+Fulton, Indiana,B27003_035,533,Female,6 to 18 years,Yes
+Fulton, Indiana,B27003_036,1136,Female,6 to 18 years,No
+Fulton, Indiana,B27003_038,33,Female,19 to 25 years,Yes
+Fulton, Indiana,B27003_039,719,Female,19 to 25 years,No
+Fulton, Indiana,B27003_041,229,Female,26 to 34 years,Yes
+Fulton, Indiana,B27003_042,716,Female,26 to 34 years,No
+Fulton, Indiana,B27003_044,218,Female,35 to 44 years,Yes
+Fulton, Indiana,B27003_045,957,Female,35 to 44 years,No
+Fulton, Indiana,B27003_047,300,Female,45 to 54 years,Yes
+Fulton, Indiana,B27003_048,1079,Female,45 to 54 years,No
+Fulton, Indiana,B27003_050,230,Female,55 to 64 years,Yes
+Fulton, Indiana,B27003_051,1190,Female,55 to 64 years,No
+Fulton, Indiana,B27003_053,1104,Female,65 to 74 years,Yes
+Fulton, Indiana,B27003_054,9,Female,65 to 74 years,No
+Fulton, Indiana,B27003_056,913,Female,75 years and over,Yes
+Fulton, Indiana,B27003_057,32,Female,75 years and over,No
+Gibson, Indiana,B27003_004,443,Male,Under 6 years,Yes
+Gibson, Indiana,B27003_005,810,Male,Under 6 years,No
+Gibson, Indiana,B27003_007,770,Male,6 to 18 years,Yes
+Gibson, Indiana,B27003_008,2364,Male,6 to 18 years,No
+Gibson, Indiana,B27003_010,82,Male,19 to 25 years,Yes
+Gibson, Indiana,B27003_011,1256,Male,19 to 25 years,No
+Gibson, Indiana,B27003_013,168,Male,26 to 34 years,Yes
+Gibson, Indiana,B27003_014,1582,Male,26 to 34 years,No
+Gibson, Indiana,B27003_016,190,Male,35 to 44 years,Yes
+Gibson, Indiana,B27003_017,1780,Male,35 to 44 years,No
+Gibson, Indiana,B27003_019,201,Male,45 to 54 years,Yes
+Gibson, Indiana,B27003_020,2048,Male,45 to 54 years,No
+Gibson, Indiana,B27003_022,427,Male,55 to 64 years,Yes
+Gibson, Indiana,B27003_023,1967,Male,55 to 64 years,No
+Gibson, Indiana,B27003_025,1421,Male,65 to 74 years,Yes
+Gibson, Indiana,B27003_026,47,Male,65 to 74 years,No
+Gibson, Indiana,B27003_028,892,Male,75 years and over,Yes
+Gibson, Indiana,B27003_029,5,Male,75 years and over,No
+Gibson, Indiana,B27003_032,400,Female,Under 6 years,Yes
+Gibson, Indiana,B27003_033,849,Female,Under 6 years,No
+Gibson, Indiana,B27003_035,627,Female,6 to 18 years,Yes
+Gibson, Indiana,B27003_036,2115,Female,6 to 18 years,No
+Gibson, Indiana,B27003_038,218,Female,19 to 25 years,Yes
+Gibson, Indiana,B27003_039,1175,Female,19 to 25 years,No
+Gibson, Indiana,B27003_041,213,Female,26 to 34 years,Yes
+Gibson, Indiana,B27003_042,1384,Female,26 to 34 years,No
+Gibson, Indiana,B27003_044,185,Female,35 to 44 years,Yes
+Gibson, Indiana,B27003_045,1798,Female,35 to 44 years,No
+Gibson, Indiana,B27003_047,205,Female,45 to 54 years,Yes
+Gibson, Indiana,B27003_048,2029,Female,45 to 54 years,No
+Gibson, Indiana,B27003_050,429,Female,55 to 64 years,Yes
+Gibson, Indiana,B27003_051,1894,Female,55 to 64 years,No
+Gibson, Indiana,B27003_053,1613,Female,65 to 74 years,Yes
+Gibson, Indiana,B27003_054,34,Female,65 to 74 years,No
+Gibson, Indiana,B27003_056,1387,Female,75 years and over,Yes
+Gibson, Indiana,B27003_057,0,Female,75 years and over,No
+Grant, Indiana,B27003_004,1643,Male,Under 6 years,Yes
+Grant, Indiana,B27003_005,591,Male,Under 6 years,No
+Grant, Indiana,B27003_007,2254,Male,6 to 18 years,Yes
+Grant, Indiana,B27003_008,3117,Male,6 to 18 years,No
+Grant, Indiana,B27003_010,461,Male,19 to 25 years,Yes
+Grant, Indiana,B27003_011,3243,Male,19 to 25 years,No
+Grant, Indiana,B27003_013,561,Male,26 to 34 years,Yes
+Grant, Indiana,B27003_014,2323,Male,26 to 34 years,No
+Grant, Indiana,B27003_016,574,Male,35 to 44 years,Yes
+Grant, Indiana,B27003_017,2766,Male,35 to 44 years,No
+Grant, Indiana,B27003_019,1117,Male,45 to 54 years,Yes
+Grant, Indiana,B27003_020,3115,Male,45 to 54 years,No
+Grant, Indiana,B27003_022,1340,Male,55 to 64 years,Yes
+Grant, Indiana,B27003_023,3086,Male,55 to 64 years,No
+Grant, Indiana,B27003_025,3077,Male,65 to 74 years,Yes
+Grant, Indiana,B27003_026,96,Male,65 to 74 years,No
+Grant, Indiana,B27003_028,2046,Male,75 years and over,Yes
+Grant, Indiana,B27003_029,11,Male,75 years and over,No
+Grant, Indiana,B27003_032,1422,Female,Under 6 years,Yes
+Grant, Indiana,B27003_033,950,Female,Under 6 years,No
+Grant, Indiana,B27003_035,2336,Female,6 to 18 years,Yes
+Grant, Indiana,B27003_036,2749,Female,6 to 18 years,No
+Grant, Indiana,B27003_038,591,Female,19 to 25 years,Yes
+Grant, Indiana,B27003_039,3993,Female,19 to 25 years,No
+Grant, Indiana,B27003_041,1086,Female,26 to 34 years,Yes
+Grant, Indiana,B27003_042,2148,Female,26 to 34 years,No
+Grant, Indiana,B27003_044,948,Female,35 to 44 years,Yes
+Grant, Indiana,B27003_045,2756,Female,35 to 44 years,No
+Grant, Indiana,B27003_047,1018,Female,45 to 54 years,Yes
+Grant, Indiana,B27003_048,3174,Female,45 to 54 years,No
+Grant, Indiana,B27003_050,1181,Female,55 to 64 years,Yes
+Grant, Indiana,B27003_051,3654,Female,55 to 64 years,No
+Grant, Indiana,B27003_053,3522,Female,65 to 74 years,Yes
+Grant, Indiana,B27003_054,66,Female,65 to 74 years,No
+Grant, Indiana,B27003_056,3062,Female,75 years and over,Yes
+Grant, Indiana,B27003_057,15,Female,75 years and over,No
+Greene, Indiana,B27003_004,577,Male,Under 6 years,Yes
+Greene, Indiana,B27003_005,502,Male,Under 6 years,No
+Greene, Indiana,B27003_007,906,Male,6 to 18 years,Yes
+Greene, Indiana,B27003_008,1786,Male,6 to 18 years,No
+Greene, Indiana,B27003_010,225,Male,19 to 25 years,Yes
+Greene, Indiana,B27003_011,1031,Male,19 to 25 years,No
+Greene, Indiana,B27003_013,267,Male,26 to 34 years,Yes
+Greene, Indiana,B27003_014,1313,Male,26 to 34 years,No
+Greene, Indiana,B27003_016,258,Male,35 to 44 years,Yes
+Greene, Indiana,B27003_017,1621,Male,35 to 44 years,No
+Greene, Indiana,B27003_019,338,Male,45 to 54 years,Yes
+Greene, Indiana,B27003_020,1984,Male,45 to 54 years,No
+Greene, Indiana,B27003_022,548,Male,55 to 64 years,Yes
+Greene, Indiana,B27003_023,1774,Male,55 to 64 years,No
+Greene, Indiana,B27003_025,1636,Male,65 to 74 years,Yes
+Greene, Indiana,B27003_026,38,Male,65 to 74 years,No
+Greene, Indiana,B27003_028,1035,Male,75 years and over,Yes
+Greene, Indiana,B27003_029,9,Male,75 years and over,No
+Greene, Indiana,B27003_032,524,Female,Under 6 years,Yes
+Greene, Indiana,B27003_033,523,Female,Under 6 years,No
+Greene, Indiana,B27003_035,778,Female,6 to 18 years,Yes
+Greene, Indiana,B27003_036,1866,Female,6 to 18 years,No
+Greene, Indiana,B27003_038,333,Female,19 to 25 years,Yes
+Greene, Indiana,B27003_039,740,Female,19 to 25 years,No
+Greene, Indiana,B27003_041,435,Female,26 to 34 years,Yes
+Greene, Indiana,B27003_042,1229,Female,26 to 34 years,No
+Greene, Indiana,B27003_044,318,Female,35 to 44 years,Yes
+Greene, Indiana,B27003_045,1586,Female,35 to 44 years,No
+Greene, Indiana,B27003_047,491,Female,45 to 54 years,Yes
+Greene, Indiana,B27003_048,1775,Female,45 to 54 years,No
+Greene, Indiana,B27003_050,549,Female,55 to 64 years,Yes
+Greene, Indiana,B27003_051,1750,Female,55 to 64 years,No
+Greene, Indiana,B27003_053,1765,Female,65 to 74 years,Yes
+Greene, Indiana,B27003_054,1,Female,65 to 74 years,No
+Greene, Indiana,B27003_056,1488,Female,75 years and over,Yes
+Greene, Indiana,B27003_057,0,Female,75 years and over,No
+Hamilton, Indiana,B27003_004,1267,Male,Under 6 years,Yes
+Hamilton, Indiana,B27003_005,11965,Male,Under 6 years,No
+Hamilton, Indiana,B27003_007,3320,Male,6 to 18 years,Yes
+Hamilton, Indiana,B27003_008,30599,Male,6 to 18 years,No
+Hamilton, Indiana,B27003_010,594,Male,19 to 25 years,Yes
+Hamilton, Indiana,B27003_011,10514,Male,19 to 25 years,No
+Hamilton, Indiana,B27003_013,709,Male,26 to 34 years,Yes
+Hamilton, Indiana,B27003_014,15661,Male,26 to 34 years,No
+Hamilton, Indiana,B27003_016,1136,Male,35 to 44 years,Yes
+Hamilton, Indiana,B27003_017,21811,Male,35 to 44 years,No
+Hamilton, Indiana,B27003_019,1037,Male,45 to 54 years,Yes
+Hamilton, Indiana,B27003_020,22016,Male,45 to 54 years,No
+Hamilton, Indiana,B27003_022,1449,Male,55 to 64 years,Yes
+Hamilton, Indiana,B27003_023,15701,Male,55 to 64 years,No
+Hamilton, Indiana,B27003_025,9960,Male,65 to 74 years,Yes
+Hamilton, Indiana,B27003_026,518,Male,65 to 74 years,No
+Hamilton, Indiana,B27003_028,5301,Male,75 years and over,Yes
+Hamilton, Indiana,B27003_029,43,Male,75 years and over,No
+Hamilton, Indiana,B27003_032,1492,Female,Under 6 years,Yes
+Hamilton, Indiana,B27003_033,11411,Female,Under 6 years,No
+Hamilton, Indiana,B27003_035,3190,Female,6 to 18 years,Yes
+Hamilton, Indiana,B27003_036,29512,Female,6 to 18 years,No
+Hamilton, Indiana,B27003_038,719,Female,19 to 25 years,Yes
+Hamilton, Indiana,B27003_039,9845,Female,19 to 25 years,No
+Hamilton, Indiana,B27003_041,1116,Female,26 to 34 years,Yes
+Hamilton, Indiana,B27003_042,17136,Female,26 to 34 years,No
+Hamilton, Indiana,B27003_044,1141,Female,35 to 44 years,Yes
+Hamilton, Indiana,B27003_045,23414,Female,35 to 44 years,No
+Hamilton, Indiana,B27003_047,1151,Female,45 to 54 years,Yes
+Hamilton, Indiana,B27003_048,22744,Female,45 to 54 years,No
+Hamilton, Indiana,B27003_050,1717,Female,55 to 64 years,Yes
+Hamilton, Indiana,B27003_051,16934,Female,55 to 64 years,No
+Hamilton, Indiana,B27003_053,11189,Female,65 to 74 years,Yes
+Hamilton, Indiana,B27003_054,398,Female,65 to 74 years,No
+Hamilton, Indiana,B27003_056,7753,Female,75 years and over,Yes
+Hamilton, Indiana,B27003_057,66,Female,75 years and over,No
+Hancock, Indiana,B27003_004,547,Male,Under 6 years,Yes
+Hancock, Indiana,B27003_005,2055,Male,Under 6 years,No
+Hancock, Indiana,B27003_007,979,Male,6 to 18 years,Yes
+Hancock, Indiana,B27003_008,5786,Male,6 to 18 years,No
+Hancock, Indiana,B27003_010,384,Male,19 to 25 years,Yes
+Hancock, Indiana,B27003_011,2782,Male,19 to 25 years,No
+Hancock, Indiana,B27003_013,363,Male,26 to 34 years,Yes
+Hancock, Indiana,B27003_014,3249,Male,26 to 34 years,No
+Hancock, Indiana,B27003_016,359,Male,35 to 44 years,Yes
+Hancock, Indiana,B27003_017,4222,Male,35 to 44 years,No
+Hancock, Indiana,B27003_019,449,Male,45 to 54 years,Yes
+Hancock, Indiana,B27003_020,4938,Male,45 to 54 years,No
+Hancock, Indiana,B27003_022,692,Male,55 to 64 years,Yes
+Hancock, Indiana,B27003_023,4029,Male,55 to 64 years,No
+Hancock, Indiana,B27003_025,3313,Male,65 to 74 years,Yes
+Hancock, Indiana,B27003_026,77,Male,65 to 74 years,No
+Hancock, Indiana,B27003_028,1785,Male,75 years and over,Yes
+Hancock, Indiana,B27003_029,0,Male,75 years and over,No
+Hancock, Indiana,B27003_032,617,Female,Under 6 years,Yes
+Hancock, Indiana,B27003_033,1973,Female,Under 6 years,No
+Hancock, Indiana,B27003_035,1047,Female,6 to 18 years,Yes
+Hancock, Indiana,B27003_036,5398,Female,6 to 18 years,No
+Hancock, Indiana,B27003_038,320,Female,19 to 25 years,Yes
+Hancock, Indiana,B27003_039,2409,Female,19 to 25 years,No
+Hancock, Indiana,B27003_041,463,Female,26 to 34 years,Yes
+Hancock, Indiana,B27003_042,3415,Female,26 to 34 years,No
+Hancock, Indiana,B27003_044,651,Female,35 to 44 years,Yes
+Hancock, Indiana,B27003_045,4379,Female,35 to 44 years,No
+Hancock, Indiana,B27003_047,337,Female,45 to 54 years,Yes
+Hancock, Indiana,B27003_048,5189,Female,45 to 54 years,No
+Hancock, Indiana,B27003_050,728,Female,55 to 64 years,Yes
+Hancock, Indiana,B27003_051,4316,Female,55 to 64 years,No
+Hancock, Indiana,B27003_053,3501,Female,65 to 74 years,Yes
+Hancock, Indiana,B27003_054,111,Female,65 to 74 years,No
+Hancock, Indiana,B27003_056,2367,Female,75 years and over,Yes
+Hancock, Indiana,B27003_057,0,Female,75 years and over,No
+Harrison, Indiana,B27003_004,610,Male,Under 6 years,Yes
+Harrison, Indiana,B27003_005,936,Male,Under 6 years,No
+Harrison, Indiana,B27003_007,702,Male,6 to 18 years,Yes
+Harrison, Indiana,B27003_008,2611,Male,6 to 18 years,No
+Harrison, Indiana,B27003_010,214,Male,19 to 25 years,Yes
+Harrison, Indiana,B27003_011,1252,Male,19 to 25 years,No
+Harrison, Indiana,B27003_013,293,Male,26 to 34 years,Yes
+Harrison, Indiana,B27003_014,1748,Male,26 to 34 years,No
+Harrison, Indiana,B27003_016,428,Male,35 to 44 years,Yes
+Harrison, Indiana,B27003_017,1959,Male,35 to 44 years,No
+Harrison, Indiana,B27003_019,289,Male,45 to 54 years,Yes
+Harrison, Indiana,B27003_020,2636,Male,45 to 54 years,No
+Harrison, Indiana,B27003_022,729,Male,55 to 64 years,Yes
+Harrison, Indiana,B27003_023,2174,Male,55 to 64 years,No
+Harrison, Indiana,B27003_025,1945,Male,65 to 74 years,Yes
+Harrison, Indiana,B27003_026,54,Male,65 to 74 years,No
+Harrison, Indiana,B27003_028,1075,Male,75 years and over,Yes
+Harrison, Indiana,B27003_029,0,Male,75 years and over,No
+Harrison, Indiana,B27003_032,329,Female,Under 6 years,Yes
+Harrison, Indiana,B27003_033,863,Female,Under 6 years,No
+Harrison, Indiana,B27003_035,1080,Female,6 to 18 years,Yes
+Harrison, Indiana,B27003_036,2384,Female,6 to 18 years,No
+Harrison, Indiana,B27003_038,173,Female,19 to 25 years,Yes
+Harrison, Indiana,B27003_039,1266,Female,19 to 25 years,No
+Harrison, Indiana,B27003_041,448,Female,26 to 34 years,Yes
+Harrison, Indiana,B27003_042,1439,Female,26 to 34 years,No
+Harrison, Indiana,B27003_044,369,Female,35 to 44 years,Yes
+Harrison, Indiana,B27003_045,2053,Female,35 to 44 years,No
+Harrison, Indiana,B27003_047,397,Female,45 to 54 years,Yes
+Harrison, Indiana,B27003_048,2444,Female,45 to 54 years,No
+Harrison, Indiana,B27003_050,529,Female,55 to 64 years,Yes
+Harrison, Indiana,B27003_051,2412,Female,55 to 64 years,No
+Harrison, Indiana,B27003_053,2046,Female,65 to 74 years,Yes
+Harrison, Indiana,B27003_054,22,Female,65 to 74 years,No
+Harrison, Indiana,B27003_056,1453,Female,75 years and over,Yes
+Harrison, Indiana,B27003_057,61,Female,75 years and over,No
+Hendricks, Indiana,B27003_004,1439,Male,Under 6 years,Yes
+Hendricks, Indiana,B27003_005,4499,Male,Under 6 years,No
+Hendricks, Indiana,B27003_007,2375,Male,6 to 18 years,Yes
+Hendricks, Indiana,B27003_008,13863,Male,6 to 18 years,No
+Hendricks, Indiana,B27003_010,569,Male,19 to 25 years,Yes
+Hendricks, Indiana,B27003_011,5655,Male,19 to 25 years,No
+Hendricks, Indiana,B27003_013,457,Male,26 to 34 years,Yes
+Hendricks, Indiana,B27003_014,8403,Male,26 to 34 years,No
+Hendricks, Indiana,B27003_016,856,Male,35 to 44 years,Yes
+Hendricks, Indiana,B27003_017,10476,Male,35 to 44 years,No
+Hendricks, Indiana,B27003_019,1286,Male,45 to 54 years,Yes
+Hendricks, Indiana,B27003_020,9746,Male,45 to 54 years,No
+Hendricks, Indiana,B27003_022,1281,Male,55 to 64 years,Yes
+Hendricks, Indiana,B27003_023,8383,Male,55 to 64 years,No
+Hendricks, Indiana,B27003_025,5446,Male,65 to 74 years,Yes
+Hendricks, Indiana,B27003_026,258,Male,65 to 74 years,No
+Hendricks, Indiana,B27003_028,3210,Male,75 years and over,Yes
+Hendricks, Indiana,B27003_029,21,Male,75 years and over,No
+Hendricks, Indiana,B27003_032,1163,Female,Under 6 years,Yes
+Hendricks, Indiana,B27003_033,4603,Female,Under 6 years,No
+Hendricks, Indiana,B27003_035,2354,Female,6 to 18 years,Yes
+Hendricks, Indiana,B27003_036,13068,Female,6 to 18 years,No
+Hendricks, Indiana,B27003_038,686,Female,19 to 25 years,Yes
+Hendricks, Indiana,B27003_039,4955,Female,19 to 25 years,No
+Hendricks, Indiana,B27003_041,898,Female,26 to 34 years,Yes
+Hendricks, Indiana,B27003_042,8402,Female,26 to 34 years,No
+Hendricks, Indiana,B27003_044,733,Female,35 to 44 years,Yes
+Hendricks, Indiana,B27003_045,10808,Female,35 to 44 years,No
+Hendricks, Indiana,B27003_047,837,Female,45 to 54 years,Yes
+Hendricks, Indiana,B27003_048,10375,Female,45 to 54 years,No
+Hendricks, Indiana,B27003_050,1230,Female,55 to 64 years,Yes
+Hendricks, Indiana,B27003_051,8637,Female,55 to 64 years,No
+Hendricks, Indiana,B27003_053,6394,Female,65 to 74 years,Yes
+Hendricks, Indiana,B27003_054,326,Female,65 to 74 years,No
+Hendricks, Indiana,B27003_056,4509,Female,75 years and over,Yes
+Hendricks, Indiana,B27003_057,20,Female,75 years and over,No
+Henry, Indiana,B27003_004,671,Male,Under 6 years,Yes
+Henry, Indiana,B27003_005,837,Male,Under 6 years,No
+Henry, Indiana,B27003_007,1591,Male,6 to 18 years,Yes
+Henry, Indiana,B27003_008,2402,Male,6 to 18 years,No
+Henry, Indiana,B27003_010,365,Male,19 to 25 years,Yes
+Henry, Indiana,B27003_011,1629,Male,19 to 25 years,No
+Henry, Indiana,B27003_013,334,Male,26 to 34 years,Yes
+Henry, Indiana,B27003_014,2235,Male,26 to 34 years,No
+Henry, Indiana,B27003_016,566,Male,35 to 44 years,Yes
+Henry, Indiana,B27003_017,2019,Male,35 to 44 years,No
+Henry, Indiana,B27003_019,716,Male,45 to 54 years,Yes
+Henry, Indiana,B27003_020,2268,Male,45 to 54 years,No
+Henry, Indiana,B27003_022,749,Male,55 to 64 years,Yes
+Henry, Indiana,B27003_023,2245,Male,55 to 64 years,No
+Henry, Indiana,B27003_025,2172,Male,65 to 74 years,Yes
+Henry, Indiana,B27003_026,85,Male,65 to 74 years,No
+Henry, Indiana,B27003_028,1461,Male,75 years and over,Yes
+Henry, Indiana,B27003_029,15,Male,75 years and over,No
+Henry, Indiana,B27003_032,617,Female,Under 6 years,Yes
+Henry, Indiana,B27003_033,813,Female,Under 6 years,No
+Henry, Indiana,B27003_035,1462,Female,6 to 18 years,Yes
+Henry, Indiana,B27003_036,2096,Female,6 to 18 years,No
+Henry, Indiana,B27003_038,416,Female,19 to 25 years,Yes
+Henry, Indiana,B27003_039,1208,Female,19 to 25 years,No
+Henry, Indiana,B27003_041,531,Female,26 to 34 years,Yes
+Henry, Indiana,B27003_042,1697,Female,26 to 34 years,No
+Henry, Indiana,B27003_044,430,Female,35 to 44 years,Yes
+Henry, Indiana,B27003_045,2299,Female,35 to 44 years,No
+Henry, Indiana,B27003_047,775,Female,45 to 54 years,Yes
+Henry, Indiana,B27003_048,2404,Female,45 to 54 years,No
+Henry, Indiana,B27003_050,735,Female,55 to 64 years,Yes
+Henry, Indiana,B27003_051,2595,Female,55 to 64 years,No
+Henry, Indiana,B27003_053,2605,Female,65 to 74 years,Yes
+Henry, Indiana,B27003_054,49,Female,65 to 74 years,No
+Henry, Indiana,B27003_056,2071,Female,75 years and over,Yes
+Henry, Indiana,B27003_057,26,Female,75 years and over,No
+Howard, Indiana,B27003_004,1449,Male,Under 6 years,Yes
+Howard, Indiana,B27003_005,1578,Male,Under 6 years,No
+Howard, Indiana,B27003_007,2553,Male,6 to 18 years,Yes
+Howard, Indiana,B27003_008,4364,Male,6 to 18 years,No
+Howard, Indiana,B27003_010,294,Male,19 to 25 years,Yes
+Howard, Indiana,B27003_011,3018,Male,19 to 25 years,No
+Howard, Indiana,B27003_013,813,Male,26 to 34 years,Yes
+Howard, Indiana,B27003_014,3421,Male,26 to 34 years,No
+Howard, Indiana,B27003_016,637,Male,35 to 44 years,Yes
+Howard, Indiana,B27003_017,3737,Male,35 to 44 years,No
+Howard, Indiana,B27003_019,1083,Male,45 to 54 years,Yes
+Howard, Indiana,B27003_020,4360,Male,45 to 54 years,No
+Howard, Indiana,B27003_022,1197,Male,55 to 64 years,Yes
+Howard, Indiana,B27003_023,4206,Male,55 to 64 years,No
+Howard, Indiana,B27003_025,3870,Male,65 to 74 years,Yes
+Howard, Indiana,B27003_026,86,Male,65 to 74 years,No
+Howard, Indiana,B27003_028,2531,Male,75 years and over,Yes
+Howard, Indiana,B27003_029,26,Male,75 years and over,No
+Howard, Indiana,B27003_032,1393,Female,Under 6 years,Yes
+Howard, Indiana,B27003_033,1482,Female,Under 6 years,No
+Howard, Indiana,B27003_035,2095,Female,6 to 18 years,Yes
+Howard, Indiana,B27003_036,4644,Female,6 to 18 years,No
+Howard, Indiana,B27003_038,803,Female,19 to 25 years,Yes
+Howard, Indiana,B27003_039,2498,Female,19 to 25 years,No
+Howard, Indiana,B27003_041,974,Female,26 to 34 years,Yes
+Howard, Indiana,B27003_042,3328,Female,26 to 34 years,No
+Howard, Indiana,B27003_044,974,Female,35 to 44 years,Yes
+Howard, Indiana,B27003_045,4008,Female,35 to 44 years,No
+Howard, Indiana,B27003_047,929,Female,45 to 54 years,Yes
+Howard, Indiana,B27003_048,4514,Female,45 to 54 years,No
+Howard, Indiana,B27003_050,1193,Female,55 to 64 years,Yes
+Howard, Indiana,B27003_051,4848,Female,55 to 64 years,No
+Howard, Indiana,B27003_053,4638,Female,65 to 74 years,Yes
+Howard, Indiana,B27003_054,58,Female,65 to 74 years,No
+Howard, Indiana,B27003_056,3807,Female,75 years and over,Yes
+Howard, Indiana,B27003_057,8,Female,75 years and over,No
+Huntington, Indiana,B27003_004,332,Male,Under 6 years,Yes
+Huntington, Indiana,B27003_005,856,Male,Under 6 years,No
+Huntington, Indiana,B27003_007,753,Male,6 to 18 years,Yes
+Huntington, Indiana,B27003_008,2347,Male,6 to 18 years,No
+Huntington, Indiana,B27003_010,57,Male,19 to 25 years,Yes
+Huntington, Indiana,B27003_011,1683,Male,19 to 25 years,No
+Huntington, Indiana,B27003_013,260,Male,26 to 34 years,Yes
+Huntington, Indiana,B27003_014,1678,Male,26 to 34 years,No
+Huntington, Indiana,B27003_016,215,Male,35 to 44 years,Yes
+Huntington, Indiana,B27003_017,1968,Male,35 to 44 years,No
+Huntington, Indiana,B27003_019,361,Male,45 to 54 years,Yes
+Huntington, Indiana,B27003_020,2071,Male,45 to 54 years,No
+Huntington, Indiana,B27003_022,479,Male,55 to 64 years,Yes
+Huntington, Indiana,B27003_023,2095,Male,55 to 64 years,No
+Huntington, Indiana,B27003_025,1490,Male,65 to 74 years,Yes
+Huntington, Indiana,B27003_026,50,Male,65 to 74 years,No
+Huntington, Indiana,B27003_028,957,Male,75 years and over,Yes
+Huntington, Indiana,B27003_029,0,Male,75 years and over,No
+Huntington, Indiana,B27003_032,432,Female,Under 6 years,Yes
+Huntington, Indiana,B27003_033,781,Female,Under 6 years,No
+Huntington, Indiana,B27003_035,770,Female,6 to 18 years,Yes
+Huntington, Indiana,B27003_036,2231,Female,6 to 18 years,No
+Huntington, Indiana,B27003_038,169,Female,19 to 25 years,Yes
+Huntington, Indiana,B27003_039,1498,Female,19 to 25 years,No
+Huntington, Indiana,B27003_041,145,Female,26 to 34 years,Yes
+Huntington, Indiana,B27003_042,1738,Female,26 to 34 years,No
+Huntington, Indiana,B27003_044,258,Female,35 to 44 years,Yes
+Huntington, Indiana,B27003_045,1864,Female,35 to 44 years,No
+Huntington, Indiana,B27003_047,245,Female,45 to 54 years,Yes
+Huntington, Indiana,B27003_048,2276,Female,45 to 54 years,No
+Huntington, Indiana,B27003_050,502,Female,55 to 64 years,Yes
+Huntington, Indiana,B27003_051,2160,Female,55 to 64 years,No
+Huntington, Indiana,B27003_053,1694,Female,65 to 74 years,Yes
+Huntington, Indiana,B27003_054,13,Female,65 to 74 years,No
+Huntington, Indiana,B27003_056,1514,Female,75 years and over,Yes
+Huntington, Indiana,B27003_057,8,Female,75 years and over,No
+Jackson, Indiana,B27003_004,669,Male,Under 6 years,Yes
+Jackson, Indiana,B27003_005,1176,Male,Under 6 years,No
+Jackson, Indiana,B27003_007,1040,Male,6 to 18 years,Yes
+Jackson, Indiana,B27003_008,2985,Male,6 to 18 years,No
+Jackson, Indiana,B27003_010,146,Male,19 to 25 years,Yes
+Jackson, Indiana,B27003_011,1557,Male,19 to 25 years,No
+Jackson, Indiana,B27003_013,376,Male,26 to 34 years,Yes
+Jackson, Indiana,B27003_014,1869,Male,26 to 34 years,No
+Jackson, Indiana,B27003_016,192,Male,35 to 44 years,Yes
+Jackson, Indiana,B27003_017,2889,Male,35 to 44 years,No
+Jackson, Indiana,B27003_019,513,Male,45 to 54 years,Yes
+Jackson, Indiana,B27003_020,2424,Male,45 to 54 years,No
+Jackson, Indiana,B27003_022,551,Male,55 to 64 years,Yes
+Jackson, Indiana,B27003_023,2158,Male,55 to 64 years,No
+Jackson, Indiana,B27003_025,1744,Male,65 to 74 years,Yes
+Jackson, Indiana,B27003_026,82,Male,65 to 74 years,No
+Jackson, Indiana,B27003_028,1111,Male,75 years and over,Yes
+Jackson, Indiana,B27003_029,0,Male,75 years and over,No
+Jackson, Indiana,B27003_032,602,Female,Under 6 years,Yes
+Jackson, Indiana,B27003_033,1065,Female,Under 6 years,No
+Jackson, Indiana,B27003_035,1100,Female,6 to 18 years,Yes
+Jackson, Indiana,B27003_036,2702,Female,6 to 18 years,No
+Jackson, Indiana,B27003_038,196,Female,19 to 25 years,Yes
+Jackson, Indiana,B27003_039,1481,Female,19 to 25 years,No
+Jackson, Indiana,B27003_041,421,Female,26 to 34 years,Yes
+Jackson, Indiana,B27003_042,1988,Female,26 to 34 years,No
+Jackson, Indiana,B27003_044,488,Female,35 to 44 years,Yes
+Jackson, Indiana,B27003_045,2303,Female,35 to 44 years,No
+Jackson, Indiana,B27003_047,564,Female,45 to 54 years,Yes
+Jackson, Indiana,B27003_048,2391,Female,45 to 54 years,No
+Jackson, Indiana,B27003_050,796,Female,55 to 64 years,Yes
+Jackson, Indiana,B27003_051,2096,Female,55 to 64 years,No
+Jackson, Indiana,B27003_053,2023,Female,65 to 74 years,Yes
+Jackson, Indiana,B27003_054,12,Female,65 to 74 years,No
+Jackson, Indiana,B27003_056,1547,Female,75 years and over,Yes
+Jackson, Indiana,B27003_057,14,Female,75 years and over,No
+Jasper, Indiana,B27003_004,395,Male,Under 6 years,Yes
+Jasper, Indiana,B27003_005,897,Male,Under 6 years,No
+Jasper, Indiana,B27003_007,963,Male,6 to 18 years,Yes
+Jasper, Indiana,B27003_008,2092,Male,6 to 18 years,No
+Jasper, Indiana,B27003_010,93,Male,19 to 25 years,Yes
+Jasper, Indiana,B27003_011,1437,Male,19 to 25 years,No
+Jasper, Indiana,B27003_013,221,Male,26 to 34 years,Yes
+Jasper, Indiana,B27003_014,1368,Male,26 to 34 years,No
+Jasper, Indiana,B27003_016,303,Male,35 to 44 years,Yes
+Jasper, Indiana,B27003_017,1759,Male,35 to 44 years,No
+Jasper, Indiana,B27003_019,248,Male,45 to 54 years,Yes
+Jasper, Indiana,B27003_020,1907,Male,45 to 54 years,No
+Jasper, Indiana,B27003_022,344,Male,55 to 64 years,Yes
+Jasper, Indiana,B27003_023,1905,Male,55 to 64 years,No
+Jasper, Indiana,B27003_025,1494,Male,65 to 74 years,Yes
+Jasper, Indiana,B27003_026,88,Male,65 to 74 years,No
+Jasper, Indiana,B27003_028,960,Male,75 years and over,Yes
+Jasper, Indiana,B27003_029,21,Male,75 years and over,No
+Jasper, Indiana,B27003_032,226,Female,Under 6 years,Yes
+Jasper, Indiana,B27003_033,901,Female,Under 6 years,No
+Jasper, Indiana,B27003_035,787,Female,6 to 18 years,Yes
+Jasper, Indiana,B27003_036,2162,Female,6 to 18 years,No
+Jasper, Indiana,B27003_038,397,Female,19 to 25 years,Yes
+Jasper, Indiana,B27003_039,1079,Female,19 to 25 years,No
+Jasper, Indiana,B27003_041,291,Female,26 to 34 years,Yes
+Jasper, Indiana,B27003_042,1256,Female,26 to 34 years,No
+Jasper, Indiana,B27003_044,348,Female,35 to 44 years,Yes
+Jasper, Indiana,B27003_045,1669,Female,35 to 44 years,No
+Jasper, Indiana,B27003_047,332,Female,45 to 54 years,Yes
+Jasper, Indiana,B27003_048,1884,Female,45 to 54 years,No
+Jasper, Indiana,B27003_050,472,Female,55 to 64 years,Yes
+Jasper, Indiana,B27003_051,1851,Female,55 to 64 years,No
+Jasper, Indiana,B27003_053,1698,Female,65 to 74 years,Yes
+Jasper, Indiana,B27003_054,49,Female,65 to 74 years,No
+Jasper, Indiana,B27003_056,1203,Female,75 years and over,Yes
+Jasper, Indiana,B27003_057,7,Female,75 years and over,No
+Jay, Indiana,B27003_004,503,Male,Under 6 years,Yes
+Jay, Indiana,B27003_005,385,Male,Under 6 years,No
+Jay, Indiana,B27003_007,781,Male,6 to 18 years,Yes
+Jay, Indiana,B27003_008,1288,Male,6 to 18 years,No
+Jay, Indiana,B27003_010,91,Male,19 to 25 years,Yes
+Jay, Indiana,B27003_011,829,Male,19 to 25 years,No
+Jay, Indiana,B27003_013,174,Male,26 to 34 years,Yes
+Jay, Indiana,B27003_014,809,Male,26 to 34 years,No
+Jay, Indiana,B27003_016,153,Male,35 to 44 years,Yes
+Jay, Indiana,B27003_017,966,Male,35 to 44 years,No
+Jay, Indiana,B27003_019,179,Male,45 to 54 years,Yes
+Jay, Indiana,B27003_020,1200,Male,45 to 54 years,No
+Jay, Indiana,B27003_022,321,Male,55 to 64 years,Yes
+Jay, Indiana,B27003_023,1081,Male,55 to 64 years,No
+Jay, Indiana,B27003_025,888,Male,65 to 74 years,Yes
+Jay, Indiana,B27003_026,52,Male,65 to 74 years,No
+Jay, Indiana,B27003_028,584,Male,75 years and over,Yes
+Jay, Indiana,B27003_029,0,Male,75 years and over,No
+Jay, Indiana,B27003_032,415,Female,Under 6 years,Yes
+Jay, Indiana,B27003_033,409,Female,Under 6 years,No
+Jay, Indiana,B27003_035,792,Female,6 to 18 years,Yes
+Jay, Indiana,B27003_036,1127,Female,6 to 18 years,No
+Jay, Indiana,B27003_038,199,Female,19 to 25 years,Yes
+Jay, Indiana,B27003_039,683,Female,19 to 25 years,No
+Jay, Indiana,B27003_041,219,Female,26 to 34 years,Yes
+Jay, Indiana,B27003_042,716,Female,26 to 34 years,No
+Jay, Indiana,B27003_044,214,Female,35 to 44 years,Yes
+Jay, Indiana,B27003_045,950,Female,35 to 44 years,No
+Jay, Indiana,B27003_047,366,Female,45 to 54 years,Yes
+Jay, Indiana,B27003_048,1068,Female,45 to 54 years,No
+Jay, Indiana,B27003_050,223,Female,55 to 64 years,Yes
+Jay, Indiana,B27003_051,1155,Female,55 to 64 years,No
+Jay, Indiana,B27003_053,1057,Female,65 to 74 years,Yes
+Jay, Indiana,B27003_054,33,Female,65 to 74 years,No
+Jay, Indiana,B27003_056,881,Female,75 years and over,Yes
+Jay, Indiana,B27003_057,0,Female,75 years and over,No
+Jefferson, Indiana,B27003_004,462,Male,Under 6 years,Yes
+Jefferson, Indiana,B27003_005,582,Male,Under 6 years,No
+Jefferson, Indiana,B27003_007,703,Male,6 to 18 years,Yes
+Jefferson, Indiana,B27003_008,1782,Male,6 to 18 years,No
+Jefferson, Indiana,B27003_010,212,Male,19 to 25 years,Yes
+Jefferson, Indiana,B27003_011,1239,Male,19 to 25 years,No
+Jefferson, Indiana,B27003_013,100,Male,26 to 34 years,Yes
+Jefferson, Indiana,B27003_014,1466,Male,26 to 34 years,No
+Jefferson, Indiana,B27003_016,349,Male,35 to 44 years,Yes
+Jefferson, Indiana,B27003_017,1498,Male,35 to 44 years,No
+Jefferson, Indiana,B27003_019,178,Male,45 to 54 years,Yes
+Jefferson, Indiana,B27003_020,1907,Male,45 to 54 years,No
+Jefferson, Indiana,B27003_022,469,Male,55 to 64 years,Yes
+Jefferson, Indiana,B27003_023,1798,Male,55 to 64 years,No
+Jefferson, Indiana,B27003_025,1479,Male,65 to 74 years,Yes
+Jefferson, Indiana,B27003_026,45,Male,65 to 74 years,No
+Jefferson, Indiana,B27003_028,820,Male,75 years and over,Yes
+Jefferson, Indiana,B27003_029,6,Male,75 years and over,No
+Jefferson, Indiana,B27003_032,579,Female,Under 6 years,Yes
+Jefferson, Indiana,B27003_033,531,Female,Under 6 years,No
+Jefferson, Indiana,B27003_035,777,Female,6 to 18 years,Yes
+Jefferson, Indiana,B27003_036,1715,Female,6 to 18 years,No
+Jefferson, Indiana,B27003_038,465,Female,19 to 25 years,Yes
+Jefferson, Indiana,B27003_039,1085,Female,19 to 25 years,No
+Jefferson, Indiana,B27003_041,303,Female,26 to 34 years,Yes
+Jefferson, Indiana,B27003_042,1059,Female,26 to 34 years,No
+Jefferson, Indiana,B27003_044,296,Female,35 to 44 years,Yes
+Jefferson, Indiana,B27003_045,1425,Female,35 to 44 years,No
+Jefferson, Indiana,B27003_047,318,Female,45 to 54 years,Yes
+Jefferson, Indiana,B27003_048,1738,Female,45 to 54 years,No
+Jefferson, Indiana,B27003_050,420,Female,55 to 64 years,Yes
+Jefferson, Indiana,B27003_051,1831,Female,55 to 64 years,No
+Jefferson, Indiana,B27003_053,1606,Female,65 to 74 years,Yes
+Jefferson, Indiana,B27003_054,10,Female,65 to 74 years,No
+Jefferson, Indiana,B27003_056,1237,Female,75 years and over,Yes
+Jefferson, Indiana,B27003_057,0,Female,75 years and over,No
+Jennings, Indiana,B27003_004,480,Male,Under 6 years,Yes
+Jennings, Indiana,B27003_005,541,Male,Under 6 years,No
+Jennings, Indiana,B27003_007,893,Male,6 to 18 years,Yes
+Jennings, Indiana,B27003_008,1505,Male,6 to 18 years,No
+Jennings, Indiana,B27003_010,210,Male,19 to 25 years,Yes
+Jennings, Indiana,B27003_011,1055,Male,19 to 25 years,No
+Jennings, Indiana,B27003_013,196,Male,26 to 34 years,Yes
+Jennings, Indiana,B27003_014,1183,Male,26 to 34 years,No
+Jennings, Indiana,B27003_016,348,Male,35 to 44 years,Yes
+Jennings, Indiana,B27003_017,1311,Male,35 to 44 years,No
+Jennings, Indiana,B27003_019,463,Male,45 to 54 years,Yes
+Jennings, Indiana,B27003_020,1684,Male,45 to 54 years,No
+Jennings, Indiana,B27003_022,470,Male,55 to 64 years,Yes
+Jennings, Indiana,B27003_023,1475,Male,55 to 64 years,No
+Jennings, Indiana,B27003_025,1223,Male,65 to 74 years,Yes
+Jennings, Indiana,B27003_026,31,Male,65 to 74 years,No
+Jennings, Indiana,B27003_028,651,Male,75 years and over,Yes
+Jennings, Indiana,B27003_029,0,Male,75 years and over,No
+Jennings, Indiana,B27003_032,356,Female,Under 6 years,Yes
+Jennings, Indiana,B27003_033,566,Female,Under 6 years,No
+Jennings, Indiana,B27003_035,755,Female,6 to 18 years,Yes
+Jennings, Indiana,B27003_036,1762,Female,6 to 18 years,No
+Jennings, Indiana,B27003_038,204,Female,19 to 25 years,Yes
+Jennings, Indiana,B27003_039,977,Female,19 to 25 years,No
+Jennings, Indiana,B27003_041,230,Female,26 to 34 years,Yes
+Jennings, Indiana,B27003_042,1035,Female,26 to 34 years,No
+Jennings, Indiana,B27003_044,360,Female,35 to 44 years,Yes
+Jennings, Indiana,B27003_045,1263,Female,35 to 44 years,No
+Jennings, Indiana,B27003_047,338,Female,45 to 54 years,Yes
+Jennings, Indiana,B27003_048,1709,Female,45 to 54 years,No
+Jennings, Indiana,B27003_050,449,Female,55 to 64 years,Yes
+Jennings, Indiana,B27003_051,1375,Female,55 to 64 years,No
+Jennings, Indiana,B27003_053,1354,Female,65 to 74 years,Yes
+Jennings, Indiana,B27003_054,34,Female,65 to 74 years,No
+Jennings, Indiana,B27003_056,911,Female,75 years and over,Yes
+Jennings, Indiana,B27003_057,47,Female,75 years and over,No
+Johnson, Indiana,B27003_004,1837,Male,Under 6 years,Yes
+Johnson, Indiana,B27003_005,4498,Male,Under 6 years,No
+Johnson, Indiana,B27003_007,2751,Male,6 to 18 years,Yes
+Johnson, Indiana,B27003_008,11351,Male,6 to 18 years,No
+Johnson, Indiana,B27003_010,655,Male,19 to 25 years,Yes
+Johnson, Indiana,B27003_011,5856,Male,19 to 25 years,No
+Johnson, Indiana,B27003_013,1246,Male,26 to 34 years,Yes
+Johnson, Indiana,B27003_014,7216,Male,26 to 34 years,No
+Johnson, Indiana,B27003_016,866,Male,35 to 44 years,Yes
+Johnson, Indiana,B27003_017,9322,Male,35 to 44 years,No
+Johnson, Indiana,B27003_019,953,Male,45 to 54 years,Yes
+Johnson, Indiana,B27003_020,8940,Male,45 to 54 years,No
+Johnson, Indiana,B27003_022,1443,Male,55 to 64 years,Yes
+Johnson, Indiana,B27003_023,7098,Male,55 to 64 years,No
+Johnson, Indiana,B27003_025,5613,Male,65 to 74 years,Yes
+Johnson, Indiana,B27003_026,160,Male,65 to 74 years,No
+Johnson, Indiana,B27003_028,3241,Male,75 years and over,Yes
+Johnson, Indiana,B27003_029,14,Male,75 years and over,No
+Johnson, Indiana,B27003_032,1771,Female,Under 6 years,Yes
+Johnson, Indiana,B27003_033,4047,Female,Under 6 years,No
+Johnson, Indiana,B27003_035,3093,Female,6 to 18 years,Yes
+Johnson, Indiana,B27003_036,10397,Female,6 to 18 years,No
+Johnson, Indiana,B27003_038,658,Female,19 to 25 years,Yes
+Johnson, Indiana,B27003_039,5849,Female,19 to 25 years,No
+Johnson, Indiana,B27003_041,1250,Female,26 to 34 years,Yes
+Johnson, Indiana,B27003_042,7899,Female,26 to 34 years,No
+Johnson, Indiana,B27003_044,963,Female,35 to 44 years,Yes
+Johnson, Indiana,B27003_045,9312,Female,35 to 44 years,No
+Johnson, Indiana,B27003_047,1111,Female,45 to 54 years,Yes
+Johnson, Indiana,B27003_048,9245,Female,45 to 54 years,No
+Johnson, Indiana,B27003_050,1439,Female,55 to 64 years,Yes
+Johnson, Indiana,B27003_051,7923,Female,55 to 64 years,No
+Johnson, Indiana,B27003_053,6672,Female,65 to 74 years,Yes
+Johnson, Indiana,B27003_054,209,Female,65 to 74 years,No
+Johnson, Indiana,B27003_056,4708,Female,75 years and over,Yes
+Johnson, Indiana,B27003_057,25,Female,75 years and over,No
+Knox, Indiana,B27003_004,763,Male,Under 6 years,Yes
+Knox, Indiana,B27003_005,740,Male,Under 6 years,No
+Knox, Indiana,B27003_007,1312,Male,6 to 18 years,Yes
+Knox, Indiana,B27003_008,1676,Male,6 to 18 years,No
+Knox, Indiana,B27003_010,329,Male,19 to 25 years,Yes
+Knox, Indiana,B27003_011,2276,Male,19 to 25 years,No
+Knox, Indiana,B27003_013,321,Male,26 to 34 years,Yes
+Knox, Indiana,B27003_014,1688,Male,26 to 34 years,No
+Knox, Indiana,B27003_016,388,Male,35 to 44 years,Yes
+Knox, Indiana,B27003_017,1601,Male,35 to 44 years,No
+Knox, Indiana,B27003_019,426,Male,45 to 54 years,Yes
+Knox, Indiana,B27003_020,1919,Male,45 to 54 years,No
+Knox, Indiana,B27003_022,588,Male,55 to 64 years,Yes
+Knox, Indiana,B27003_023,1833,Male,55 to 64 years,No
+Knox, Indiana,B27003_025,1527,Male,65 to 74 years,Yes
+Knox, Indiana,B27003_026,41,Male,65 to 74 years,No
+Knox, Indiana,B27003_028,1006,Male,75 years and over,Yes
+Knox, Indiana,B27003_029,0,Male,75 years and over,No
+Knox, Indiana,B27003_032,543,Female,Under 6 years,Yes
+Knox, Indiana,B27003_033,638,Female,Under 6 years,No
+Knox, Indiana,B27003_035,1118,Female,6 to 18 years,Yes
+Knox, Indiana,B27003_036,1729,Female,6 to 18 years,No
+Knox, Indiana,B27003_038,362,Female,19 to 25 years,Yes
+Knox, Indiana,B27003_039,1426,Female,19 to 25 years,No
+Knox, Indiana,B27003_041,446,Female,26 to 34 years,Yes
+Knox, Indiana,B27003_042,1459,Female,26 to 34 years,No
+Knox, Indiana,B27003_044,623,Female,35 to 44 years,Yes
+Knox, Indiana,B27003_045,1478,Female,35 to 44 years,No
+Knox, Indiana,B27003_047,460,Female,45 to 54 years,Yes
+Knox, Indiana,B27003_048,1766,Female,45 to 54 years,No
+Knox, Indiana,B27003_050,566,Female,55 to 64 years,Yes
+Knox, Indiana,B27003_051,2031,Female,55 to 64 years,No
+Knox, Indiana,B27003_053,1871,Female,65 to 74 years,Yes
+Knox, Indiana,B27003_054,36,Female,65 to 74 years,No
+Knox, Indiana,B27003_056,1610,Female,75 years and over,Yes
+Knox, Indiana,B27003_057,0,Female,75 years and over,No
+Kosciusko, Indiana,B27003_004,1183,Male,Under 6 years,Yes
+Kosciusko, Indiana,B27003_005,2047,Male,Under 6 years,No
+Kosciusko, Indiana,B27003_007,1754,Male,6 to 18 years,Yes
+Kosciusko, Indiana,B27003_008,5382,Male,6 to 18 years,No
+Kosciusko, Indiana,B27003_010,283,Male,19 to 25 years,Yes
+Kosciusko, Indiana,B27003_011,3239,Male,19 to 25 years,No
+Kosciusko, Indiana,B27003_013,244,Male,26 to 34 years,Yes
+Kosciusko, Indiana,B27003_014,4376,Male,26 to 34 years,No
+Kosciusko, Indiana,B27003_016,628,Male,35 to 44 years,Yes
+Kosciusko, Indiana,B27003_017,3974,Male,35 to 44 years,No
+Kosciusko, Indiana,B27003_019,496,Male,45 to 54 years,Yes
+Kosciusko, Indiana,B27003_020,4417,Male,45 to 54 years,No
+Kosciusko, Indiana,B27003_022,790,Male,55 to 64 years,Yes
+Kosciusko, Indiana,B27003_023,4555,Male,55 to 64 years,No
+Kosciusko, Indiana,B27003_025,3319,Male,65 to 74 years,Yes
+Kosciusko, Indiana,B27003_026,162,Male,65 to 74 years,No
+Kosciusko, Indiana,B27003_028,2026,Male,75 years and over,Yes
+Kosciusko, Indiana,B27003_029,45,Male,75 years and over,No
+Kosciusko, Indiana,B27003_032,1052,Female,Under 6 years,Yes
+Kosciusko, Indiana,B27003_033,2002,Female,Under 6 years,No
+Kosciusko, Indiana,B27003_035,1825,Female,6 to 18 years,Yes
+Kosciusko, Indiana,B27003_036,4938,Female,6 to 18 years,No
+Kosciusko, Indiana,B27003_038,573,Female,19 to 25 years,Yes
+Kosciusko, Indiana,B27003_039,2990,Female,19 to 25 years,No
+Kosciusko, Indiana,B27003_041,699,Female,26 to 34 years,Yes
+Kosciusko, Indiana,B27003_042,3627,Female,26 to 34 years,No
+Kosciusko, Indiana,B27003_044,457,Female,35 to 44 years,Yes
+Kosciusko, Indiana,B27003_045,4053,Female,35 to 44 years,No
+Kosciusko, Indiana,B27003_047,525,Female,45 to 54 years,Yes
+Kosciusko, Indiana,B27003_048,4595,Female,45 to 54 years,No
+Kosciusko, Indiana,B27003_050,848,Female,55 to 64 years,Yes
+Kosciusko, Indiana,B27003_051,4431,Female,55 to 64 years,No
+Kosciusko, Indiana,B27003_053,3677,Female,65 to 74 years,Yes
+Kosciusko, Indiana,B27003_054,101,Female,65 to 74 years,No
+Kosciusko, Indiana,B27003_056,2740,Female,75 years and over,Yes
+Kosciusko, Indiana,B27003_057,18,Female,75 years and over,No
+LaGrange, Indiana,B27003_004,418,Male,Under 6 years,Yes
+LaGrange, Indiana,B27003_005,1831,Male,Under 6 years,No
+LaGrange, Indiana,B27003_007,794,Male,6 to 18 years,Yes
+LaGrange, Indiana,B27003_008,4005,Male,6 to 18 years,No
+LaGrange, Indiana,B27003_010,81,Male,19 to 25 years,Yes
+LaGrange, Indiana,B27003_011,1911,Male,19 to 25 years,No
+LaGrange, Indiana,B27003_013,216,Male,26 to 34 years,Yes
+LaGrange, Indiana,B27003_014,1784,Male,26 to 34 years,No
+LaGrange, Indiana,B27003_016,154,Male,35 to 44 years,Yes
+LaGrange, Indiana,B27003_017,1965,Male,35 to 44 years,No
+LaGrange, Indiana,B27003_019,161,Male,45 to 54 years,Yes
+LaGrange, Indiana,B27003_020,1949,Male,45 to 54 years,No
+LaGrange, Indiana,B27003_022,363,Male,55 to 64 years,Yes
+LaGrange, Indiana,B27003_023,1703,Male,55 to 64 years,No
+LaGrange, Indiana,B27003_025,1261,Male,65 to 74 years,Yes
+LaGrange, Indiana,B27003_026,212,Male,65 to 74 years,No
+LaGrange, Indiana,B27003_028,783,Male,75 years and over,Yes
+LaGrange, Indiana,B27003_029,90,Male,75 years and over,No
+LaGrange, Indiana,B27003_032,224,Female,Under 6 years,Yes
+LaGrange, Indiana,B27003_033,1831,Female,Under 6 years,No
+LaGrange, Indiana,B27003_035,620,Female,6 to 18 years,Yes
+LaGrange, Indiana,B27003_036,3632,Female,6 to 18 years,No
+LaGrange, Indiana,B27003_038,139,Female,19 to 25 years,Yes
+LaGrange, Indiana,B27003_039,1594,Female,19 to 25 years,No
+LaGrange, Indiana,B27003_041,240,Female,26 to 34 years,Yes
+LaGrange, Indiana,B27003_042,1729,Female,26 to 34 years,No
+LaGrange, Indiana,B27003_044,173,Female,35 to 44 years,Yes
+LaGrange, Indiana,B27003_045,1939,Female,35 to 44 years,No
+LaGrange, Indiana,B27003_047,182,Female,45 to 54 years,Yes
+LaGrange, Indiana,B27003_048,1986,Female,45 to 54 years,No
+LaGrange, Indiana,B27003_050,419,Female,55 to 64 years,Yes
+LaGrange, Indiana,B27003_051,1733,Female,55 to 64 years,No
+LaGrange, Indiana,B27003_053,1286,Female,65 to 74 years,Yes
+LaGrange, Indiana,B27003_054,278,Female,65 to 74 years,No
+LaGrange, Indiana,B27003_056,1019,Female,75 years and over,Yes
+LaGrange, Indiana,B27003_057,74,Female,75 years and over,No
+Lake, Indiana,B27003_004,8674,Male,Under 6 years,Yes
+Lake, Indiana,B27003_005,9260,Male,Under 6 years,No
+Lake, Indiana,B27003_007,18214,Male,6 to 18 years,Yes
+Lake, Indiana,B27003_008,26408,Male,6 to 18 years,No
+Lake, Indiana,B27003_010,2441,Male,19 to 25 years,Yes
+Lake, Indiana,B27003_011,19404,Male,19 to 25 years,No
+Lake, Indiana,B27003_013,3292,Male,26 to 34 years,Yes
+Lake, Indiana,B27003_014,22208,Male,26 to 34 years,No
+Lake, Indiana,B27003_016,4505,Male,35 to 44 years,Yes
+Lake, Indiana,B27003_017,24978,Male,35 to 44 years,No
+Lake, Indiana,B27003_019,4844,Male,45 to 54 years,Yes
+Lake, Indiana,B27003_020,25587,Male,45 to 54 years,No
+Lake, Indiana,B27003_022,7240,Male,55 to 64 years,Yes
+Lake, Indiana,B27003_023,24623,Male,55 to 64 years,No
+Lake, Indiana,B27003_025,18858,Male,65 to 74 years,Yes
+Lake, Indiana,B27003_026,974,Male,65 to 74 years,No
+Lake, Indiana,B27003_028,12293,Male,75 years and over,Yes
+Lake, Indiana,B27003_029,94,Male,75 years and over,No
+Lake, Indiana,B27003_032,8162,Female,Under 6 years,Yes
+Lake, Indiana,B27003_033,9681,Female,Under 6 years,No
+Lake, Indiana,B27003_035,16257,Female,6 to 18 years,Yes
+Lake, Indiana,B27003_036,25856,Female,6 to 18 years,No
+Lake, Indiana,B27003_038,4960,Female,19 to 25 years,Yes
+Lake, Indiana,B27003_039,16380,Female,19 to 25 years,No
+Lake, Indiana,B27003_041,5778,Female,26 to 34 years,Yes
+Lake, Indiana,B27003_042,21435,Female,26 to 34 years,No
+Lake, Indiana,B27003_044,6448,Female,35 to 44 years,Yes
+Lake, Indiana,B27003_045,24976,Female,35 to 44 years,No
+Lake, Indiana,B27003_047,5323,Female,45 to 54 years,Yes
+Lake, Indiana,B27003_048,27506,Female,45 to 54 years,No
+Lake, Indiana,B27003_050,7037,Female,55 to 64 years,Yes
+Lake, Indiana,B27003_051,27616,Female,55 to 64 years,No
+Lake, Indiana,B27003_053,22372,Female,65 to 74 years,Yes
+Lake, Indiana,B27003_054,857,Female,65 to 74 years,No
+Lake, Indiana,B27003_056,18540,Female,75 years and over,Yes
+Lake, Indiana,B27003_057,269,Female,75 years and over,No
+LaPorte, Indiana,B27003_004,2239,Male,Under 6 years,Yes
+LaPorte, Indiana,B27003_005,1778,Male,Under 6 years,No
+LaPorte, Indiana,B27003_007,3196,Male,6 to 18 years,Yes
+LaPorte, Indiana,B27003_008,5605,Male,6 to 18 years,No
+LaPorte, Indiana,B27003_010,714,Male,19 to 25 years,Yes
+LaPorte, Indiana,B27003_011,3307,Male,19 to 25 years,No
+LaPorte, Indiana,B27003_013,879,Male,26 to 34 years,Yes
+LaPorte, Indiana,B27003_014,4446,Male,26 to 34 years,No
+LaPorte, Indiana,B27003_016,717,Male,35 to 44 years,Yes
+LaPorte, Indiana,B27003_017,4580,Male,35 to 44 years,No
+LaPorte, Indiana,B27003_019,1122,Male,45 to 54 years,Yes
+LaPorte, Indiana,B27003_020,5369,Male,45 to 54 years,No
+LaPorte, Indiana,B27003_022,1767,Male,55 to 64 years,Yes
+LaPorte, Indiana,B27003_023,5717,Male,55 to 64 years,No
+LaPorte, Indiana,B27003_025,4916,Male,65 to 74 years,Yes
+LaPorte, Indiana,B27003_026,179,Male,65 to 74 years,No
+LaPorte, Indiana,B27003_028,2788,Male,75 years and over,Yes
+LaPorte, Indiana,B27003_029,20,Male,75 years and over,No
+LaPorte, Indiana,B27003_032,1947,Female,Under 6 years,Yes
+LaPorte, Indiana,B27003_033,1999,Female,Under 6 years,No
+LaPorte, Indiana,B27003_035,3542,Female,6 to 18 years,Yes
+LaPorte, Indiana,B27003_036,4884,Female,6 to 18 years,No
+LaPorte, Indiana,B27003_038,1195,Female,19 to 25 years,Yes
+LaPorte, Indiana,B27003_039,2893,Female,19 to 25 years,No
+LaPorte, Indiana,B27003_041,1475,Female,26 to 34 years,Yes
+LaPorte, Indiana,B27003_042,4079,Female,26 to 34 years,No
+LaPorte, Indiana,B27003_044,1185,Female,35 to 44 years,Yes
+LaPorte, Indiana,B27003_045,4949,Female,35 to 44 years,No
+LaPorte, Indiana,B27003_047,1018,Female,45 to 54 years,Yes
+LaPorte, Indiana,B27003_048,6164,Female,45 to 54 years,No
+LaPorte, Indiana,B27003_050,1317,Female,55 to 64 years,Yes
+LaPorte, Indiana,B27003_051,6394,Female,55 to 64 years,No
+LaPorte, Indiana,B27003_053,5642,Female,65 to 74 years,Yes
+LaPorte, Indiana,B27003_054,183,Female,65 to 74 years,No
+LaPorte, Indiana,B27003_056,4316,Female,75 years and over,Yes
+LaPorte, Indiana,B27003_057,0,Female,75 years and over,No
+Lawrence, Indiana,B27003_004,891,Male,Under 6 years,Yes
+Lawrence, Indiana,B27003_005,747,Male,Under 6 years,No
+Lawrence, Indiana,B27003_007,1438,Male,6 to 18 years,Yes
+Lawrence, Indiana,B27003_008,2390,Male,6 to 18 years,No
+Lawrence, Indiana,B27003_010,207,Male,19 to 25 years,Yes
+Lawrence, Indiana,B27003_011,1601,Male,19 to 25 years,No
+Lawrence, Indiana,B27003_013,305,Male,26 to 34 years,Yes
+Lawrence, Indiana,B27003_014,1991,Male,26 to 34 years,No
+Lawrence, Indiana,B27003_016,427,Male,35 to 44 years,Yes
+Lawrence, Indiana,B27003_017,2238,Male,35 to 44 years,No
+Lawrence, Indiana,B27003_019,518,Male,45 to 54 years,Yes
+Lawrence, Indiana,B27003_020,2613,Male,45 to 54 years,No
+Lawrence, Indiana,B27003_022,857,Male,55 to 64 years,Yes
+Lawrence, Indiana,B27003_023,2266,Male,55 to 64 years,No
+Lawrence, Indiana,B27003_025,2301,Male,65 to 74 years,Yes
+Lawrence, Indiana,B27003_026,78,Male,65 to 74 years,No
+Lawrence, Indiana,B27003_028,1288,Male,75 years and over,Yes
+Lawrence, Indiana,B27003_029,57,Male,75 years and over,No
+Lawrence, Indiana,B27003_032,508,Female,Under 6 years,Yes
+Lawrence, Indiana,B27003_033,1030,Female,Under 6 years,No
+Lawrence, Indiana,B27003_035,1321,Female,6 to 18 years,Yes
+Lawrence, Indiana,B27003_036,2213,Female,6 to 18 years,No
+Lawrence, Indiana,B27003_038,286,Female,19 to 25 years,Yes
+Lawrence, Indiana,B27003_039,1205,Female,19 to 25 years,No
+Lawrence, Indiana,B27003_041,384,Female,26 to 34 years,Yes
+Lawrence, Indiana,B27003_042,2004,Female,26 to 34 years,No
+Lawrence, Indiana,B27003_044,520,Female,35 to 44 years,Yes
+Lawrence, Indiana,B27003_045,2202,Female,35 to 44 years,No
+Lawrence, Indiana,B27003_047,562,Female,45 to 54 years,Yes
+Lawrence, Indiana,B27003_048,2621,Female,45 to 54 years,No
+Lawrence, Indiana,B27003_050,656,Female,55 to 64 years,Yes
+Lawrence, Indiana,B27003_051,2606,Female,55 to 64 years,No
+Lawrence, Indiana,B27003_053,2541,Female,65 to 74 years,Yes
+Lawrence, Indiana,B27003_054,29,Female,65 to 74 years,No
+Lawrence, Indiana,B27003_056,2030,Female,75 years and over,Yes
+Lawrence, Indiana,B27003_057,58,Female,75 years and over,No
+Madison, Indiana,B27003_004,2278,Male,Under 6 years,Yes
+Madison, Indiana,B27003_005,2317,Male,Under 6 years,No
+Madison, Indiana,B27003_007,4691,Male,6 to 18 years,Yes
+Madison, Indiana,B27003_008,6034,Male,6 to 18 years,No
+Madison, Indiana,B27003_010,814,Male,19 to 25 years,Yes
+Madison, Indiana,B27003_011,4431,Male,19 to 25 years,No
+Madison, Indiana,B27003_013,1461,Male,26 to 34 years,Yes
+Madison, Indiana,B27003_014,5249,Male,26 to 34 years,No
+Madison, Indiana,B27003_016,1527,Male,35 to 44 years,Yes
+Madison, Indiana,B27003_017,5918,Male,35 to 44 years,No
+Madison, Indiana,B27003_019,1501,Male,45 to 54 years,Yes
+Madison, Indiana,B27003_020,6786,Male,45 to 54 years,No
+Madison, Indiana,B27003_022,2285,Male,55 to 64 years,Yes
+Madison, Indiana,B27003_023,5708,Male,55 to 64 years,No
+Madison, Indiana,B27003_025,5699,Male,65 to 74 years,Yes
+Madison, Indiana,B27003_026,137,Male,65 to 74 years,No
+Madison, Indiana,B27003_028,3806,Male,75 years and over,Yes
+Madison, Indiana,B27003_029,16,Male,75 years and over,No
+Madison, Indiana,B27003_032,2353,Female,Under 6 years,Yes
+Madison, Indiana,B27003_033,2147,Female,Under 6 years,No
+Madison, Indiana,B27003_035,4528,Female,6 to 18 years,Yes
+Madison, Indiana,B27003_036,5423,Female,6 to 18 years,No
+Madison, Indiana,B27003_038,1217,Female,19 to 25 years,Yes
+Madison, Indiana,B27003_039,4159,Female,19 to 25 years,No
+Madison, Indiana,B27003_041,1669,Female,26 to 34 years,Yes
+Madison, Indiana,B27003_042,5254,Female,26 to 34 years,No
+Madison, Indiana,B27003_044,1720,Female,35 to 44 years,Yes
+Madison, Indiana,B27003_045,5913,Female,35 to 44 years,No
+Madison, Indiana,B27003_047,1612,Female,45 to 54 years,Yes
+Madison, Indiana,B27003_048,6978,Female,45 to 54 years,No
+Madison, Indiana,B27003_050,2231,Female,55 to 64 years,Yes
+Madison, Indiana,B27003_051,6568,Female,55 to 64 years,No
+Madison, Indiana,B27003_053,6831,Female,65 to 74 years,Yes
+Madison, Indiana,B27003_054,116,Female,65 to 74 years,No
+Madison, Indiana,B27003_056,5380,Female,75 years and over,Yes
+Madison, Indiana,B27003_057,75,Female,75 years and over,No
+Marion, Indiana,B27003_004,22815,Male,Under 6 years,Yes
+Marion, Indiana,B27003_005,19659,Male,Under 6 years,No
+Marion, Indiana,B27003_007,39571,Male,6 to 18 years,Yes
+Marion, Indiana,B27003_008,42838,Male,6 to 18 years,No
+Marion, Indiana,B27003_010,5722,Male,19 to 25 years,Yes
+Marion, Indiana,B27003_011,40642,Male,19 to 25 years,No
+Marion, Indiana,B27003_013,8363,Male,26 to 34 years,Yes
+Marion, Indiana,B27003_014,56648,Male,26 to 34 years,No
+Marion, Indiana,B27003_016,8030,Male,35 to 44 years,Yes
+Marion, Indiana,B27003_017,50517,Male,35 to 44 years,No
+Marion, Indiana,B27003_019,11057,Male,45 to 54 years,Yes
+Marion, Indiana,B27003_020,44603,Male,45 to 54 years,No
+Marion, Indiana,B27003_022,13964,Male,55 to 64 years,Yes
+Marion, Indiana,B27003_023,38647,Male,55 to 64 years,No
+Marion, Indiana,B27003_025,27364,Male,65 to 74 years,Yes
+Marion, Indiana,B27003_026,1773,Male,65 to 74 years,No
+Marion, Indiana,B27003_028,16776,Male,75 years and over,Yes
+Marion, Indiana,B27003_029,149,Male,75 years and over,No
+Marion, Indiana,B27003_032,22259,Female,Under 6 years,Yes
+Marion, Indiana,B27003_033,17572,Female,Under 6 years,No
+Marion, Indiana,B27003_035,36373,Female,6 to 18 years,Yes
+Marion, Indiana,B27003_036,44038,Female,6 to 18 years,No
+Marion, Indiana,B27003_038,9802,Female,19 to 25 years,Yes
+Marion, Indiana,B27003_039,38590,Female,19 to 25 years,No
+Marion, Indiana,B27003_041,16179,Female,26 to 34 years,Yes
+Marion, Indiana,B27003_042,55917,Female,26 to 34 years,No
+Marion, Indiana,B27003_044,12151,Female,35 to 44 years,Yes
+Marion, Indiana,B27003_045,49675,Female,35 to 44 years,No
+Marion, Indiana,B27003_047,12281,Female,45 to 54 years,Yes
+Marion, Indiana,B27003_048,47515,Female,45 to 54 years,No
+Marion, Indiana,B27003_050,13918,Female,55 to 64 years,Yes
+Marion, Indiana,B27003_051,45546,Female,55 to 64 years,No
+Marion, Indiana,B27003_053,34047,Female,65 to 74 years,Yes
+Marion, Indiana,B27003_054,1822,Female,65 to 74 years,No
+Marion, Indiana,B27003_056,27363,Female,75 years and over,Yes
+Marion, Indiana,B27003_057,290,Female,75 years and over,No
+Marshall, Indiana,B27003_004,729,Male,Under 6 years,Yes
+Marshall, Indiana,B27003_005,1213,Male,Under 6 years,No
+Marshall, Indiana,B27003_007,1119,Male,6 to 18 years,Yes
+Marshall, Indiana,B27003_008,3449,Male,6 to 18 years,No
+Marshall, Indiana,B27003_010,211,Male,19 to 25 years,Yes
+Marshall, Indiana,B27003_011,1691,Male,19 to 25 years,No
+Marshall, Indiana,B27003_013,524,Male,26 to 34 years,Yes
+Marshall, Indiana,B27003_014,1717,Male,26 to 34 years,No
+Marshall, Indiana,B27003_016,351,Male,35 to 44 years,Yes
+Marshall, Indiana,B27003_017,2350,Male,35 to 44 years,No
+Marshall, Indiana,B27003_019,444,Male,45 to 54 years,Yes
+Marshall, Indiana,B27003_020,2651,Male,45 to 54 years,No
+Marshall, Indiana,B27003_022,613,Male,55 to 64 years,Yes
+Marshall, Indiana,B27003_023,2456,Male,55 to 64 years,No
+Marshall, Indiana,B27003_025,2047,Male,65 to 74 years,Yes
+Marshall, Indiana,B27003_026,82,Male,65 to 74 years,No
+Marshall, Indiana,B27003_028,1360,Male,75 years and over,Yes
+Marshall, Indiana,B27003_029,0,Male,75 years and over,No
+Marshall, Indiana,B27003_032,366,Female,Under 6 years,Yes
+Marshall, Indiana,B27003_033,1158,Female,Under 6 years,No
+Marshall, Indiana,B27003_035,1375,Female,6 to 18 years,Yes
+Marshall, Indiana,B27003_036,2977,Female,6 to 18 years,No
+Marshall, Indiana,B27003_038,238,Female,19 to 25 years,Yes
+Marshall, Indiana,B27003_039,1700,Female,19 to 25 years,No
+Marshall, Indiana,B27003_041,333,Female,26 to 34 years,Yes
+Marshall, Indiana,B27003_042,1836,Female,26 to 34 years,No
+Marshall, Indiana,B27003_044,385,Female,35 to 44 years,Yes
+Marshall, Indiana,B27003_045,2366,Female,35 to 44 years,No
+Marshall, Indiana,B27003_047,475,Female,45 to 54 years,Yes
+Marshall, Indiana,B27003_048,2584,Female,45 to 54 years,No
+Marshall, Indiana,B27003_050,490,Female,55 to 64 years,Yes
+Marshall, Indiana,B27003_051,2674,Female,55 to 64 years,No
+Marshall, Indiana,B27003_053,2127,Female,65 to 74 years,Yes
+Marshall, Indiana,B27003_054,77,Female,65 to 74 years,No
+Marshall, Indiana,B27003_056,1906,Female,75 years and over,Yes
+Marshall, Indiana,B27003_057,26,Female,75 years and over,No
+Martin, Indiana,B27003_004,82,Male,Under 6 years,Yes
+Martin, Indiana,B27003_005,287,Male,Under 6 years,No
+Martin, Indiana,B27003_007,267,Male,6 to 18 years,Yes
+Martin, Indiana,B27003_008,567,Male,6 to 18 years,No
+Martin, Indiana,B27003_010,33,Male,19 to 25 years,Yes
+Martin, Indiana,B27003_011,300,Male,19 to 25 years,No
+Martin, Indiana,B27003_013,46,Male,26 to 34 years,Yes
+Martin, Indiana,B27003_014,482,Male,26 to 34 years,No
+Martin, Indiana,B27003_016,78,Male,35 to 44 years,Yes
+Martin, Indiana,B27003_017,532,Male,35 to 44 years,No
+Martin, Indiana,B27003_019,105,Male,45 to 54 years,Yes
+Martin, Indiana,B27003_020,574,Male,45 to 54 years,No
+Martin, Indiana,B27003_022,162,Male,55 to 64 years,Yes
+Martin, Indiana,B27003_023,615,Male,55 to 64 years,No
+Martin, Indiana,B27003_025,463,Male,65 to 74 years,Yes
+Martin, Indiana,B27003_026,54,Male,65 to 74 years,No
+Martin, Indiana,B27003_028,338,Male,75 years and over,Yes
+Martin, Indiana,B27003_029,0,Male,75 years and over,No
+Martin, Indiana,B27003_032,94,Female,Under 6 years,Yes
+Martin, Indiana,B27003_033,228,Female,Under 6 years,No
+Martin, Indiana,B27003_035,246,Female,6 to 18 years,Yes
+Martin, Indiana,B27003_036,574,Female,6 to 18 years,No
+Martin, Indiana,B27003_038,39,Female,19 to 25 years,Yes
+Martin, Indiana,B27003_039,349,Female,19 to 25 years,No
+Martin, Indiana,B27003_041,66,Female,26 to 34 years,Yes
+Martin, Indiana,B27003_042,352,Female,26 to 34 years,No
+Martin, Indiana,B27003_044,118,Female,35 to 44 years,Yes
+Martin, Indiana,B27003_045,441,Female,35 to 44 years,No
+Martin, Indiana,B27003_047,79,Female,45 to 54 years,Yes
+Martin, Indiana,B27003_048,592,Female,45 to 54 years,No
+Martin, Indiana,B27003_050,138,Female,55 to 64 years,Yes
+Martin, Indiana,B27003_051,617,Female,55 to 64 years,No
+Martin, Indiana,B27003_053,574,Female,65 to 74 years,Yes
+Martin, Indiana,B27003_054,0,Female,65 to 74 years,No
+Martin, Indiana,B27003_056,432,Female,75 years and over,Yes
+Martin, Indiana,B27003_057,0,Female,75 years and over,No
+Miami, Indiana,B27003_004,604,Male,Under 6 years,Yes
+Miami, Indiana,B27003_005,649,Male,Under 6 years,No
+Miami, Indiana,B27003_007,1189,Male,6 to 18 years,Yes
+Miami, Indiana,B27003_008,1711,Male,6 to 18 years,No
+Miami, Indiana,B27003_010,143,Male,19 to 25 years,Yes
+Miami, Indiana,B27003_011,1242,Male,19 to 25 years,No
+Miami, Indiana,B27003_013,287,Male,26 to 34 years,Yes
+Miami, Indiana,B27003_014,1681,Male,26 to 34 years,No
+Miami, Indiana,B27003_016,380,Male,35 to 44 years,Yes
+Miami, Indiana,B27003_017,1689,Male,35 to 44 years,No
+Miami, Indiana,B27003_019,383,Male,45 to 54 years,Yes
+Miami, Indiana,B27003_020,1989,Male,45 to 54 years,No
+Miami, Indiana,B27003_022,537,Male,55 to 64 years,Yes
+Miami, Indiana,B27003_023,1810,Male,55 to 64 years,No
+Miami, Indiana,B27003_025,1644,Male,65 to 74 years,Yes
+Miami, Indiana,B27003_026,57,Male,65 to 74 years,No
+Miami, Indiana,B27003_028,1003,Male,75 years and over,Yes
+Miami, Indiana,B27003_029,0,Male,75 years and over,No
+Miami, Indiana,B27003_032,612,Female,Under 6 years,Yes
+Miami, Indiana,B27003_033,513,Female,Under 6 years,No
+Miami, Indiana,B27003_035,1117,Female,6 to 18 years,Yes
+Miami, Indiana,B27003_036,1707,Female,6 to 18 years,No
+Miami, Indiana,B27003_038,301,Female,19 to 25 years,Yes
+Miami, Indiana,B27003_039,1117,Female,19 to 25 years,No
+Miami, Indiana,B27003_041,455,Female,26 to 34 years,Yes
+Miami, Indiana,B27003_042,1232,Female,26 to 34 years,No
+Miami, Indiana,B27003_044,409,Female,35 to 44 years,Yes
+Miami, Indiana,B27003_045,1576,Female,35 to 44 years,No
+Miami, Indiana,B27003_047,463,Female,45 to 54 years,Yes
+Miami, Indiana,B27003_048,1725,Female,45 to 54 years,No
+Miami, Indiana,B27003_050,504,Female,55 to 64 years,Yes
+Miami, Indiana,B27003_051,1785,Female,55 to 64 years,No
+Miami, Indiana,B27003_053,1732,Female,65 to 74 years,Yes
+Miami, Indiana,B27003_054,36,Female,65 to 74 years,No
+Miami, Indiana,B27003_056,1402,Female,75 years and over,Yes
+Miami, Indiana,B27003_057,12,Female,75 years and over,No
+Monroe, Indiana,B27003_004,1397,Male,Under 6 years,Yes
+Monroe, Indiana,B27003_005,2660,Male,Under 6 years,No
+Monroe, Indiana,B27003_007,3008,Male,6 to 18 years,Yes
+Monroe, Indiana,B27003_008,7273,Male,6 to 18 years,No
+Monroe, Indiana,B27003_010,1232,Male,19 to 25 years,Yes
+Monroe, Indiana,B27003_011,17630,Male,19 to 25 years,No
+Monroe, Indiana,B27003_013,975,Male,26 to 34 years,Yes
+Monroe, Indiana,B27003_014,8350,Male,26 to 34 years,No
+Monroe, Indiana,B27003_016,1138,Male,35 to 44 years,Yes
+Monroe, Indiana,B27003_017,6401,Male,35 to 44 years,No
+Monroe, Indiana,B27003_019,973,Male,45 to 54 years,Yes
+Monroe, Indiana,B27003_020,6041,Male,45 to 54 years,No
+Monroe, Indiana,B27003_022,1351,Male,55 to 64 years,Yes
+Monroe, Indiana,B27003_023,5789,Male,55 to 64 years,No
+Monroe, Indiana,B27003_025,4294,Male,65 to 74 years,Yes
+Monroe, Indiana,B27003_026,464,Male,65 to 74 years,No
+Monroe, Indiana,B27003_028,2852,Male,75 years and over,Yes
+Monroe, Indiana,B27003_029,28,Male,75 years and over,No
+Monroe, Indiana,B27003_032,1554,Female,Under 6 years,Yes
+Monroe, Indiana,B27003_033,2168,Female,Under 6 years,No
+Monroe, Indiana,B27003_035,2272,Female,6 to 18 years,Yes
+Monroe, Indiana,B27003_036,7874,Female,6 to 18 years,No
+Monroe, Indiana,B27003_038,933,Female,19 to 25 years,Yes
+Monroe, Indiana,B27003_039,17005,Female,19 to 25 years,No
+Monroe, Indiana,B27003_041,1407,Female,26 to 34 years,Yes
+Monroe, Indiana,B27003_042,7226,Female,26 to 34 years,No
+Monroe, Indiana,B27003_044,965,Female,35 to 44 years,Yes
+Monroe, Indiana,B27003_045,6503,Female,35 to 44 years,No
+Monroe, Indiana,B27003_047,1276,Female,45 to 54 years,Yes
+Monroe, Indiana,B27003_048,5947,Female,45 to 54 years,No
+Monroe, Indiana,B27003_050,1465,Female,55 to 64 years,Yes
+Monroe, Indiana,B27003_051,6326,Female,55 to 64 years,No
+Monroe, Indiana,B27003_053,5032,Female,65 to 74 years,Yes
+Monroe, Indiana,B27003_054,468,Female,65 to 74 years,No
+Monroe, Indiana,B27003_056,4023,Female,75 years and over,Yes
+Monroe, Indiana,B27003_057,62,Female,75 years and over,No
+Montgomery, Indiana,B27003_004,473,Male,Under 6 years,Yes
+Montgomery, Indiana,B27003_005,977,Male,Under 6 years,No
+Montgomery, Indiana,B27003_007,1120,Male,6 to 18 years,Yes
+Montgomery, Indiana,B27003_008,2283,Male,6 to 18 years,No
+Montgomery, Indiana,B27003_010,82,Male,19 to 25 years,Yes
+Montgomery, Indiana,B27003_011,1896,Male,19 to 25 years,No
+Montgomery, Indiana,B27003_013,346,Male,26 to 34 years,Yes
+Montgomery, Indiana,B27003_014,1578,Male,26 to 34 years,No
+Montgomery, Indiana,B27003_016,194,Male,35 to 44 years,Yes
+Montgomery, Indiana,B27003_017,2071,Male,35 to 44 years,No
+Montgomery, Indiana,B27003_019,359,Male,45 to 54 years,Yes
+Montgomery, Indiana,B27003_020,2267,Male,45 to 54 years,No
+Montgomery, Indiana,B27003_022,425,Male,55 to 64 years,Yes
+Montgomery, Indiana,B27003_023,2224,Male,55 to 64 years,No
+Montgomery, Indiana,B27003_025,1617,Male,65 to 74 years,Yes
+Montgomery, Indiana,B27003_026,56,Male,65 to 74 years,No
+Montgomery, Indiana,B27003_028,1176,Male,75 years and over,Yes
+Montgomery, Indiana,B27003_029,17,Male,75 years and over,No
+Montgomery, Indiana,B27003_032,584,Female,Under 6 years,Yes
+Montgomery, Indiana,B27003_033,842,Female,Under 6 years,No
+Montgomery, Indiana,B27003_035,915,Female,6 to 18 years,Yes
+Montgomery, Indiana,B27003_036,2057,Female,6 to 18 years,No
+Montgomery, Indiana,B27003_038,248,Female,19 to 25 years,Yes
+Montgomery, Indiana,B27003_039,1295,Female,19 to 25 years,No
+Montgomery, Indiana,B27003_041,343,Female,26 to 34 years,Yes
+Montgomery, Indiana,B27003_042,1463,Female,26 to 34 years,No
+Montgomery, Indiana,B27003_044,226,Female,35 to 44 years,Yes
+Montgomery, Indiana,B27003_045,1874,Female,35 to 44 years,No
+Montgomery, Indiana,B27003_047,256,Female,45 to 54 years,Yes
+Montgomery, Indiana,B27003_048,2274,Female,45 to 54 years,No
+Montgomery, Indiana,B27003_050,395,Female,55 to 64 years,Yes
+Montgomery, Indiana,B27003_051,2251,Female,55 to 64 years,No
+Montgomery, Indiana,B27003_053,1890,Female,65 to 74 years,Yes
+Montgomery, Indiana,B27003_054,63,Female,65 to 74 years,No
+Montgomery, Indiana,B27003_056,1569,Female,75 years and over,Yes
+Montgomery, Indiana,B27003_057,4,Female,75 years and over,No
+Morgan, Indiana,B27003_004,837,Male,Under 6 years,Yes
+Morgan, Indiana,B27003_005,1516,Male,Under 6 years,No
+Morgan, Indiana,B27003_007,1723,Male,6 to 18 years,Yes
+Morgan, Indiana,B27003_008,4689,Male,6 to 18 years,No
+Morgan, Indiana,B27003_010,396,Male,19 to 25 years,Yes
+Morgan, Indiana,B27003_011,2453,Male,19 to 25 years,No
+Morgan, Indiana,B27003_013,398,Male,26 to 34 years,Yes
+Morgan, Indiana,B27003_014,2873,Male,26 to 34 years,No
+Morgan, Indiana,B27003_016,395,Male,35 to 44 years,Yes
+Morgan, Indiana,B27003_017,3486,Male,35 to 44 years,No
+Morgan, Indiana,B27003_019,701,Male,45 to 54 years,Yes
+Morgan, Indiana,B27003_020,4364,Male,45 to 54 years,No
+Morgan, Indiana,B27003_022,1174,Male,55 to 64 years,Yes
+Morgan, Indiana,B27003_023,3968,Male,55 to 64 years,No
+Morgan, Indiana,B27003_025,3172,Male,65 to 74 years,Yes
+Morgan, Indiana,B27003_026,106,Male,65 to 74 years,No
+Morgan, Indiana,B27003_028,1709,Male,75 years and over,Yes
+Morgan, Indiana,B27003_029,20,Male,75 years and over,No
+Morgan, Indiana,B27003_032,937,Female,Under 6 years,Yes
+Morgan, Indiana,B27003_033,1488,Female,Under 6 years,No
+Morgan, Indiana,B27003_035,1540,Female,6 to 18 years,Yes
+Morgan, Indiana,B27003_036,4330,Female,6 to 18 years,No
+Morgan, Indiana,B27003_038,576,Female,19 to 25 years,Yes
+Morgan, Indiana,B27003_039,2073,Female,19 to 25 years,No
+Morgan, Indiana,B27003_041,801,Female,26 to 34 years,Yes
+Morgan, Indiana,B27003_042,2741,Female,26 to 34 years,No
+Morgan, Indiana,B27003_044,722,Female,35 to 44 years,Yes
+Morgan, Indiana,B27003_045,3457,Female,35 to 44 years,No
+Morgan, Indiana,B27003_047,702,Female,45 to 54 years,Yes
+Morgan, Indiana,B27003_048,4676,Female,45 to 54 years,No
+Morgan, Indiana,B27003_050,975,Female,55 to 64 years,Yes
+Morgan, Indiana,B27003_051,4169,Female,55 to 64 years,No
+Morgan, Indiana,B27003_053,3403,Female,65 to 74 years,Yes
+Morgan, Indiana,B27003_054,76,Female,65 to 74 years,No
+Morgan, Indiana,B27003_056,2146,Female,75 years and over,Yes
+Morgan, Indiana,B27003_057,26,Female,75 years and over,No
+Newton, Indiana,B27003_004,169,Male,Under 6 years,Yes
+Newton, Indiana,B27003_005,217,Male,Under 6 years,No
+Newton, Indiana,B27003_007,449,Male,6 to 18 years,Yes
+Newton, Indiana,B27003_008,754,Male,6 to 18 years,No
+Newton, Indiana,B27003_010,47,Male,19 to 25 years,Yes
+Newton, Indiana,B27003_011,402,Male,19 to 25 years,No
+Newton, Indiana,B27003_013,94,Male,26 to 34 years,Yes
+Newton, Indiana,B27003_014,673,Male,26 to 34 years,No
+Newton, Indiana,B27003_016,162,Male,35 to 44 years,Yes
+Newton, Indiana,B27003_017,734,Male,35 to 44 years,No
+Newton, Indiana,B27003_019,158,Male,45 to 54 years,Yes
+Newton, Indiana,B27003_020,805,Male,45 to 54 years,No
+Newton, Indiana,B27003_022,224,Male,55 to 64 years,Yes
+Newton, Indiana,B27003_023,875,Male,55 to 64 years,No
+Newton, Indiana,B27003_025,646,Male,65 to 74 years,Yes
+Newton, Indiana,B27003_026,55,Male,65 to 74 years,No
+Newton, Indiana,B27003_028,455,Male,75 years and over,Yes
+Newton, Indiana,B27003_029,4,Male,75 years and over,No
+Newton, Indiana,B27003_032,146,Female,Under 6 years,Yes
+Newton, Indiana,B27003_033,330,Female,Under 6 years,No
+Newton, Indiana,B27003_035,418,Female,6 to 18 years,Yes
+Newton, Indiana,B27003_036,737,Female,6 to 18 years,No
+Newton, Indiana,B27003_038,172,Female,19 to 25 years,Yes
+Newton, Indiana,B27003_039,349,Female,19 to 25 years,No
+Newton, Indiana,B27003_041,84,Female,26 to 34 years,Yes
+Newton, Indiana,B27003_042,636,Female,26 to 34 years,No
+Newton, Indiana,B27003_044,144,Female,35 to 44 years,Yes
+Newton, Indiana,B27003_045,647,Female,35 to 44 years,No
+Newton, Indiana,B27003_047,261,Female,45 to 54 years,Yes
+Newton, Indiana,B27003_048,646,Female,45 to 54 years,No
+Newton, Indiana,B27003_050,132,Female,55 to 64 years,Yes
+Newton, Indiana,B27003_051,895,Female,55 to 64 years,No
+Newton, Indiana,B27003_053,677,Female,65 to 74 years,Yes
+Newton, Indiana,B27003_054,56,Female,65 to 74 years,No
+Newton, Indiana,B27003_056,544,Female,75 years and over,Yes
+Newton, Indiana,B27003_057,2,Female,75 years and over,No
+Noble, Indiana,B27003_004,672,Male,Under 6 years,Yes
+Noble, Indiana,B27003_005,1315,Male,Under 6 years,No
+Noble, Indiana,B27003_007,1060,Male,6 to 18 years,Yes
+Noble, Indiana,B27003_008,3480,Male,6 to 18 years,No
+Noble, Indiana,B27003_010,149,Male,19 to 25 years,Yes
+Noble, Indiana,B27003_011,1786,Male,19 to 25 years,No
+Noble, Indiana,B27003_013,194,Male,26 to 34 years,Yes
+Noble, Indiana,B27003_014,2369,Male,26 to 34 years,No
+Noble, Indiana,B27003_016,334,Male,35 to 44 years,Yes
+Noble, Indiana,B27003_017,2495,Male,35 to 44 years,No
+Noble, Indiana,B27003_019,537,Male,45 to 54 years,Yes
+Noble, Indiana,B27003_020,2650,Male,45 to 54 years,No
+Noble, Indiana,B27003_022,647,Male,55 to 64 years,Yes
+Noble, Indiana,B27003_023,2590,Male,55 to 64 years,No
+Noble, Indiana,B27003_025,2048,Male,65 to 74 years,Yes
+Noble, Indiana,B27003_026,83,Male,65 to 74 years,No
+Noble, Indiana,B27003_028,1051,Male,75 years and over,Yes
+Noble, Indiana,B27003_029,0,Male,75 years and over,No
+Noble, Indiana,B27003_032,618,Female,Under 6 years,Yes
+Noble, Indiana,B27003_033,1147,Female,Under 6 years,No
+Noble, Indiana,B27003_035,1282,Female,6 to 18 years,Yes
+Noble, Indiana,B27003_036,3074,Female,6 to 18 years,No
+Noble, Indiana,B27003_038,225,Female,19 to 25 years,Yes
+Noble, Indiana,B27003_039,1762,Female,19 to 25 years,No
+Noble, Indiana,B27003_041,284,Female,26 to 34 years,Yes
+Noble, Indiana,B27003_042,2012,Female,26 to 34 years,No
+Noble, Indiana,B27003_044,305,Female,35 to 44 years,Yes
+Noble, Indiana,B27003_045,2605,Female,35 to 44 years,No
+Noble, Indiana,B27003_047,418,Female,45 to 54 years,Yes
+Noble, Indiana,B27003_048,2693,Female,45 to 54 years,No
+Noble, Indiana,B27003_050,382,Female,55 to 64 years,Yes
+Noble, Indiana,B27003_051,2883,Female,55 to 64 years,No
+Noble, Indiana,B27003_053,2120,Female,65 to 74 years,Yes
+Noble, Indiana,B27003_054,17,Female,65 to 74 years,No
+Noble, Indiana,B27003_056,1377,Female,75 years and over,Yes
+Noble, Indiana,B27003_057,16,Female,75 years and over,No
+Ohio, Indiana,B27003_004,96,Male,Under 6 years,Yes
+Ohio, Indiana,B27003_005,99,Male,Under 6 years,No
+Ohio, Indiana,B27003_007,94,Male,6 to 18 years,Yes
+Ohio, Indiana,B27003_008,319,Male,6 to 18 years,No
+Ohio, Indiana,B27003_010,17,Male,19 to 25 years,Yes
+Ohio, Indiana,B27003_011,140,Male,19 to 25 years,No
+Ohio, Indiana,B27003_013,48,Male,26 to 34 years,Yes
+Ohio, Indiana,B27003_014,260,Male,26 to 34 years,No
+Ohio, Indiana,B27003_016,34,Male,35 to 44 years,Yes
+Ohio, Indiana,B27003_017,299,Male,35 to 44 years,No
+Ohio, Indiana,B27003_019,59,Male,45 to 54 years,Yes
+Ohio, Indiana,B27003_020,398,Male,45 to 54 years,No
+Ohio, Indiana,B27003_022,99,Male,55 to 64 years,Yes
+Ohio, Indiana,B27003_023,402,Male,55 to 64 years,No
+Ohio, Indiana,B27003_025,317,Male,65 to 74 years,Yes
+Ohio, Indiana,B27003_026,16,Male,65 to 74 years,No
+Ohio, Indiana,B27003_028,194,Male,75 years and over,Yes
+Ohio, Indiana,B27003_029,0,Male,75 years and over,No
+Ohio, Indiana,B27003_032,59,Female,Under 6 years,Yes
+Ohio, Indiana,B27003_033,118,Female,Under 6 years,No
+Ohio, Indiana,B27003_035,69,Female,6 to 18 years,Yes
+Ohio, Indiana,B27003_036,333,Female,6 to 18 years,No
+Ohio, Indiana,B27003_038,11,Female,19 to 25 years,Yes
+Ohio, Indiana,B27003_039,185,Female,19 to 25 years,No
+Ohio, Indiana,B27003_041,26,Female,26 to 34 years,Yes
+Ohio, Indiana,B27003_042,254,Female,26 to 34 years,No
+Ohio, Indiana,B27003_044,16,Female,35 to 44 years,Yes
+Ohio, Indiana,B27003_045,318,Female,35 to 44 years,No
+Ohio, Indiana,B27003_047,82,Female,45 to 54 years,Yes
+Ohio, Indiana,B27003_048,342,Female,45 to 54 years,No
+Ohio, Indiana,B27003_050,82,Female,55 to 64 years,Yes
+Ohio, Indiana,B27003_051,417,Female,55 to 64 years,No
+Ohio, Indiana,B27003_053,374,Female,65 to 74 years,Yes
+Ohio, Indiana,B27003_054,0,Female,65 to 74 years,No
+Ohio, Indiana,B27003_056,240,Female,75 years and over,Yes
+Ohio, Indiana,B27003_057,17,Female,75 years and over,No
+Orange, Indiana,B27003_004,270,Male,Under 6 years,Yes
+Orange, Indiana,B27003_005,392,Male,Under 6 years,No
+Orange, Indiana,B27003_007,848,Male,6 to 18 years,Yes
+Orange, Indiana,B27003_008,924,Male,6 to 18 years,No
+Orange, Indiana,B27003_010,226,Male,19 to 25 years,Yes
+Orange, Indiana,B27003_011,551,Male,19 to 25 years,No
+Orange, Indiana,B27003_013,213,Male,26 to 34 years,Yes
+Orange, Indiana,B27003_014,771,Male,26 to 34 years,No
+Orange, Indiana,B27003_016,224,Male,35 to 44 years,Yes
+Orange, Indiana,B27003_017,842,Male,35 to 44 years,No
+Orange, Indiana,B27003_019,262,Male,45 to 54 years,Yes
+Orange, Indiana,B27003_020,1054,Male,45 to 54 years,No
+Orange, Indiana,B27003_022,348,Male,55 to 64 years,Yes
+Orange, Indiana,B27003_023,1096,Male,55 to 64 years,No
+Orange, Indiana,B27003_025,969,Male,65 to 74 years,Yes
+Orange, Indiana,B27003_026,21,Male,65 to 74 years,No
+Orange, Indiana,B27003_028,585,Male,75 years and over,Yes
+Orange, Indiana,B27003_029,10,Male,75 years and over,No
+Orange, Indiana,B27003_032,280,Female,Under 6 years,Yes
+Orange, Indiana,B27003_033,394,Female,Under 6 years,No
+Orange, Indiana,B27003_035,723,Female,6 to 18 years,Yes
+Orange, Indiana,B27003_036,967,Female,6 to 18 years,No
+Orange, Indiana,B27003_038,191,Female,19 to 25 years,Yes
+Orange, Indiana,B27003_039,478,Female,19 to 25 years,No
+Orange, Indiana,B27003_041,203,Female,26 to 34 years,Yes
+Orange, Indiana,B27003_042,735,Female,26 to 34 years,No
+Orange, Indiana,B27003_044,214,Female,35 to 44 years,Yes
+Orange, Indiana,B27003_045,891,Female,35 to 44 years,No
+Orange, Indiana,B27003_047,329,Female,45 to 54 years,Yes
+Orange, Indiana,B27003_048,965,Female,45 to 54 years,No
+Orange, Indiana,B27003_050,391,Female,55 to 64 years,Yes
+Orange, Indiana,B27003_051,998,Female,55 to 64 years,No
+Orange, Indiana,B27003_053,1124,Female,65 to 74 years,Yes
+Orange, Indiana,B27003_054,20,Female,65 to 74 years,No
+Orange, Indiana,B27003_056,778,Female,75 years and over,Yes
+Orange, Indiana,B27003_057,0,Female,75 years and over,No
+Owen, Indiana,B27003_004,281,Male,Under 6 years,Yes
+Owen, Indiana,B27003_005,337,Male,Under 6 years,No
+Owen, Indiana,B27003_007,600,Male,6 to 18 years,Yes
+Owen, Indiana,B27003_008,1211,Male,6 to 18 years,No
+Owen, Indiana,B27003_010,48,Male,19 to 25 years,Yes
+Owen, Indiana,B27003_011,688,Male,19 to 25 years,No
+Owen, Indiana,B27003_013,217,Male,26 to 34 years,Yes
+Owen, Indiana,B27003_014,786,Male,26 to 34 years,No
+Owen, Indiana,B27003_016,207,Male,35 to 44 years,Yes
+Owen, Indiana,B27003_017,974,Male,35 to 44 years,No
+Owen, Indiana,B27003_019,293,Male,45 to 54 years,Yes
+Owen, Indiana,B27003_020,1342,Male,45 to 54 years,No
+Owen, Indiana,B27003_022,607,Male,55 to 64 years,Yes
+Owen, Indiana,B27003_023,1150,Male,55 to 64 years,No
+Owen, Indiana,B27003_025,1146,Male,65 to 74 years,Yes
+Owen, Indiana,B27003_026,78,Male,65 to 74 years,No
+Owen, Indiana,B27003_028,618,Male,75 years and over,Yes
+Owen, Indiana,B27003_029,4,Male,75 years and over,No
+Owen, Indiana,B27003_032,424,Female,Under 6 years,Yes
+Owen, Indiana,B27003_033,270,Female,Under 6 years,No
+Owen, Indiana,B27003_035,674,Female,6 to 18 years,Yes
+Owen, Indiana,B27003_036,953,Female,6 to 18 years,No
+Owen, Indiana,B27003_038,95,Female,19 to 25 years,Yes
+Owen, Indiana,B27003_039,552,Female,19 to 25 years,No
+Owen, Indiana,B27003_041,262,Female,26 to 34 years,Yes
+Owen, Indiana,B27003_042,712,Female,26 to 34 years,No
+Owen, Indiana,B27003_044,186,Female,35 to 44 years,Yes
+Owen, Indiana,B27003_045,959,Female,35 to 44 years,No
+Owen, Indiana,B27003_047,309,Female,45 to 54 years,Yes
+Owen, Indiana,B27003_048,1245,Female,45 to 54 years,No
+Owen, Indiana,B27003_050,374,Female,55 to 64 years,Yes
+Owen, Indiana,B27003_051,1253,Female,55 to 64 years,No
+Owen, Indiana,B27003_053,1112,Female,65 to 74 years,Yes
+Owen, Indiana,B27003_054,50,Female,65 to 74 years,No
+Owen, Indiana,B27003_056,700,Female,75 years and over,Yes
+Owen, Indiana,B27003_057,5,Female,75 years and over,No
+Parke, Indiana,B27003_004,195,Male,Under 6 years,Yes
+Parke, Indiana,B27003_005,442,Male,Under 6 years,No
+Parke, Indiana,B27003_007,529,Male,6 to 18 years,Yes
+Parke, Indiana,B27003_008,830,Male,6 to 18 years,No
+Parke, Indiana,B27003_010,68,Male,19 to 25 years,Yes
+Parke, Indiana,B27003_011,469,Male,19 to 25 years,No
+Parke, Indiana,B27003_013,68,Male,26 to 34 years,Yes
+Parke, Indiana,B27003_014,701,Male,26 to 34 years,No
+Parke, Indiana,B27003_016,180,Male,35 to 44 years,Yes
+Parke, Indiana,B27003_017,812,Male,35 to 44 years,No
+Parke, Indiana,B27003_019,185,Male,45 to 54 years,Yes
+Parke, Indiana,B27003_020,870,Male,45 to 54 years,No
+Parke, Indiana,B27003_022,312,Male,55 to 64 years,Yes
+Parke, Indiana,B27003_023,902,Male,55 to 64 years,No
+Parke, Indiana,B27003_025,878,Male,65 to 74 years,Yes
+Parke, Indiana,B27003_026,35,Male,65 to 74 years,No
+Parke, Indiana,B27003_028,580,Male,75 years and over,Yes
+Parke, Indiana,B27003_029,0,Male,75 years and over,No
+Parke, Indiana,B27003_032,235,Female,Under 6 years,Yes
+Parke, Indiana,B27003_033,394,Female,Under 6 years,No
+Parke, Indiana,B27003_035,513,Female,6 to 18 years,Yes
+Parke, Indiana,B27003_036,690,Female,6 to 18 years,No
+Parke, Indiana,B27003_038,132,Female,19 to 25 years,Yes
+Parke, Indiana,B27003_039,399,Female,19 to 25 years,No
+Parke, Indiana,B27003_041,109,Female,26 to 34 years,Yes
+Parke, Indiana,B27003_042,591,Female,26 to 34 years,No
+Parke, Indiana,B27003_044,94,Female,35 to 44 years,Yes
+Parke, Indiana,B27003_045,471,Female,35 to 44 years,No
+Parke, Indiana,B27003_047,116,Female,45 to 54 years,Yes
+Parke, Indiana,B27003_048,973,Female,45 to 54 years,No
+Parke, Indiana,B27003_050,383,Female,55 to 64 years,Yes
+Parke, Indiana,B27003_051,809,Female,55 to 64 years,No
+Parke, Indiana,B27003_053,929,Female,65 to 74 years,Yes
+Parke, Indiana,B27003_054,2,Female,65 to 74 years,No
+Parke, Indiana,B27003_056,665,Female,75 years and over,Yes
+Parke, Indiana,B27003_057,0,Female,75 years and over,No
+Perry, Indiana,B27003_004,270,Male,Under 6 years,Yes
+Perry, Indiana,B27003_005,351,Male,Under 6 years,No
+Perry, Indiana,B27003_007,504,Male,6 to 18 years,Yes
+Perry, Indiana,B27003_008,1130,Male,6 to 18 years,No
+Perry, Indiana,B27003_010,53,Male,19 to 25 years,Yes
+Perry, Indiana,B27003_011,620,Male,19 to 25 years,No
+Perry, Indiana,B27003_013,137,Male,26 to 34 years,Yes
+Perry, Indiana,B27003_014,719,Male,26 to 34 years,No
+Perry, Indiana,B27003_016,103,Male,35 to 44 years,Yes
+Perry, Indiana,B27003_017,818,Male,35 to 44 years,No
+Perry, Indiana,B27003_019,134,Male,45 to 54 years,Yes
+Perry, Indiana,B27003_020,1026,Male,45 to 54 years,No
+Perry, Indiana,B27003_022,219,Male,55 to 64 years,Yes
+Perry, Indiana,B27003_023,1104,Male,55 to 64 years,No
+Perry, Indiana,B27003_025,953,Male,65 to 74 years,Yes
+Perry, Indiana,B27003_026,0,Male,65 to 74 years,No
+Perry, Indiana,B27003_028,588,Male,75 years and over,Yes
+Perry, Indiana,B27003_029,0,Male,75 years and over,No
+Perry, Indiana,B27003_032,315,Female,Under 6 years,Yes
+Perry, Indiana,B27003_033,326,Female,Under 6 years,No
+Perry, Indiana,B27003_035,407,Female,6 to 18 years,Yes
+Perry, Indiana,B27003_036,993,Female,6 to 18 years,No
+Perry, Indiana,B27003_038,143,Female,19 to 25 years,Yes
+Perry, Indiana,B27003_039,493,Female,19 to 25 years,No
+Perry, Indiana,B27003_041,163,Female,26 to 34 years,Yes
+Perry, Indiana,B27003_042,718,Female,26 to 34 years,No
+Perry, Indiana,B27003_044,118,Female,35 to 44 years,Yes
+Perry, Indiana,B27003_045,933,Female,35 to 44 years,No
+Perry, Indiana,B27003_047,114,Female,45 to 54 years,Yes
+Perry, Indiana,B27003_048,1000,Female,45 to 54 years,No
+Perry, Indiana,B27003_050,268,Female,55 to 64 years,Yes
+Perry, Indiana,B27003_051,1089,Female,55 to 64 years,No
+Perry, Indiana,B27003_053,976,Female,65 to 74 years,Yes
+Perry, Indiana,B27003_054,13,Female,65 to 74 years,No
+Perry, Indiana,B27003_056,723,Female,75 years and over,Yes
+Perry, Indiana,B27003_057,0,Female,75 years and over,No
+Pike, Indiana,B27003_004,80,Male,Under 6 years,Yes
+Pike, Indiana,B27003_005,315,Male,Under 6 years,No
+Pike, Indiana,B27003_007,329,Male,6 to 18 years,Yes
+Pike, Indiana,B27003_008,743,Male,6 to 18 years,No
+Pike, Indiana,B27003_010,52,Male,19 to 25 years,Yes
+Pike, Indiana,B27003_011,339,Male,19 to 25 years,No
+Pike, Indiana,B27003_013,75,Male,26 to 34 years,Yes
+Pike, Indiana,B27003_014,558,Male,26 to 34 years,No
+Pike, Indiana,B27003_016,90,Male,35 to 44 years,Yes
+Pike, Indiana,B27003_017,622,Male,35 to 44 years,No
+Pike, Indiana,B27003_019,114,Male,45 to 54 years,Yes
+Pike, Indiana,B27003_020,770,Male,45 to 54 years,No
+Pike, Indiana,B27003_022,172,Male,55 to 64 years,Yes
+Pike, Indiana,B27003_023,771,Male,55 to 64 years,No
+Pike, Indiana,B27003_025,691,Male,65 to 74 years,Yes
+Pike, Indiana,B27003_026,14,Male,65 to 74 years,No
+Pike, Indiana,B27003_028,405,Male,75 years and over,Yes
+Pike, Indiana,B27003_029,0,Male,75 years and over,No
+Pike, Indiana,B27003_032,171,Female,Under 6 years,Yes
+Pike, Indiana,B27003_033,208,Female,Under 6 years,No
+Pike, Indiana,B27003_035,306,Female,6 to 18 years,Yes
+Pike, Indiana,B27003_036,768,Female,6 to 18 years,No
+Pike, Indiana,B27003_038,81,Female,19 to 25 years,Yes
+Pike, Indiana,B27003_039,368,Female,19 to 25 years,No
+Pike, Indiana,B27003_041,101,Female,26 to 34 years,Yes
+Pike, Indiana,B27003_042,420,Female,26 to 34 years,No
+Pike, Indiana,B27003_044,171,Female,35 to 44 years,Yes
+Pike, Indiana,B27003_045,530,Female,35 to 44 years,No
+Pike, Indiana,B27003_047,141,Female,45 to 54 years,Yes
+Pike, Indiana,B27003_048,677,Female,45 to 54 years,No
+Pike, Indiana,B27003_050,205,Female,55 to 64 years,Yes
+Pike, Indiana,B27003_051,722,Female,55 to 64 years,No
+Pike, Indiana,B27003_053,659,Female,65 to 74 years,Yes
+Pike, Indiana,B27003_054,0,Female,65 to 74 years,No
+Pike, Indiana,B27003_056,523,Female,75 years and over,Yes
+Pike, Indiana,B27003_057,0,Female,75 years and over,No
+Porter, Indiana,B27003_004,1482,Male,Under 6 years,Yes
+Porter, Indiana,B27003_005,4174,Male,Under 6 years,No
+Porter, Indiana,B27003_007,3656,Male,6 to 18 years,Yes
+Porter, Indiana,B27003_008,11301,Male,6 to 18 years,No
+Porter, Indiana,B27003_010,558,Male,19 to 25 years,Yes
+Porter, Indiana,B27003_011,7124,Male,19 to 25 years,No
+Porter, Indiana,B27003_013,1083,Male,26 to 34 years,Yes
+Porter, Indiana,B27003_014,8184,Male,26 to 34 years,No
+Porter, Indiana,B27003_016,771,Male,35 to 44 years,Yes
+Porter, Indiana,B27003_017,10065,Male,35 to 44 years,No
+Porter, Indiana,B27003_019,1222,Male,45 to 54 years,Yes
+Porter, Indiana,B27003_020,9804,Male,45 to 54 years,No
+Porter, Indiana,B27003_022,1521,Male,55 to 64 years,Yes
+Porter, Indiana,B27003_023,9950,Male,55 to 64 years,No
+Porter, Indiana,B27003_025,7135,Male,65 to 74 years,Yes
+Porter, Indiana,B27003_026,418,Male,65 to 74 years,No
+Porter, Indiana,B27003_028,3885,Male,75 years and over,Yes
+Porter, Indiana,B27003_029,16,Male,75 years and over,No
+Porter, Indiana,B27003_032,1531,Female,Under 6 years,Yes
+Porter, Indiana,B27003_033,3971,Female,Under 6 years,No
+Porter, Indiana,B27003_035,2884,Female,6 to 18 years,Yes
+Porter, Indiana,B27003_036,11027,Female,6 to 18 years,No
+Porter, Indiana,B27003_038,1287,Female,19 to 25 years,Yes
+Porter, Indiana,B27003_039,6021,Female,19 to 25 years,No
+Porter, Indiana,B27003_041,1677,Female,26 to 34 years,Yes
+Porter, Indiana,B27003_042,7487,Female,26 to 34 years,No
+Porter, Indiana,B27003_044,1362,Female,35 to 44 years,Yes
+Porter, Indiana,B27003_045,9672,Female,35 to 44 years,No
+Porter, Indiana,B27003_047,1207,Female,45 to 54 years,Yes
+Porter, Indiana,B27003_048,10173,Female,45 to 54 years,No
+Porter, Indiana,B27003_050,1893,Female,55 to 64 years,Yes
+Porter, Indiana,B27003_051,10377,Female,55 to 64 years,No
+Porter, Indiana,B27003_053,7634,Female,65 to 74 years,Yes
+Porter, Indiana,B27003_054,241,Female,65 to 74 years,No
+Porter, Indiana,B27003_056,5574,Female,75 years and over,Yes
+Porter, Indiana,B27003_057,35,Female,75 years and over,No
+Posey, Indiana,B27003_004,268,Male,Under 6 years,Yes
+Posey, Indiana,B27003_005,597,Male,Under 6 years,No
+Posey, Indiana,B27003_007,501,Male,6 to 18 years,Yes
+Posey, Indiana,B27003_008,1724,Male,6 to 18 years,No
+Posey, Indiana,B27003_010,28,Male,19 to 25 years,Yes
+Posey, Indiana,B27003_011,933,Male,19 to 25 years,No
+Posey, Indiana,B27003_013,211,Male,26 to 34 years,Yes
+Posey, Indiana,B27003_014,1106,Male,26 to 34 years,No
+Posey, Indiana,B27003_016,135,Male,35 to 44 years,Yes
+Posey, Indiana,B27003_017,1322,Male,35 to 44 years,No
+Posey, Indiana,B27003_019,163,Male,45 to 54 years,Yes
+Posey, Indiana,B27003_020,1571,Male,45 to 54 years,No
+Posey, Indiana,B27003_022,448,Male,55 to 64 years,Yes
+Posey, Indiana,B27003_023,1640,Male,55 to 64 years,No
+Posey, Indiana,B27003_025,1272,Male,65 to 74 years,Yes
+Posey, Indiana,B27003_026,11,Male,65 to 74 years,No
+Posey, Indiana,B27003_028,740,Male,75 years and over,Yes
+Posey, Indiana,B27003_029,0,Male,75 years and over,No
+Posey, Indiana,B27003_032,190,Female,Under 6 years,Yes
+Posey, Indiana,B27003_033,588,Female,Under 6 years,No
+Posey, Indiana,B27003_035,551,Female,6 to 18 years,Yes
+Posey, Indiana,B27003_036,1574,Female,6 to 18 years,No
+Posey, Indiana,B27003_038,97,Female,19 to 25 years,Yes
+Posey, Indiana,B27003_039,767,Female,19 to 25 years,No
+Posey, Indiana,B27003_041,263,Female,26 to 34 years,Yes
+Posey, Indiana,B27003_042,1060,Female,26 to 34 years,No
+Posey, Indiana,B27003_044,242,Female,35 to 44 years,Yes
+Posey, Indiana,B27003_045,1329,Female,35 to 44 years,No
+Posey, Indiana,B27003_047,174,Female,45 to 54 years,Yes
+Posey, Indiana,B27003_048,1568,Female,45 to 54 years,No
+Posey, Indiana,B27003_050,252,Female,55 to 64 years,Yes
+Posey, Indiana,B27003_051,1744,Female,55 to 64 years,No
+Posey, Indiana,B27003_053,1307,Female,65 to 74 years,Yes
+Posey, Indiana,B27003_054,8,Female,65 to 74 years,No
+Posey, Indiana,B27003_056,962,Female,75 years and over,Yes
+Posey, Indiana,B27003_057,0,Female,75 years and over,No
+Pulaski, Indiana,B27003_004,162,Male,Under 6 years,Yes
+Pulaski, Indiana,B27003_005,191,Male,Under 6 years,No
+Pulaski, Indiana,B27003_007,234,Male,6 to 18 years,Yes
+Pulaski, Indiana,B27003_008,1025,Male,6 to 18 years,No
+Pulaski, Indiana,B27003_010,63,Male,19 to 25 years,Yes
+Pulaski, Indiana,B27003_011,382,Male,19 to 25 years,No
+Pulaski, Indiana,B27003_013,90,Male,26 to 34 years,Yes
+Pulaski, Indiana,B27003_014,499,Male,26 to 34 years,No
+Pulaski, Indiana,B27003_016,120,Male,35 to 44 years,Yes
+Pulaski, Indiana,B27003_017,681,Male,35 to 44 years,No
+Pulaski, Indiana,B27003_019,91,Male,45 to 54 years,Yes
+Pulaski, Indiana,B27003_020,711,Male,45 to 54 years,No
+Pulaski, Indiana,B27003_022,224,Male,55 to 64 years,Yes
+Pulaski, Indiana,B27003_023,753,Male,55 to 64 years,No
+Pulaski, Indiana,B27003_025,629,Male,65 to 74 years,Yes
+Pulaski, Indiana,B27003_026,45,Male,65 to 74 years,No
+Pulaski, Indiana,B27003_028,444,Male,75 years and over,Yes
+Pulaski, Indiana,B27003_029,0,Male,75 years and over,No
+Pulaski, Indiana,B27003_032,139,Female,Under 6 years,Yes
+Pulaski, Indiana,B27003_033,271,Female,Under 6 years,No
+Pulaski, Indiana,B27003_035,452,Female,6 to 18 years,Yes
+Pulaski, Indiana,B27003_036,648,Female,6 to 18 years,No
+Pulaski, Indiana,B27003_038,88,Female,19 to 25 years,Yes
+Pulaski, Indiana,B27003_039,271,Female,19 to 25 years,No
+Pulaski, Indiana,B27003_041,179,Female,26 to 34 years,Yes
+Pulaski, Indiana,B27003_042,481,Female,26 to 34 years,No
+Pulaski, Indiana,B27003_044,166,Female,35 to 44 years,Yes
+Pulaski, Indiana,B27003_045,538,Female,35 to 44 years,No
+Pulaski, Indiana,B27003_047,120,Female,45 to 54 years,Yes
+Pulaski, Indiana,B27003_048,745,Female,45 to 54 years,No
+Pulaski, Indiana,B27003_050,180,Female,55 to 64 years,Yes
+Pulaski, Indiana,B27003_051,741,Female,55 to 64 years,No
+Pulaski, Indiana,B27003_053,648,Female,65 to 74 years,Yes
+Pulaski, Indiana,B27003_054,10,Female,65 to 74 years,No
+Pulaski, Indiana,B27003_056,517,Female,75 years and over,Yes
+Pulaski, Indiana,B27003_057,14,Female,75 years and over,No
+Putnam, Indiana,B27003_004,660,Male,Under 6 years,Yes
+Putnam, Indiana,B27003_005,383,Male,Under 6 years,No
+Putnam, Indiana,B27003_007,951,Male,6 to 18 years,Yes
+Putnam, Indiana,B27003_008,2134,Male,6 to 18 years,No
+Putnam, Indiana,B27003_010,236,Male,19 to 25 years,Yes
+Putnam, Indiana,B27003_011,1958,Male,19 to 25 years,No
+Putnam, Indiana,B27003_013,145,Male,26 to 34 years,Yes
+Putnam, Indiana,B27003_014,1280,Male,26 to 34 years,No
+Putnam, Indiana,B27003_016,192,Male,35 to 44 years,Yes
+Putnam, Indiana,B27003_017,1620,Male,35 to 44 years,No
+Putnam, Indiana,B27003_019,292,Male,45 to 54 years,Yes
+Putnam, Indiana,B27003_020,2177,Male,45 to 54 years,No
+Putnam, Indiana,B27003_022,501,Male,55 to 64 years,Yes
+Putnam, Indiana,B27003_023,1891,Male,55 to 64 years,No
+Putnam, Indiana,B27003_025,1488,Male,65 to 74 years,Yes
+Putnam, Indiana,B27003_026,43,Male,65 to 74 years,No
+Putnam, Indiana,B27003_028,1050,Male,75 years and over,Yes
+Putnam, Indiana,B27003_029,1,Male,75 years and over,No
+Putnam, Indiana,B27003_032,516,Female,Under 6 years,Yes
+Putnam, Indiana,B27003_033,552,Female,Under 6 years,No
+Putnam, Indiana,B27003_035,716,Female,6 to 18 years,Yes
+Putnam, Indiana,B27003_036,2179,Female,6 to 18 years,No
+Putnam, Indiana,B27003_038,358,Female,19 to 25 years,Yes
+Putnam, Indiana,B27003_039,1999,Female,19 to 25 years,No
+Putnam, Indiana,B27003_041,309,Female,26 to 34 years,Yes
+Putnam, Indiana,B27003_042,1350,Female,26 to 34 years,No
+Putnam, Indiana,B27003_044,288,Female,35 to 44 years,Yes
+Putnam, Indiana,B27003_045,1578,Female,35 to 44 years,No
+Putnam, Indiana,B27003_047,252,Female,45 to 54 years,Yes
+Putnam, Indiana,B27003_048,2060,Female,45 to 54 years,No
+Putnam, Indiana,B27003_050,511,Female,55 to 64 years,Yes
+Putnam, Indiana,B27003_051,1880,Female,55 to 64 years,No
+Putnam, Indiana,B27003_053,1632,Female,65 to 74 years,Yes
+Putnam, Indiana,B27003_054,59,Female,65 to 74 years,No
+Putnam, Indiana,B27003_056,1354,Female,75 years and over,Yes
+Putnam, Indiana,B27003_057,0,Female,75 years and over,No
+Randolph, Indiana,B27003_004,334,Male,Under 6 years,Yes
+Randolph, Indiana,B27003_005,444,Male,Under 6 years,No
+Randolph, Indiana,B27003_007,985,Male,6 to 18 years,Yes
+Randolph, Indiana,B27003_008,1269,Male,6 to 18 years,No
+Randolph, Indiana,B27003_010,59,Male,19 to 25 years,Yes
+Randolph, Indiana,B27003_011,919,Male,19 to 25 years,No
+Randolph, Indiana,B27003_013,205,Male,26 to 34 years,Yes
+Randolph, Indiana,B27003_014,921,Male,26 to 34 years,No
+Randolph, Indiana,B27003_016,251,Male,35 to 44 years,Yes
+Randolph, Indiana,B27003_017,1189,Male,35 to 44 years,No
+Randolph, Indiana,B27003_019,278,Male,45 to 54 years,Yes
+Randolph, Indiana,B27003_020,1456,Male,45 to 54 years,No
+Randolph, Indiana,B27003_022,454,Male,55 to 64 years,Yes
+Randolph, Indiana,B27003_023,1271,Male,55 to 64 years,No
+Randolph, Indiana,B27003_025,1211,Male,65 to 74 years,Yes
+Randolph, Indiana,B27003_026,18,Male,65 to 74 years,No
+Randolph, Indiana,B27003_028,823,Male,75 years and over,Yes
+Randolph, Indiana,B27003_029,0,Male,75 years and over,No
+Randolph, Indiana,B27003_032,454,Female,Under 6 years,Yes
+Randolph, Indiana,B27003_033,454,Female,Under 6 years,No
+Randolph, Indiana,B27003_035,798,Female,6 to 18 years,Yes
+Randolph, Indiana,B27003_036,1437,Female,6 to 18 years,No
+Randolph, Indiana,B27003_038,231,Female,19 to 25 years,Yes
+Randolph, Indiana,B27003_039,597,Female,19 to 25 years,No
+Randolph, Indiana,B27003_041,302,Female,26 to 34 years,Yes
+Randolph, Indiana,B27003_042,926,Female,26 to 34 years,No
+Randolph, Indiana,B27003_044,298,Female,35 to 44 years,Yes
+Randolph, Indiana,B27003_045,1176,Female,35 to 44 years,No
+Randolph, Indiana,B27003_047,284,Female,45 to 54 years,Yes
+Randolph, Indiana,B27003_048,1343,Female,45 to 54 years,No
+Randolph, Indiana,B27003_050,474,Female,55 to 64 years,Yes
+Randolph, Indiana,B27003_051,1281,Female,55 to 64 years,No
+Randolph, Indiana,B27003_053,1361,Female,65 to 74 years,Yes
+Randolph, Indiana,B27003_054,27,Female,65 to 74 years,No
+Randolph, Indiana,B27003_056,1191,Female,75 years and over,Yes
+Randolph, Indiana,B27003_057,0,Female,75 years and over,No
+Ripley, Indiana,B27003_004,419,Male,Under 6 years,Yes
+Ripley, Indiana,B27003_005,646,Male,Under 6 years,No
+Ripley, Indiana,B27003_007,680,Male,6 to 18 years,Yes
+Ripley, Indiana,B27003_008,1892,Male,6 to 18 years,No
+Ripley, Indiana,B27003_010,72,Male,19 to 25 years,Yes
+Ripley, Indiana,B27003_011,1189,Male,19 to 25 years,No
+Ripley, Indiana,B27003_013,196,Male,26 to 34 years,Yes
+Ripley, Indiana,B27003_014,1118,Male,26 to 34 years,No
+Ripley, Indiana,B27003_016,212,Male,35 to 44 years,Yes
+Ripley, Indiana,B27003_017,1431,Male,35 to 44 years,No
+Ripley, Indiana,B27003_019,231,Male,45 to 54 years,Yes
+Ripley, Indiana,B27003_020,1741,Male,45 to 54 years,No
+Ripley, Indiana,B27003_022,290,Male,55 to 64 years,Yes
+Ripley, Indiana,B27003_023,1616,Male,55 to 64 years,No
+Ripley, Indiana,B27003_025,1280,Male,65 to 74 years,Yes
+Ripley, Indiana,B27003_026,30,Male,65 to 74 years,No
+Ripley, Indiana,B27003_028,758,Male,75 years and over,Yes
+Ripley, Indiana,B27003_029,29,Male,75 years and over,No
+Ripley, Indiana,B27003_032,345,Female,Under 6 years,Yes
+Ripley, Indiana,B27003_033,711,Female,Under 6 years,No
+Ripley, Indiana,B27003_035,680,Female,6 to 18 years,Yes
+Ripley, Indiana,B27003_036,1808,Female,6 to 18 years,No
+Ripley, Indiana,B27003_038,147,Female,19 to 25 years,Yes
+Ripley, Indiana,B27003_039,844,Female,19 to 25 years,No
+Ripley, Indiana,B27003_041,210,Female,26 to 34 years,Yes
+Ripley, Indiana,B27003_042,1199,Female,26 to 34 years,No
+Ripley, Indiana,B27003_044,219,Female,35 to 44 years,Yes
+Ripley, Indiana,B27003_045,1501,Female,35 to 44 years,No
+Ripley, Indiana,B27003_047,359,Female,45 to 54 years,Yes
+Ripley, Indiana,B27003_048,1672,Female,45 to 54 years,No
+Ripley, Indiana,B27003_050,396,Female,55 to 64 years,Yes
+Ripley, Indiana,B27003_051,1601,Female,55 to 64 years,No
+Ripley, Indiana,B27003_053,1370,Female,65 to 74 years,Yes
+Ripley, Indiana,B27003_054,52,Female,65 to 74 years,No
+Ripley, Indiana,B27003_056,1005,Female,75 years and over,Yes
+Ripley, Indiana,B27003_057,0,Female,75 years and over,No
+Rush, Indiana,B27003_004,180,Male,Under 6 years,Yes
+Rush, Indiana,B27003_005,387,Male,Under 6 years,No
+Rush, Indiana,B27003_007,327,Male,6 to 18 years,Yes
+Rush, Indiana,B27003_008,1169,Male,6 to 18 years,No
+Rush, Indiana,B27003_010,99,Male,19 to 25 years,Yes
+Rush, Indiana,B27003_011,468,Male,19 to 25 years,No
+Rush, Indiana,B27003_013,81,Male,26 to 34 years,Yes
+Rush, Indiana,B27003_014,752,Male,26 to 34 years,No
+Rush, Indiana,B27003_016,113,Male,35 to 44 years,Yes
+Rush, Indiana,B27003_017,872,Male,35 to 44 years,No
+Rush, Indiana,B27003_019,250,Male,45 to 54 years,Yes
+Rush, Indiana,B27003_020,935,Male,45 to 54 years,No
+Rush, Indiana,B27003_022,159,Male,55 to 64 years,Yes
+Rush, Indiana,B27003_023,1064,Male,55 to 64 years,No
+Rush, Indiana,B27003_025,716,Male,65 to 74 years,Yes
+Rush, Indiana,B27003_026,11,Male,65 to 74 years,No
+Rush, Indiana,B27003_028,501,Male,75 years and over,Yes
+Rush, Indiana,B27003_029,16,Male,75 years and over,No
+Rush, Indiana,B27003_032,253,Female,Under 6 years,Yes
+Rush, Indiana,B27003_033,283,Female,Under 6 years,No
+Rush, Indiana,B27003_035,365,Female,6 to 18 years,Yes
+Rush, Indiana,B27003_036,1137,Female,6 to 18 years,No
+Rush, Indiana,B27003_038,148,Female,19 to 25 years,Yes
+Rush, Indiana,B27003_039,455,Female,19 to 25 years,No
+Rush, Indiana,B27003_041,93,Female,26 to 34 years,Yes
+Rush, Indiana,B27003_042,739,Female,26 to 34 years,No
+Rush, Indiana,B27003_044,159,Female,35 to 44 years,Yes
+Rush, Indiana,B27003_045,816,Female,35 to 44 years,No
+Rush, Indiana,B27003_047,188,Female,45 to 54 years,Yes
+Rush, Indiana,B27003_048,1015,Female,45 to 54 years,No
+Rush, Indiana,B27003_050,282,Female,55 to 64 years,Yes
+Rush, Indiana,B27003_051,932,Female,55 to 64 years,No
+Rush, Indiana,B27003_053,809,Female,65 to 74 years,Yes
+Rush, Indiana,B27003_054,27,Female,65 to 74 years,No
+Rush, Indiana,B27003_056,721,Female,75 years and over,Yes
+Rush, Indiana,B27003_057,0,Female,75 years and over,No
+St. Joseph, Indiana,B27003_004,4877,Male,Under 6 years,Yes
+St. Joseph, Indiana,B27003_005,5503,Male,Under 6 years,No
+St. Joseph, Indiana,B27003_007,7998,Male,6 to 18 years,Yes
+St. Joseph, Indiana,B27003_008,16261,Male,6 to 18 years,No
+St. Joseph, Indiana,B27003_010,1608,Male,19 to 25 years,Yes
+St. Joseph, Indiana,B27003_011,12483,Male,19 to 25 years,No
+St. Joseph, Indiana,B27003_013,1838,Male,26 to 34 years,Yes
+St. Joseph, Indiana,B27003_014,13497,Male,26 to 34 years,No
+St. Joseph, Indiana,B27003_016,1837,Male,35 to 44 years,Yes
+St. Joseph, Indiana,B27003_017,13589,Male,35 to 44 years,No
+St. Joseph, Indiana,B27003_019,2308,Male,45 to 54 years,Yes
+St. Joseph, Indiana,B27003_020,13511,Male,45 to 54 years,No
+St. Joseph, Indiana,B27003_022,2946,Male,55 to 64 years,Yes
+St. Joseph, Indiana,B27003_023,13697,Male,55 to 64 years,No
+St. Joseph, Indiana,B27003_025,9995,Male,65 to 74 years,Yes
+St. Joseph, Indiana,B27003_026,564,Male,65 to 74 years,No
+St. Joseph, Indiana,B27003_028,6644,Male,75 years and over,Yes
+St. Joseph, Indiana,B27003_029,80,Male,75 years and over,No
+St. Joseph, Indiana,B27003_032,4386,Female,Under 6 years,Yes
+St. Joseph, Indiana,B27003_033,5920,Female,Under 6 years,No
+St. Joseph, Indiana,B27003_035,7939,Female,6 to 18 years,Yes
+St. Joseph, Indiana,B27003_036,15620,Female,6 to 18 years,No
+St. Joseph, Indiana,B27003_038,2733,Female,19 to 25 years,Yes
+St. Joseph, Indiana,B27003_039,12394,Female,19 to 25 years,No
+St. Joseph, Indiana,B27003_041,3112,Female,26 to 34 years,Yes
+St. Joseph, Indiana,B27003_042,12314,Female,26 to 34 years,No
+St. Joseph, Indiana,B27003_044,2656,Female,35 to 44 years,Yes
+St. Joseph, Indiana,B27003_045,13444,Female,35 to 44 years,No
+St. Joseph, Indiana,B27003_047,2313,Female,45 to 54 years,Yes
+St. Joseph, Indiana,B27003_048,14694,Female,45 to 54 years,No
+St. Joseph, Indiana,B27003_050,3086,Female,55 to 64 years,Yes
+St. Joseph, Indiana,B27003_051,14683,Female,55 to 64 years,No
+St. Joseph, Indiana,B27003_053,11421,Female,65 to 74 years,Yes
+St. Joseph, Indiana,B27003_054,453,Female,65 to 74 years,No
+St. Joseph, Indiana,B27003_056,10236,Female,75 years and over,Yes
+St. Joseph, Indiana,B27003_057,95,Female,75 years and over,No
+Scott, Indiana,B27003_004,319,Male,Under 6 years,Yes
+Scott, Indiana,B27003_005,548,Male,Under 6 years,No
+Scott, Indiana,B27003_007,555,Male,6 to 18 years,Yes
+Scott, Indiana,B27003_008,1442,Male,6 to 18 years,No
+Scott, Indiana,B27003_010,65,Male,19 to 25 years,Yes
+Scott, Indiana,B27003_011,1089,Male,19 to 25 years,No
+Scott, Indiana,B27003_013,224,Male,26 to 34 years,Yes
+Scott, Indiana,B27003_014,834,Male,26 to 34 years,No
+Scott, Indiana,B27003_016,272,Male,35 to 44 years,Yes
+Scott, Indiana,B27003_017,1150,Male,35 to 44 years,No
+Scott, Indiana,B27003_019,239,Male,45 to 54 years,Yes
+Scott, Indiana,B27003_020,1498,Male,45 to 54 years,No
+Scott, Indiana,B27003_022,520,Male,55 to 64 years,Yes
+Scott, Indiana,B27003_023,1046,Male,55 to 64 years,No
+Scott, Indiana,B27003_025,1064,Male,65 to 74 years,Yes
+Scott, Indiana,B27003_026,26,Male,65 to 74 years,No
+Scott, Indiana,B27003_028,531,Male,75 years and over,Yes
+Scott, Indiana,B27003_029,10,Male,75 years and over,No
+Scott, Indiana,B27003_032,297,Female,Under 6 years,Yes
+Scott, Indiana,B27003_033,474,Female,Under 6 years,No
+Scott, Indiana,B27003_035,775,Female,6 to 18 years,Yes
+Scott, Indiana,B27003_036,1226,Female,6 to 18 years,No
+Scott, Indiana,B27003_038,222,Female,19 to 25 years,Yes
+Scott, Indiana,B27003_039,726,Female,19 to 25 years,No
+Scott, Indiana,B27003_041,191,Female,26 to 34 years,Yes
+Scott, Indiana,B27003_042,1088,Female,26 to 34 years,No
+Scott, Indiana,B27003_044,381,Female,35 to 44 years,Yes
+Scott, Indiana,B27003_045,1096,Female,35 to 44 years,No
+Scott, Indiana,B27003_047,381,Female,45 to 54 years,Yes
+Scott, Indiana,B27003_048,1303,Female,45 to 54 years,No
+Scott, Indiana,B27003_050,456,Female,55 to 64 years,Yes
+Scott, Indiana,B27003_051,1229,Female,55 to 64 years,No
+Scott, Indiana,B27003_053,1222,Female,65 to 74 years,Yes
+Scott, Indiana,B27003_054,0,Female,65 to 74 years,No
+Scott, Indiana,B27003_056,832,Female,75 years and over,Yes
+Scott, Indiana,B27003_057,10,Female,75 years and over,No
+Shelby, Indiana,B27003_004,429,Male,Under 6 years,Yes
+Shelby, Indiana,B27003_005,1095,Male,Under 6 years,No
+Shelby, Indiana,B27003_007,1050,Male,6 to 18 years,Yes
+Shelby, Indiana,B27003_008,2933,Male,6 to 18 years,No
+Shelby, Indiana,B27003_010,130,Male,19 to 25 years,Yes
+Shelby, Indiana,B27003_011,1563,Male,19 to 25 years,No
+Shelby, Indiana,B27003_013,305,Male,26 to 34 years,Yes
+Shelby, Indiana,B27003_014,1953,Male,26 to 34 years,No
+Shelby, Indiana,B27003_016,224,Male,35 to 44 years,Yes
+Shelby, Indiana,B27003_017,2437,Male,35 to 44 years,No
+Shelby, Indiana,B27003_019,378,Male,45 to 54 years,Yes
+Shelby, Indiana,B27003_020,2771,Male,45 to 54 years,No
+Shelby, Indiana,B27003_022,600,Male,55 to 64 years,Yes
+Shelby, Indiana,B27003_023,2569,Male,55 to 64 years,No
+Shelby, Indiana,B27003_025,1929,Male,65 to 74 years,Yes
+Shelby, Indiana,B27003_026,75,Male,65 to 74 years,No
+Shelby, Indiana,B27003_028,1190,Male,75 years and over,Yes
+Shelby, Indiana,B27003_029,14,Male,75 years and over,No
+Shelby, Indiana,B27003_032,502,Female,Under 6 years,Yes
+Shelby, Indiana,B27003_033,802,Female,Under 6 years,No
+Shelby, Indiana,B27003_035,1370,Female,6 to 18 years,Yes
+Shelby, Indiana,B27003_036,2616,Female,6 to 18 years,No
+Shelby, Indiana,B27003_038,252,Female,19 to 25 years,Yes
+Shelby, Indiana,B27003_039,1370,Female,19 to 25 years,No
+Shelby, Indiana,B27003_041,354,Female,26 to 34 years,Yes
+Shelby, Indiana,B27003_042,2015,Female,26 to 34 years,No
+Shelby, Indiana,B27003_044,320,Female,35 to 44 years,Yes
+Shelby, Indiana,B27003_045,2165,Female,35 to 44 years,No
+Shelby, Indiana,B27003_047,351,Female,45 to 54 years,Yes
+Shelby, Indiana,B27003_048,2905,Female,45 to 54 years,No
+Shelby, Indiana,B27003_050,441,Female,55 to 64 years,Yes
+Shelby, Indiana,B27003_051,2792,Female,55 to 64 years,No
+Shelby, Indiana,B27003_053,2046,Female,65 to 74 years,Yes
+Shelby, Indiana,B27003_054,63,Female,65 to 74 years,No
+Shelby, Indiana,B27003_056,1705,Female,75 years and over,Yes
+Shelby, Indiana,B27003_057,0,Female,75 years and over,No
+Spencer, Indiana,B27003_004,257,Male,Under 6 years,Yes
+Spencer, Indiana,B27003_005,417,Male,Under 6 years,No
+Spencer, Indiana,B27003_007,386,Male,6 to 18 years,Yes
+Spencer, Indiana,B27003_008,1499,Male,6 to 18 years,No
+Spencer, Indiana,B27003_010,75,Male,19 to 25 years,Yes
+Spencer, Indiana,B27003_011,682,Male,19 to 25 years,No
+Spencer, Indiana,B27003_013,165,Male,26 to 34 years,Yes
+Spencer, Indiana,B27003_014,780,Male,26 to 34 years,No
+Spencer, Indiana,B27003_016,71,Male,35 to 44 years,Yes
+Spencer, Indiana,B27003_017,1098,Male,35 to 44 years,No
+Spencer, Indiana,B27003_019,176,Male,45 to 54 years,Yes
+Spencer, Indiana,B27003_020,1337,Male,45 to 54 years,No
+Spencer, Indiana,B27003_022,321,Male,55 to 64 years,Yes
+Spencer, Indiana,B27003_023,1254,Male,55 to 64 years,No
+Spencer, Indiana,B27003_025,1062,Male,65 to 74 years,Yes
+Spencer, Indiana,B27003_026,27,Male,65 to 74 years,No
+Spencer, Indiana,B27003_028,670,Male,75 years and over,Yes
+Spencer, Indiana,B27003_029,0,Male,75 years and over,No
+Spencer, Indiana,B27003_032,203,Female,Under 6 years,Yes
+Spencer, Indiana,B27003_033,414,Female,Under 6 years,No
+Spencer, Indiana,B27003_035,402,Female,6 to 18 years,Yes
+Spencer, Indiana,B27003_036,1328,Female,6 to 18 years,No
+Spencer, Indiana,B27003_038,107,Female,19 to 25 years,Yes
+Spencer, Indiana,B27003_039,556,Female,19 to 25 years,No
+Spencer, Indiana,B27003_041,262,Female,26 to 34 years,Yes
+Spencer, Indiana,B27003_042,694,Female,26 to 34 years,No
+Spencer, Indiana,B27003_044,107,Female,35 to 44 years,Yes
+Spencer, Indiana,B27003_045,1096,Female,35 to 44 years,No
+Spencer, Indiana,B27003_047,228,Female,45 to 54 years,Yes
+Spencer, Indiana,B27003_048,1189,Female,45 to 54 years,No
+Spencer, Indiana,B27003_050,259,Female,55 to 64 years,Yes
+Spencer, Indiana,B27003_051,1267,Female,55 to 64 years,No
+Spencer, Indiana,B27003_053,1101,Female,65 to 74 years,Yes
+Spencer, Indiana,B27003_054,21,Female,65 to 74 years,No
+Spencer, Indiana,B27003_056,785,Female,75 years and over,Yes
+Spencer, Indiana,B27003_057,0,Female,75 years and over,No
+Starke, Indiana,B27003_004,469,Male,Under 6 years,Yes
+Starke, Indiana,B27003_005,409,Male,Under 6 years,No
+Starke, Indiana,B27003_007,638,Male,6 to 18 years,Yes
+Starke, Indiana,B27003_008,1314,Male,6 to 18 years,No
+Starke, Indiana,B27003_010,155,Male,19 to 25 years,Yes
+Starke, Indiana,B27003_011,825,Male,19 to 25 years,No
+Starke, Indiana,B27003_013,275,Male,26 to 34 years,Yes
+Starke, Indiana,B27003_014,747,Male,26 to 34 years,No
+Starke, Indiana,B27003_016,341,Male,35 to 44 years,Yes
+Starke, Indiana,B27003_017,1016,Male,35 to 44 years,No
+Starke, Indiana,B27003_019,355,Male,45 to 54 years,Yes
+Starke, Indiana,B27003_020,1160,Male,45 to 54 years,No
+Starke, Indiana,B27003_022,525,Male,55 to 64 years,Yes
+Starke, Indiana,B27003_023,1162,Male,55 to 64 years,No
+Starke, Indiana,B27003_025,1099,Male,65 to 74 years,Yes
+Starke, Indiana,B27003_026,83,Male,65 to 74 years,No
+Starke, Indiana,B27003_028,716,Male,75 years and over,Yes
+Starke, Indiana,B27003_029,7,Male,75 years and over,No
+Starke, Indiana,B27003_032,406,Female,Under 6 years,Yes
+Starke, Indiana,B27003_033,393,Female,Under 6 years,No
+Starke, Indiana,B27003_035,687,Female,6 to 18 years,Yes
+Starke, Indiana,B27003_036,1399,Female,6 to 18 years,No
+Starke, Indiana,B27003_038,301,Female,19 to 25 years,Yes
+Starke, Indiana,B27003_039,528,Female,19 to 25 years,No
+Starke, Indiana,B27003_041,438,Female,26 to 34 years,Yes
+Starke, Indiana,B27003_042,744,Female,26 to 34 years,No
+Starke, Indiana,B27003_044,229,Female,35 to 44 years,Yes
+Starke, Indiana,B27003_045,1132,Female,35 to 44 years,No
+Starke, Indiana,B27003_047,328,Female,45 to 54 years,Yes
+Starke, Indiana,B27003_048,1217,Female,45 to 54 years,No
+Starke, Indiana,B27003_050,394,Female,55 to 64 years,Yes
+Starke, Indiana,B27003_051,1365,Female,55 to 64 years,No
+Starke, Indiana,B27003_053,1184,Female,65 to 74 years,Yes
+Starke, Indiana,B27003_054,51,Female,65 to 74 years,No
+Starke, Indiana,B27003_056,843,Female,75 years and over,Yes
+Starke, Indiana,B27003_057,0,Female,75 years and over,No
+Steuben, Indiana,B27003_004,507,Male,Under 6 years,Yes
+Steuben, Indiana,B27003_005,598,Male,Under 6 years,No
+Steuben, Indiana,B27003_007,791,Male,6 to 18 years,Yes
+Steuben, Indiana,B27003_008,2070,Male,6 to 18 years,No
+Steuben, Indiana,B27003_010,108,Male,19 to 25 years,Yes
+Steuben, Indiana,B27003_011,1900,Male,19 to 25 years,No
+Steuben, Indiana,B27003_013,172,Male,26 to 34 years,Yes
+Steuben, Indiana,B27003_014,1420,Male,26 to 34 years,No
+Steuben, Indiana,B27003_016,185,Male,35 to 44 years,Yes
+Steuben, Indiana,B27003_017,1692,Male,35 to 44 years,No
+Steuben, Indiana,B27003_019,378,Male,45 to 54 years,Yes
+Steuben, Indiana,B27003_020,1963,Male,45 to 54 years,No
+Steuben, Indiana,B27003_022,348,Male,55 to 64 years,Yes
+Steuben, Indiana,B27003_023,2278,Male,55 to 64 years,No
+Steuben, Indiana,B27003_025,1880,Male,65 to 74 years,Yes
+Steuben, Indiana,B27003_026,49,Male,65 to 74 years,No
+Steuben, Indiana,B27003_028,1099,Male,75 years and over,Yes
+Steuben, Indiana,B27003_029,0,Male,75 years and over,No
+Steuben, Indiana,B27003_032,383,Female,Under 6 years,Yes
+Steuben, Indiana,B27003_033,678,Female,Under 6 years,No
+Steuben, Indiana,B27003_035,696,Female,6 to 18 years,Yes
+Steuben, Indiana,B27003_036,2108,Female,6 to 18 years,No
+Steuben, Indiana,B27003_038,323,Female,19 to 25 years,Yes
+Steuben, Indiana,B27003_039,951,Female,19 to 25 years,No
+Steuben, Indiana,B27003_041,363,Female,26 to 34 years,Yes
+Steuben, Indiana,B27003_042,1204,Female,26 to 34 years,No
+Steuben, Indiana,B27003_044,184,Female,35 to 44 years,Yes
+Steuben, Indiana,B27003_045,1626,Female,35 to 44 years,No
+Steuben, Indiana,B27003_047,293,Female,45 to 54 years,Yes
+Steuben, Indiana,B27003_048,2087,Female,45 to 54 years,No
+Steuben, Indiana,B27003_050,345,Female,55 to 64 years,Yes
+Steuben, Indiana,B27003_051,2227,Female,55 to 64 years,No
+Steuben, Indiana,B27003_053,1938,Female,65 to 74 years,Yes
+Steuben, Indiana,B27003_054,20,Female,65 to 74 years,No
+Steuben, Indiana,B27003_056,1350,Female,75 years and over,Yes
+Steuben, Indiana,B27003_057,8,Female,75 years and over,No
+Sullivan, Indiana,B27003_004,240,Male,Under 6 years,Yes
+Sullivan, Indiana,B27003_005,490,Male,Under 6 years,No
+Sullivan, Indiana,B27003_007,411,Male,6 to 18 years,Yes
+Sullivan, Indiana,B27003_008,1046,Male,6 to 18 years,No
+Sullivan, Indiana,B27003_010,76,Male,19 to 25 years,Yes
+Sullivan, Indiana,B27003_011,865,Male,19 to 25 years,No
+Sullivan, Indiana,B27003_013,208,Male,26 to 34 years,Yes
+Sullivan, Indiana,B27003_014,802,Male,26 to 34 years,No
+Sullivan, Indiana,B27003_016,193,Male,35 to 44 years,Yes
+Sullivan, Indiana,B27003_017,919,Male,35 to 44 years,No
+Sullivan, Indiana,B27003_019,494,Male,45 to 54 years,Yes
+Sullivan, Indiana,B27003_020,784,Male,45 to 54 years,No
+Sullivan, Indiana,B27003_022,320,Male,55 to 64 years,Yes
+Sullivan, Indiana,B27003_023,946,Male,55 to 64 years,No
+Sullivan, Indiana,B27003_025,853,Male,65 to 74 years,Yes
+Sullivan, Indiana,B27003_026,22,Male,65 to 74 years,No
+Sullivan, Indiana,B27003_028,495,Male,75 years and over,Yes
+Sullivan, Indiana,B27003_029,0,Male,75 years and over,No
+Sullivan, Indiana,B27003_032,380,Female,Under 6 years,Yes
+Sullivan, Indiana,B27003_033,196,Female,Under 6 years,No
+Sullivan, Indiana,B27003_035,590,Female,6 to 18 years,Yes
+Sullivan, Indiana,B27003_036,1017,Female,6 to 18 years,No
+Sullivan, Indiana,B27003_038,123,Female,19 to 25 years,Yes
+Sullivan, Indiana,B27003_039,532,Female,19 to 25 years,No
+Sullivan, Indiana,B27003_041,321,Female,26 to 34 years,Yes
+Sullivan, Indiana,B27003_042,705,Female,26 to 34 years,No
+Sullivan, Indiana,B27003_044,151,Female,35 to 44 years,Yes
+Sullivan, Indiana,B27003_045,1018,Female,35 to 44 years,No
+Sullivan, Indiana,B27003_047,311,Female,45 to 54 years,Yes
+Sullivan, Indiana,B27003_048,977,Female,45 to 54 years,No
+Sullivan, Indiana,B27003_050,316,Female,55 to 64 years,Yes
+Sullivan, Indiana,B27003_051,1040,Female,55 to 64 years,No
+Sullivan, Indiana,B27003_053,1038,Female,65 to 74 years,Yes
+Sullivan, Indiana,B27003_054,27,Female,65 to 74 years,No
+Sullivan, Indiana,B27003_056,784,Female,75 years and over,Yes
+Sullivan, Indiana,B27003_057,25,Female,75 years and over,No
+Switzerland, Indiana,B27003_004,280,Male,Under 6 years,Yes
+Switzerland, Indiana,B27003_005,196,Male,Under 6 years,No
+Switzerland, Indiana,B27003_007,468,Male,6 to 18 years,Yes
+Switzerland, Indiana,B27003_008,611,Male,6 to 18 years,No
+Switzerland, Indiana,B27003_010,13,Male,19 to 25 years,Yes
+Switzerland, Indiana,B27003_011,343,Male,19 to 25 years,No
+Switzerland, Indiana,B27003_013,108,Male,26 to 34 years,Yes
+Switzerland, Indiana,B27003_014,407,Male,26 to 34 years,No
+Switzerland, Indiana,B27003_016,112,Male,35 to 44 years,Yes
+Switzerland, Indiana,B27003_017,522,Male,35 to 44 years,No
+Switzerland, Indiana,B27003_019,125,Male,45 to 54 years,Yes
+Switzerland, Indiana,B27003_020,635,Male,45 to 54 years,No
+Switzerland, Indiana,B27003_022,164,Male,55 to 64 years,Yes
+Switzerland, Indiana,B27003_023,555,Male,55 to 64 years,No
+Switzerland, Indiana,B27003_025,501,Male,65 to 74 years,Yes
+Switzerland, Indiana,B27003_026,43,Male,65 to 74 years,No
+Switzerland, Indiana,B27003_028,336,Male,75 years and over,Yes
+Switzerland, Indiana,B27003_029,28,Male,75 years and over,No
+Switzerland, Indiana,B27003_032,186,Female,Under 6 years,Yes
+Switzerland, Indiana,B27003_033,171,Female,Under 6 years,No
+Switzerland, Indiana,B27003_035,323,Female,6 to 18 years,Yes
+Switzerland, Indiana,B27003_036,557,Female,6 to 18 years,No
+Switzerland, Indiana,B27003_038,134,Female,19 to 25 years,Yes
+Switzerland, Indiana,B27003_039,238,Female,19 to 25 years,No
+Switzerland, Indiana,B27003_041,181,Female,26 to 34 years,Yes
+Switzerland, Indiana,B27003_042,334,Female,26 to 34 years,No
+Switzerland, Indiana,B27003_044,119,Female,35 to 44 years,Yes
+Switzerland, Indiana,B27003_045,522,Female,35 to 44 years,No
+Switzerland, Indiana,B27003_047,126,Female,45 to 54 years,Yes
+Switzerland, Indiana,B27003_048,613,Female,45 to 54 years,No
+Switzerland, Indiana,B27003_050,156,Female,55 to 64 years,Yes
+Switzerland, Indiana,B27003_051,520,Female,55 to 64 years,No
+Switzerland, Indiana,B27003_053,508,Female,65 to 74 years,Yes
+Switzerland, Indiana,B27003_054,22,Female,65 to 74 years,No
+Switzerland, Indiana,B27003_056,336,Female,75 years and over,Yes
+Switzerland, Indiana,B27003_057,35,Female,75 years and over,No
+Tippecanoe, Indiana,B27003_004,2478,Male,Under 6 years,Yes
+Tippecanoe, Indiana,B27003_005,4117,Male,Under 6 years,No
+Tippecanoe, Indiana,B27003_007,4244,Male,6 to 18 years,Yes
+Tippecanoe, Indiana,B27003_008,11729,Male,6 to 18 years,No
+Tippecanoe, Indiana,B27003_010,1182,Male,19 to 25 years,Yes
+Tippecanoe, Indiana,B27003_011,23598,Male,19 to 25 years,No
+Tippecanoe, Indiana,B27003_013,1355,Male,26 to 34 years,Yes
+Tippecanoe, Indiana,B27003_014,10433,Male,26 to 34 years,No
+Tippecanoe, Indiana,B27003_016,1219,Male,35 to 44 years,Yes
+Tippecanoe, Indiana,B27003_017,8909,Male,35 to 44 years,No
+Tippecanoe, Indiana,B27003_019,912,Male,45 to 54 years,Yes
+Tippecanoe, Indiana,B27003_020,8317,Male,45 to 54 years,No
+Tippecanoe, Indiana,B27003_022,1295,Male,55 to 64 years,Yes
+Tippecanoe, Indiana,B27003_023,7367,Male,55 to 64 years,No
+Tippecanoe, Indiana,B27003_025,5009,Male,65 to 74 years,Yes
+Tippecanoe, Indiana,B27003_026,477,Male,65 to 74 years,No
+Tippecanoe, Indiana,B27003_028,3175,Male,75 years and over,Yes
+Tippecanoe, Indiana,B27003_029,17,Male,75 years and over,No
+Tippecanoe, Indiana,B27003_032,2353,Female,Under 6 years,Yes
+Tippecanoe, Indiana,B27003_033,4136,Female,Under 6 years,No
+Tippecanoe, Indiana,B27003_035,3797,Female,6 to 18 years,Yes
+Tippecanoe, Indiana,B27003_036,11320,Female,6 to 18 years,No
+Tippecanoe, Indiana,B27003_038,1372,Female,19 to 25 years,Yes
+Tippecanoe, Indiana,B27003_039,17855,Female,19 to 25 years,No
+Tippecanoe, Indiana,B27003_041,1619,Female,26 to 34 years,Yes
+Tippecanoe, Indiana,B27003_042,9487,Female,26 to 34 years,No
+Tippecanoe, Indiana,B27003_044,1515,Female,35 to 44 years,Yes
+Tippecanoe, Indiana,B27003_045,8365,Female,35 to 44 years,No
+Tippecanoe, Indiana,B27003_047,1221,Female,45 to 54 years,Yes
+Tippecanoe, Indiana,B27003_048,8146,Female,45 to 54 years,No
+Tippecanoe, Indiana,B27003_050,1502,Female,55 to 64 years,Yes
+Tippecanoe, Indiana,B27003_051,7950,Female,55 to 64 years,No
+Tippecanoe, Indiana,B27003_053,5981,Female,65 to 74 years,Yes
+Tippecanoe, Indiana,B27003_054,348,Female,65 to 74 years,No
+Tippecanoe, Indiana,B27003_056,4716,Female,75 years and over,Yes
+Tippecanoe, Indiana,B27003_057,24,Female,75 years and over,No
+Tipton, Indiana,B27003_004,104,Male,Under 6 years,Yes
+Tipton, Indiana,B27003_005,419,Male,Under 6 years,No
+Tipton, Indiana,B27003_007,275,Male,6 to 18 years,Yes
+Tipton, Indiana,B27003_008,895,Male,6 to 18 years,No
+Tipton, Indiana,B27003_010,58,Male,19 to 25 years,Yes
+Tipton, Indiana,B27003_011,537,Male,19 to 25 years,No
+Tipton, Indiana,B27003_013,134,Male,26 to 34 years,Yes
+Tipton, Indiana,B27003_014,625,Male,26 to 34 years,No
+Tipton, Indiana,B27003_016,169,Male,35 to 44 years,Yes
+Tipton, Indiana,B27003_017,712,Male,35 to 44 years,No
+Tipton, Indiana,B27003_019,107,Male,45 to 54 years,Yes
+Tipton, Indiana,B27003_020,1055,Male,45 to 54 years,No
+Tipton, Indiana,B27003_022,162,Male,55 to 64 years,Yes
+Tipton, Indiana,B27003_023,990,Male,55 to 64 years,No
+Tipton, Indiana,B27003_025,764,Male,65 to 74 years,Yes
+Tipton, Indiana,B27003_026,55,Male,65 to 74 years,No
+Tipton, Indiana,B27003_028,465,Male,75 years and over,Yes
+Tipton, Indiana,B27003_029,0,Male,75 years and over,No
+Tipton, Indiana,B27003_032,90,Female,Under 6 years,Yes
+Tipton, Indiana,B27003_033,324,Female,Under 6 years,No
+Tipton, Indiana,B27003_035,375,Female,6 to 18 years,Yes
+Tipton, Indiana,B27003_036,885,Female,6 to 18 years,No
+Tipton, Indiana,B27003_038,37,Female,19 to 25 years,Yes
+Tipton, Indiana,B27003_039,416,Female,19 to 25 years,No
+Tipton, Indiana,B27003_041,130,Female,26 to 34 years,Yes
+Tipton, Indiana,B27003_042,531,Female,26 to 34 years,No
+Tipton, Indiana,B27003_044,91,Female,35 to 44 years,Yes
+Tipton, Indiana,B27003_045,776,Female,35 to 44 years,No
+Tipton, Indiana,B27003_047,141,Female,45 to 54 years,Yes
+Tipton, Indiana,B27003_048,959,Female,45 to 54 years,No
+Tipton, Indiana,B27003_050,152,Female,55 to 64 years,Yes
+Tipton, Indiana,B27003_051,1006,Female,55 to 64 years,No
+Tipton, Indiana,B27003_053,877,Female,65 to 74 years,Yes
+Tipton, Indiana,B27003_054,27,Female,65 to 74 years,No
+Tipton, Indiana,B27003_056,667,Female,75 years and over,Yes
+Tipton, Indiana,B27003_057,12,Female,75 years and over,No
+Union, Indiana,B27003_004,54,Male,Under 6 years,Yes
+Union, Indiana,B27003_005,200,Male,Under 6 years,No
+Union, Indiana,B27003_007,131,Male,6 to 18 years,Yes
+Union, Indiana,B27003_008,501,Male,6 to 18 years,No
+Union, Indiana,B27003_010,67,Male,19 to 25 years,Yes
+Union, Indiana,B27003_011,227,Male,19 to 25 years,No
+Union, Indiana,B27003_013,10,Male,26 to 34 years,Yes
+Union, Indiana,B27003_014,289,Male,26 to 34 years,No
+Union, Indiana,B27003_016,50,Male,35 to 44 years,Yes
+Union, Indiana,B27003_017,340,Male,35 to 44 years,No
+Union, Indiana,B27003_019,72,Male,45 to 54 years,Yes
+Union, Indiana,B27003_020,473,Male,45 to 54 years,No
+Union, Indiana,B27003_022,87,Male,55 to 64 years,Yes
+Union, Indiana,B27003_023,417,Male,55 to 64 years,No
+Union, Indiana,B27003_025,359,Male,65 to 74 years,Yes
+Union, Indiana,B27003_026,3,Male,65 to 74 years,No
+Union, Indiana,B27003_028,202,Male,75 years and over,Yes
+Union, Indiana,B27003_029,0,Male,75 years and over,No
+Union, Indiana,B27003_032,108,Female,Under 6 years,Yes
+Union, Indiana,B27003_033,146,Female,Under 6 years,No
+Union, Indiana,B27003_035,151,Female,6 to 18 years,Yes
+Union, Indiana,B27003_036,426,Female,6 to 18 years,No
+Union, Indiana,B27003_038,39,Female,19 to 25 years,Yes
+Union, Indiana,B27003_039,186,Female,19 to 25 years,No
+Union, Indiana,B27003_041,22,Female,26 to 34 years,Yes
+Union, Indiana,B27003_042,293,Female,26 to 34 years,No
+Union, Indiana,B27003_044,62,Female,35 to 44 years,Yes
+Union, Indiana,B27003_045,354,Female,35 to 44 years,No
+Union, Indiana,B27003_047,112,Female,45 to 54 years,Yes
+Union, Indiana,B27003_048,500,Female,45 to 54 years,No
+Union, Indiana,B27003_050,59,Female,55 to 64 years,Yes
+Union, Indiana,B27003_051,451,Female,55 to 64 years,No
+Union, Indiana,B27003_053,406,Female,65 to 74 years,Yes
+Union, Indiana,B27003_054,11,Female,65 to 74 years,No
+Union, Indiana,B27003_056,288,Female,75 years and over,Yes
+Union, Indiana,B27003_057,0,Female,75 years and over,No
+Vanderburgh, Indiana,B27003_004,3027,Male,Under 6 years,Yes
+Vanderburgh, Indiana,B27003_005,3788,Male,Under 6 years,No
+Vanderburgh, Indiana,B27003_007,5335,Male,6 to 18 years,Yes
+Vanderburgh, Indiana,B27003_008,9136,Male,6 to 18 years,No
+Vanderburgh, Indiana,B27003_010,792,Male,19 to 25 years,Yes
+Vanderburgh, Indiana,B27003_011,8194,Male,19 to 25 years,No
+Vanderburgh, Indiana,B27003_013,1405,Male,26 to 34 years,Yes
+Vanderburgh, Indiana,B27003_014,9653,Male,26 to 34 years,No
+Vanderburgh, Indiana,B27003_016,1811,Male,35 to 44 years,Yes
+Vanderburgh, Indiana,B27003_017,8565,Male,35 to 44 years,No
+Vanderburgh, Indiana,B27003_019,2232,Male,45 to 54 years,Yes
+Vanderburgh, Indiana,B27003_020,8624,Male,45 to 54 years,No
+Vanderburgh, Indiana,B27003_022,2989,Male,55 to 64 years,Yes
+Vanderburgh, Indiana,B27003_023,9105,Male,55 to 64 years,No
+Vanderburgh, Indiana,B27003_025,7140,Male,65 to 74 years,Yes
+Vanderburgh, Indiana,B27003_026,141,Male,65 to 74 years,No
+Vanderburgh, Indiana,B27003_028,4681,Male,75 years and over,Yes
+Vanderburgh, Indiana,B27003_029,15,Male,75 years and over,No
+Vanderburgh, Indiana,B27003_032,3040,Female,Under 6 years,Yes
+Vanderburgh, Indiana,B27003_033,3504,Female,Under 6 years,No
+Vanderburgh, Indiana,B27003_035,4706,Female,6 to 18 years,Yes
+Vanderburgh, Indiana,B27003_036,9272,Female,6 to 18 years,No
+Vanderburgh, Indiana,B27003_038,1386,Female,19 to 25 years,Yes
+Vanderburgh, Indiana,B27003_039,8269,Female,19 to 25 years,No
+Vanderburgh, Indiana,B27003_041,2565,Female,26 to 34 years,Yes
+Vanderburgh, Indiana,B27003_042,9082,Female,26 to 34 years,No
+Vanderburgh, Indiana,B27003_044,1993,Female,35 to 44 years,Yes
+Vanderburgh, Indiana,B27003_045,8570,Female,35 to 44 years,No
+Vanderburgh, Indiana,B27003_047,2281,Female,45 to 54 years,Yes
+Vanderburgh, Indiana,B27003_048,9080,Female,45 to 54 years,No
+Vanderburgh, Indiana,B27003_050,2349,Female,55 to 64 years,Yes
+Vanderburgh, Indiana,B27003_051,10415,Female,55 to 64 years,No
+Vanderburgh, Indiana,B27003_053,8240,Female,65 to 74 years,Yes
+Vanderburgh, Indiana,B27003_054,283,Female,65 to 74 years,No
+Vanderburgh, Indiana,B27003_056,7157,Female,75 years and over,Yes
+Vanderburgh, Indiana,B27003_057,160,Female,75 years and over,No
+Vermillion, Indiana,B27003_004,371,Male,Under 6 years,Yes
+Vermillion, Indiana,B27003_005,152,Male,Under 6 years,No
+Vermillion, Indiana,B27003_007,455,Male,6 to 18 years,Yes
+Vermillion, Indiana,B27003_008,1012,Male,6 to 18 years,No
+Vermillion, Indiana,B27003_010,69,Male,19 to 25 years,Yes
+Vermillion, Indiana,B27003_011,438,Male,19 to 25 years,No
+Vermillion, Indiana,B27003_013,149,Male,26 to 34 years,Yes
+Vermillion, Indiana,B27003_014,643,Male,26 to 34 years,No
+Vermillion, Indiana,B27003_016,182,Male,35 to 44 years,Yes
+Vermillion, Indiana,B27003_017,799,Male,35 to 44 years,No
+Vermillion, Indiana,B27003_019,230,Male,45 to 54 years,Yes
+Vermillion, Indiana,B27003_020,893,Male,45 to 54 years,No
+Vermillion, Indiana,B27003_022,367,Male,55 to 64 years,Yes
+Vermillion, Indiana,B27003_023,695,Male,55 to 64 years,No
+Vermillion, Indiana,B27003_025,843,Male,65 to 74 years,Yes
+Vermillion, Indiana,B27003_026,10,Male,65 to 74 years,No
+Vermillion, Indiana,B27003_028,441,Male,75 years and over,Yes
+Vermillion, Indiana,B27003_029,0,Male,75 years and over,No
+Vermillion, Indiana,B27003_032,225,Female,Under 6 years,Yes
+Vermillion, Indiana,B27003_033,232,Female,Under 6 years,No
+Vermillion, Indiana,B27003_035,451,Female,6 to 18 years,Yes
+Vermillion, Indiana,B27003_036,708,Female,6 to 18 years,No
+Vermillion, Indiana,B27003_038,153,Female,19 to 25 years,Yes
+Vermillion, Indiana,B27003_039,428,Female,19 to 25 years,No
+Vermillion, Indiana,B27003_041,266,Female,26 to 34 years,Yes
+Vermillion, Indiana,B27003_042,439,Female,26 to 34 years,No
+Vermillion, Indiana,B27003_044,156,Female,35 to 44 years,Yes
+Vermillion, Indiana,B27003_045,804,Female,35 to 44 years,No
+Vermillion, Indiana,B27003_047,234,Female,45 to 54 years,Yes
+Vermillion, Indiana,B27003_048,822,Female,45 to 54 years,No
+Vermillion, Indiana,B27003_050,285,Female,55 to 64 years,Yes
+Vermillion, Indiana,B27003_051,886,Female,55 to 64 years,No
+Vermillion, Indiana,B27003_053,835,Female,65 to 74 years,Yes
+Vermillion, Indiana,B27003_054,8,Female,65 to 74 years,No
+Vermillion, Indiana,B27003_056,673,Female,75 years and over,Yes
+Vermillion, Indiana,B27003_057,0,Female,75 years and over,No
+Vigo, Indiana,B27003_004,2193,Male,Under 6 years,Yes
+Vigo, Indiana,B27003_005,1825,Male,Under 6 years,No
+Vigo, Indiana,B27003_007,3537,Male,6 to 18 years,Yes
+Vigo, Indiana,B27003_008,5007,Male,6 to 18 years,No
+Vigo, Indiana,B27003_010,784,Male,19 to 25 years,Yes
+Vigo, Indiana,B27003_011,7130,Male,19 to 25 years,No
+Vigo, Indiana,B27003_013,836,Male,26 to 34 years,Yes
+Vigo, Indiana,B27003_014,5087,Male,26 to 34 years,No
+Vigo, Indiana,B27003_016,1247,Male,35 to 44 years,Yes
+Vigo, Indiana,B27003_017,4647,Male,35 to 44 years,No
+Vigo, Indiana,B27003_019,1287,Male,45 to 54 years,Yes
+Vigo, Indiana,B27003_020,5011,Male,45 to 54 years,No
+Vigo, Indiana,B27003_022,1855,Male,55 to 64 years,Yes
+Vigo, Indiana,B27003_023,4182,Male,55 to 64 years,No
+Vigo, Indiana,B27003_025,4200,Male,65 to 74 years,Yes
+Vigo, Indiana,B27003_026,94,Male,65 to 74 years,No
+Vigo, Indiana,B27003_028,2309,Male,75 years and over,Yes
+Vigo, Indiana,B27003_029,0,Male,75 years and over,No
+Vigo, Indiana,B27003_032,1774,Female,Under 6 years,Yes
+Vigo, Indiana,B27003_033,1620,Female,Under 6 years,No
+Vigo, Indiana,B27003_035,3141,Female,6 to 18 years,Yes
+Vigo, Indiana,B27003_036,4883,Female,6 to 18 years,No
+Vigo, Indiana,B27003_038,1604,Female,19 to 25 years,Yes
+Vigo, Indiana,B27003_039,6261,Female,19 to 25 years,No
+Vigo, Indiana,B27003_041,1382,Female,26 to 34 years,Yes
+Vigo, Indiana,B27003_042,3802,Female,26 to 34 years,No
+Vigo, Indiana,B27003_044,1254,Female,35 to 44 years,Yes
+Vigo, Indiana,B27003_045,4588,Female,35 to 44 years,No
+Vigo, Indiana,B27003_047,1129,Female,45 to 54 years,Yes
+Vigo, Indiana,B27003_048,5045,Female,45 to 54 years,No
+Vigo, Indiana,B27003_050,1865,Female,55 to 64 years,Yes
+Vigo, Indiana,B27003_051,4871,Female,55 to 64 years,No
+Vigo, Indiana,B27003_053,4876,Female,65 to 74 years,Yes
+Vigo, Indiana,B27003_054,90,Female,65 to 74 years,No
+Vigo, Indiana,B27003_056,4237,Female,75 years and over,Yes
+Vigo, Indiana,B27003_057,21,Female,75 years and over,No
+Wabash, Indiana,B27003_004,450,Male,Under 6 years,Yes
+Wabash, Indiana,B27003_005,507,Male,Under 6 years,No
+Wabash, Indiana,B27003_007,941,Male,6 to 18 years,Yes
+Wabash, Indiana,B27003_008,1586,Male,6 to 18 years,No
+Wabash, Indiana,B27003_010,170,Male,19 to 25 years,Yes
+Wabash, Indiana,B27003_011,1335,Male,19 to 25 years,No
+Wabash, Indiana,B27003_013,140,Male,26 to 34 years,Yes
+Wabash, Indiana,B27003_014,1337,Male,26 to 34 years,No
+Wabash, Indiana,B27003_016,171,Male,35 to 44 years,Yes
+Wabash, Indiana,B27003_017,1496,Male,35 to 44 years,No
+Wabash, Indiana,B27003_019,217,Male,45 to 54 years,Yes
+Wabash, Indiana,B27003_020,1762,Male,45 to 54 years,No
+Wabash, Indiana,B27003_022,296,Male,55 to 64 years,Yes
+Wabash, Indiana,B27003_023,1926,Male,55 to 64 years,No
+Wabash, Indiana,B27003_025,1519,Male,65 to 74 years,Yes
+Wabash, Indiana,B27003_026,39,Male,65 to 74 years,No
+Wabash, Indiana,B27003_028,1043,Male,75 years and over,Yes
+Wabash, Indiana,B27003_029,0,Male,75 years and over,No
+Wabash, Indiana,B27003_032,432,Female,Under 6 years,Yes
+Wabash, Indiana,B27003_033,601,Female,Under 6 years,No
+Wabash, Indiana,B27003_035,928,Female,6 to 18 years,Yes
+Wabash, Indiana,B27003_036,1570,Female,6 to 18 years,No
+Wabash, Indiana,B27003_038,158,Female,19 to 25 years,Yes
+Wabash, Indiana,B27003_039,1229,Female,19 to 25 years,No
+Wabash, Indiana,B27003_041,291,Female,26 to 34 years,Yes
+Wabash, Indiana,B27003_042,1213,Female,26 to 34 years,No
+Wabash, Indiana,B27003_044,331,Female,35 to 44 years,Yes
+Wabash, Indiana,B27003_045,1441,Female,35 to 44 years,No
+Wabash, Indiana,B27003_047,263,Female,45 to 54 years,Yes
+Wabash, Indiana,B27003_048,1729,Female,45 to 54 years,No
+Wabash, Indiana,B27003_050,391,Female,55 to 64 years,Yes
+Wabash, Indiana,B27003_051,1813,Female,55 to 64 years,No
+Wabash, Indiana,B27003_053,1668,Female,65 to 74 years,Yes
+Wabash, Indiana,B27003_054,8,Female,65 to 74 years,No
+Wabash, Indiana,B27003_056,1592,Female,75 years and over,Yes
+Wabash, Indiana,B27003_057,39,Female,75 years and over,No
+Warren, Indiana,B27003_004,115,Male,Under 6 years,Yes
+Warren, Indiana,B27003_005,150,Male,Under 6 years,No
+Warren, Indiana,B27003_007,198,Male,6 to 18 years,Yes
+Warren, Indiana,B27003_008,521,Male,6 to 18 years,No
+Warren, Indiana,B27003_010,35,Male,19 to 25 years,Yes
+Warren, Indiana,B27003_011,204,Male,19 to 25 years,No
+Warren, Indiana,B27003_013,62,Male,26 to 34 years,Yes
+Warren, Indiana,B27003_014,312,Male,26 to 34 years,No
+Warren, Indiana,B27003_016,57,Male,35 to 44 years,Yes
+Warren, Indiana,B27003_017,417,Male,35 to 44 years,No
+Warren, Indiana,B27003_019,60,Male,45 to 54 years,Yes
+Warren, Indiana,B27003_020,594,Male,45 to 54 years,No
+Warren, Indiana,B27003_022,131,Male,55 to 64 years,Yes
+Warren, Indiana,B27003_023,495,Male,55 to 64 years,No
+Warren, Indiana,B27003_025,427,Male,65 to 74 years,Yes
+Warren, Indiana,B27003_026,19,Male,65 to 74 years,No
+Warren, Indiana,B27003_028,267,Male,75 years and over,Yes
+Warren, Indiana,B27003_029,4,Male,75 years and over,No
+Warren, Indiana,B27003_032,82,Female,Under 6 years,Yes
+Warren, Indiana,B27003_033,162,Female,Under 6 years,No
+Warren, Indiana,B27003_035,191,Female,6 to 18 years,Yes
+Warren, Indiana,B27003_036,515,Female,6 to 18 years,No
+Warren, Indiana,B27003_038,43,Female,19 to 25 years,Yes
+Warren, Indiana,B27003_039,237,Female,19 to 25 years,No
+Warren, Indiana,B27003_041,55,Female,26 to 34 years,Yes
+Warren, Indiana,B27003_042,324,Female,26 to 34 years,No
+Warren, Indiana,B27003_044,69,Female,35 to 44 years,Yes
+Warren, Indiana,B27003_045,393,Female,35 to 44 years,No
+Warren, Indiana,B27003_047,77,Female,45 to 54 years,Yes
+Warren, Indiana,B27003_048,498,Female,45 to 54 years,No
+Warren, Indiana,B27003_050,77,Female,55 to 64 years,Yes
+Warren, Indiana,B27003_051,512,Female,55 to 64 years,No
+Warren, Indiana,B27003_053,457,Female,65 to 74 years,Yes
+Warren, Indiana,B27003_054,8,Female,65 to 74 years,No
+Warren, Indiana,B27003_056,388,Female,75 years and over,Yes
+Warren, Indiana,B27003_057,5,Female,75 years and over,No
+Warrick, Indiana,B27003_004,405,Male,Under 6 years,Yes
+Warrick, Indiana,B27003_005,1645,Male,Under 6 years,No
+Warrick, Indiana,B27003_007,834,Male,6 to 18 years,Yes
+Warrick, Indiana,B27003_008,5065,Male,6 to 18 years,No
+Warrick, Indiana,B27003_010,181,Male,19 to 25 years,Yes
+Warrick, Indiana,B27003_011,1907,Male,19 to 25 years,No
+Warrick, Indiana,B27003_013,243,Male,26 to 34 years,Yes
+Warrick, Indiana,B27003_014,2876,Male,26 to 34 years,No
+Warrick, Indiana,B27003_016,292,Male,35 to 44 years,Yes
+Warrick, Indiana,B27003_017,3627,Male,35 to 44 years,No
+Warrick, Indiana,B27003_019,315,Male,45 to 54 years,Yes
+Warrick, Indiana,B27003_020,4030,Male,45 to 54 years,No
+Warrick, Indiana,B27003_022,692,Male,55 to 64 years,Yes
+Warrick, Indiana,B27003_023,3464,Male,55 to 64 years,No
+Warrick, Indiana,B27003_025,2777,Male,65 to 74 years,Yes
+Warrick, Indiana,B27003_026,144,Male,65 to 74 years,No
+Warrick, Indiana,B27003_028,1554,Male,75 years and over,Yes
+Warrick, Indiana,B27003_029,20,Male,75 years and over,No
+Warrick, Indiana,B27003_032,416,Female,Under 6 years,Yes
+Warrick, Indiana,B27003_033,1766,Female,Under 6 years,No
+Warrick, Indiana,B27003_035,1087,Female,6 to 18 years,Yes
+Warrick, Indiana,B27003_036,4566,Female,6 to 18 years,No
+Warrick, Indiana,B27003_038,459,Female,19 to 25 years,Yes
+Warrick, Indiana,B27003_039,1638,Female,19 to 25 years,No
+Warrick, Indiana,B27003_041,309,Female,26 to 34 years,Yes
+Warrick, Indiana,B27003_042,2784,Female,26 to 34 years,No
+Warrick, Indiana,B27003_044,430,Female,35 to 44 years,Yes
+Warrick, Indiana,B27003_045,3671,Female,35 to 44 years,No
+Warrick, Indiana,B27003_047,382,Female,45 to 54 years,Yes
+Warrick, Indiana,B27003_048,3941,Female,45 to 54 years,No
+Warrick, Indiana,B27003_050,739,Female,55 to 64 years,Yes
+Warrick, Indiana,B27003_051,3723,Female,55 to 64 years,No
+Warrick, Indiana,B27003_053,3029,Female,65 to 74 years,Yes
+Warrick, Indiana,B27003_054,114,Female,65 to 74 years,No
+Warrick, Indiana,B27003_056,2020,Female,75 years and over,Yes
+Warrick, Indiana,B27003_057,72,Female,75 years and over,No
+Washington, Indiana,B27003_004,457,Male,Under 6 years,Yes
+Washington, Indiana,B27003_005,477,Male,Under 6 years,No
+Washington, Indiana,B27003_007,1063,Male,6 to 18 years,Yes
+Washington, Indiana,B27003_008,1449,Male,6 to 18 years,No
+Washington, Indiana,B27003_010,234,Male,19 to 25 years,Yes
+Washington, Indiana,B27003_011,844,Male,19 to 25 years,No
+Washington, Indiana,B27003_013,332,Male,26 to 34 years,Yes
+Washington, Indiana,B27003_014,1078,Male,26 to 34 years,No
+Washington, Indiana,B27003_016,213,Male,35 to 44 years,Yes
+Washington, Indiana,B27003_017,1535,Male,35 to 44 years,No
+Washington, Indiana,B27003_019,488,Male,45 to 54 years,Yes
+Washington, Indiana,B27003_020,1514,Male,45 to 54 years,No
+Washington, Indiana,B27003_022,769,Male,55 to 64 years,Yes
+Washington, Indiana,B27003_023,1268,Male,55 to 64 years,No
+Washington, Indiana,B27003_025,1234,Male,65 to 74 years,Yes
+Washington, Indiana,B27003_026,40,Male,65 to 74 years,No
+Washington, Indiana,B27003_028,751,Male,75 years and over,Yes
+Washington, Indiana,B27003_029,0,Male,75 years and over,No
+Washington, Indiana,B27003_032,377,Female,Under 6 years,Yes
+Washington, Indiana,B27003_033,585,Female,Under 6 years,No
+Washington, Indiana,B27003_035,816,Female,6 to 18 years,Yes
+Washington, Indiana,B27003_036,1591,Female,6 to 18 years,No
+Washington, Indiana,B27003_038,168,Female,19 to 25 years,Yes
+Washington, Indiana,B27003_039,888,Female,19 to 25 years,No
+Washington, Indiana,B27003_041,359,Female,26 to 34 years,Yes
+Washington, Indiana,B27003_042,957,Female,26 to 34 years,No
+Washington, Indiana,B27003_044,432,Female,35 to 44 years,Yes
+Washington, Indiana,B27003_045,1235,Female,35 to 44 years,No
+Washington, Indiana,B27003_047,436,Female,45 to 54 years,Yes
+Washington, Indiana,B27003_048,1547,Female,45 to 54 years,No
+Washington, Indiana,B27003_050,519,Female,55 to 64 years,Yes
+Washington, Indiana,B27003_051,1496,Female,55 to 64 years,No
+Washington, Indiana,B27003_053,1396,Female,65 to 74 years,Yes
+Washington, Indiana,B27003_054,44,Female,65 to 74 years,No
+Washington, Indiana,B27003_056,962,Female,75 years and over,Yes
+Washington, Indiana,B27003_057,0,Female,75 years and over,No
+Wayne, Indiana,B27003_004,1170,Male,Under 6 years,Yes
+Wayne, Indiana,B27003_005,1113,Male,Under 6 years,No
+Wayne, Indiana,B27003_007,2390,Male,6 to 18 years,Yes
+Wayne, Indiana,B27003_008,3276,Male,6 to 18 years,No
+Wayne, Indiana,B27003_010,452,Male,19 to 25 years,Yes
+Wayne, Indiana,B27003_011,2601,Male,19 to 25 years,No
+Wayne, Indiana,B27003_013,593,Male,26 to 34 years,Yes
+Wayne, Indiana,B27003_014,2672,Male,26 to 34 years,No
+Wayne, Indiana,B27003_016,614,Male,35 to 44 years,Yes
+Wayne, Indiana,B27003_017,3172,Male,35 to 44 years,No
+Wayne, Indiana,B27003_019,852,Male,45 to 54 years,Yes
+Wayne, Indiana,B27003_020,3336,Male,45 to 54 years,No
+Wayne, Indiana,B27003_022,1309,Male,55 to 64 years,Yes
+Wayne, Indiana,B27003_023,3156,Male,55 to 64 years,No
+Wayne, Indiana,B27003_025,2912,Male,65 to 74 years,Yes
+Wayne, Indiana,B27003_026,75,Male,65 to 74 years,No
+Wayne, Indiana,B27003_028,1860,Male,75 years and over,Yes
+Wayne, Indiana,B27003_029,0,Male,75 years and over,No
+Wayne, Indiana,B27003_032,1051,Female,Under 6 years,Yes
+Wayne, Indiana,B27003_033,1194,Female,Under 6 years,No
+Wayne, Indiana,B27003_035,2364,Female,6 to 18 years,Yes
+Wayne, Indiana,B27003_036,2934,Female,6 to 18 years,No
+Wayne, Indiana,B27003_038,651,Female,19 to 25 years,Yes
+Wayne, Indiana,B27003_039,2342,Female,19 to 25 years,No
+Wayne, Indiana,B27003_041,894,Female,26 to 34 years,Yes
+Wayne, Indiana,B27003_042,2469,Female,26 to 34 years,No
+Wayne, Indiana,B27003_044,727,Female,35 to 44 years,Yes
+Wayne, Indiana,B27003_045,3101,Female,35 to 44 years,No
+Wayne, Indiana,B27003_047,897,Female,45 to 54 years,Yes
+Wayne, Indiana,B27003_048,3621,Female,45 to 54 years,No
+Wayne, Indiana,B27003_050,1072,Female,55 to 64 years,Yes
+Wayne, Indiana,B27003_051,3581,Female,55 to 64 years,No
+Wayne, Indiana,B27003_053,3601,Female,65 to 74 years,Yes
+Wayne, Indiana,B27003_054,44,Female,65 to 74 years,No
+Wayne, Indiana,B27003_056,3184,Female,75 years and over,Yes
+Wayne, Indiana,B27003_057,39,Female,75 years and over,No
+Wells, Indiana,B27003_004,430,Male,Under 6 years,Yes
+Wells, Indiana,B27003_005,728,Male,Under 6 years,No
+Wells, Indiana,B27003_007,877,Male,6 to 18 years,Yes
+Wells, Indiana,B27003_008,1812,Male,6 to 18 years,No
+Wells, Indiana,B27003_010,70,Male,19 to 25 years,Yes
+Wells, Indiana,B27003_011,941,Male,19 to 25 years,No
+Wells, Indiana,B27003_013,225,Male,26 to 34 years,Yes
+Wells, Indiana,B27003_014,1200,Male,26 to 34 years,No
+Wells, Indiana,B27003_016,148,Male,35 to 44 years,Yes
+Wells, Indiana,B27003_017,1435,Male,35 to 44 years,No
+Wells, Indiana,B27003_019,157,Male,45 to 54 years,Yes
+Wells, Indiana,B27003_020,1546,Male,45 to 54 years,No
+Wells, Indiana,B27003_022,252,Male,55 to 64 years,Yes
+Wells, Indiana,B27003_023,1669,Male,55 to 64 years,No
+Wells, Indiana,B27003_025,1247,Male,65 to 74 years,Yes
+Wells, Indiana,B27003_026,10,Male,65 to 74 years,No
+Wells, Indiana,B27003_028,762,Male,75 years and over,Yes
+Wells, Indiana,B27003_029,0,Male,75 years and over,No
+Wells, Indiana,B27003_032,361,Female,Under 6 years,Yes
+Wells, Indiana,B27003_033,633,Female,Under 6 years,No
+Wells, Indiana,B27003_035,702,Female,6 to 18 years,Yes
+Wells, Indiana,B27003_036,1818,Female,6 to 18 years,No
+Wells, Indiana,B27003_038,132,Female,19 to 25 years,Yes
+Wells, Indiana,B27003_039,819,Female,19 to 25 years,No
+Wells, Indiana,B27003_041,357,Female,26 to 34 years,Yes
+Wells, Indiana,B27003_042,1098,Female,26 to 34 years,No
+Wells, Indiana,B27003_044,221,Female,35 to 44 years,Yes
+Wells, Indiana,B27003_045,1373,Female,35 to 44 years,No
+Wells, Indiana,B27003_047,228,Female,45 to 54 years,Yes
+Wells, Indiana,B27003_048,1534,Female,45 to 54 years,No
+Wells, Indiana,B27003_050,374,Female,55 to 64 years,Yes
+Wells, Indiana,B27003_051,1654,Female,55 to 64 years,No
+Wells, Indiana,B27003_053,1409,Female,65 to 74 years,Yes
+Wells, Indiana,B27003_054,38,Female,65 to 74 years,No
+Wells, Indiana,B27003_056,1083,Female,75 years and over,Yes
+Wells, Indiana,B27003_057,13,Female,75 years and over,No
+White, Indiana,B27003_004,352,Male,Under 6 years,Yes
+White, Indiana,B27003_005,562,Male,Under 6 years,No
+White, Indiana,B27003_007,765,Male,6 to 18 years,Yes
+White, Indiana,B27003_008,1426,Male,6 to 18 years,No
+White, Indiana,B27003_010,84,Male,19 to 25 years,Yes
+White, Indiana,B27003_011,846,Male,19 to 25 years,No
+White, Indiana,B27003_013,105,Male,26 to 34 years,Yes
+White, Indiana,B27003_014,932,Male,26 to 34 years,No
+White, Indiana,B27003_016,153,Male,35 to 44 years,Yes
+White, Indiana,B27003_017,1272,Male,35 to 44 years,No
+White, Indiana,B27003_019,179,Male,45 to 54 years,Yes
+White, Indiana,B27003_020,1375,Male,45 to 54 years,No
+White, Indiana,B27003_022,365,Male,55 to 64 years,Yes
+White, Indiana,B27003_023,1423,Male,55 to 64 years,No
+White, Indiana,B27003_025,1212,Male,65 to 74 years,Yes
+White, Indiana,B27003_026,86,Male,65 to 74 years,No
+White, Indiana,B27003_028,827,Male,75 years and over,Yes
+White, Indiana,B27003_029,0,Male,75 years and over,No
+White, Indiana,B27003_032,393,Female,Under 6 years,Yes
+White, Indiana,B27003_033,540,Female,Under 6 years,No
+White, Indiana,B27003_035,459,Female,6 to 18 years,Yes
+White, Indiana,B27003_036,1529,Female,6 to 18 years,No
+White, Indiana,B27003_038,175,Female,19 to 25 years,Yes
+White, Indiana,B27003_039,657,Female,19 to 25 years,No
+White, Indiana,B27003_041,228,Female,26 to 34 years,Yes
+White, Indiana,B27003_042,862,Female,26 to 34 years,No
+White, Indiana,B27003_044,124,Female,35 to 44 years,Yes
+White, Indiana,B27003_045,1213,Female,35 to 44 years,No
+White, Indiana,B27003_047,280,Female,45 to 54 years,Yes
+White, Indiana,B27003_048,1274,Female,45 to 54 years,No
+White, Indiana,B27003_050,349,Female,55 to 64 years,Yes
+White, Indiana,B27003_051,1470,Female,55 to 64 years,No
+White, Indiana,B27003_053,1331,Female,65 to 74 years,Yes
+White, Indiana,B27003_054,4,Female,65 to 74 years,No
+White, Indiana,B27003_056,1062,Female,75 years and over,Yes
+White, Indiana,B27003_057,0,Female,75 years and over,No
+Whitley, Indiana,B27003_004,329,Male,Under 6 years,Yes
+Whitley, Indiana,B27003_005,839,Male,Under 6 years,No
+Whitley, Indiana,B27003_007,813,Male,6 to 18 years,Yes
+Whitley, Indiana,B27003_008,2243,Male,6 to 18 years,No
+Whitley, Indiana,B27003_010,88,Male,19 to 25 years,Yes
+Whitley, Indiana,B27003_011,1210,Male,19 to 25 years,No
+Whitley, Indiana,B27003_013,112,Male,26 to 34 years,Yes
+Whitley, Indiana,B27003_014,1683,Male,26 to 34 years,No
+Whitley, Indiana,B27003_016,127,Male,35 to 44 years,Yes
+Whitley, Indiana,B27003_017,1855,Male,35 to 44 years,No
+Whitley, Indiana,B27003_019,155,Male,45 to 54 years,Yes
+Whitley, Indiana,B27003_020,2057,Male,45 to 54 years,No
+Whitley, Indiana,B27003_022,370,Male,55 to 64 years,Yes
+Whitley, Indiana,B27003_023,2119,Male,55 to 64 years,No
+Whitley, Indiana,B27003_025,1588,Male,65 to 74 years,Yes
+Whitley, Indiana,B27003_026,27,Male,65 to 74 years,No
+Whitley, Indiana,B27003_028,880,Male,75 years and over,Yes
+Whitley, Indiana,B27003_029,4,Male,75 years and over,No
+Whitley, Indiana,B27003_032,270,Female,Under 6 years,Yes
+Whitley, Indiana,B27003_033,977,Female,Under 6 years,No
+Whitley, Indiana,B27003_035,602,Female,6 to 18 years,Yes
+Whitley, Indiana,B27003_036,2056,Female,6 to 18 years,No
+Whitley, Indiana,B27003_038,97,Female,19 to 25 years,Yes
+Whitley, Indiana,B27003_039,1104,Female,19 to 25 years,No
+Whitley, Indiana,B27003_041,283,Female,26 to 34 years,Yes
+Whitley, Indiana,B27003_042,1425,Female,26 to 34 years,No
+Whitley, Indiana,B27003_044,244,Female,35 to 44 years,Yes
+Whitley, Indiana,B27003_045,1824,Female,35 to 44 years,No
+Whitley, Indiana,B27003_047,207,Female,45 to 54 years,Yes
+Whitley, Indiana,B27003_048,2072,Female,45 to 54 years,No
+Whitley, Indiana,B27003_050,368,Female,55 to 64 years,Yes
+Whitley, Indiana,B27003_051,2142,Female,55 to 64 years,No
+Whitley, Indiana,B27003_053,1691,Female,65 to 74 years,Yes
+Whitley, Indiana,B27003_054,54,Female,65 to 74 years,No
+Whitley, Indiana,B27003_056,1333,Female,75 years and over,Yes
+Whitley, Indiana,B27003_057,21,Female,75 years and over,No
