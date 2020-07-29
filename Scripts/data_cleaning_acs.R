@@ -11,15 +11,24 @@ census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 # Do not need to run next line all of the time. Since it's
 # cached, it should already be loaded whenever you start R.
 # Just run once per computer.
-variables_2018 <- load_variables(2018, "acs5", cache = TRUE)
+#variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
+#  rename(variable = name)
+
 
 ######################################
 # Retrieve Income data
 ######################################
 
 IN_income <- get_data("IN", "B06010") %>% 
-  filter(variable %in% c(str_c("B06010_00", 1:9),
+  filter(variable %in% c("B06010_002",
+                         str_c("B06010_00", 4:9),
                          str_c("B06010_0", 10:11)))
+
+IN_income <- left_join(IN_income, variables_2018[,1:2], by = "variable")
+
+IN_income$label <- str_replace(IN_income$label, ".*!!(.*)", "\\1")
+
+
 
 
 ######################################
