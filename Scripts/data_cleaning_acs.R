@@ -154,6 +154,21 @@ IN_employ <- separate(IN_employ,
 
 IN_ethnic <- get_data("IN", "B03002")
 
+IN_ethnic <- left_join(IN_ethnic, variables_2018[, 1:2], by = "variable")
+
+IN_ethnic <- IN_ethnic %>% filter(str_count(label, "!!") == 3)
+
+IN_ethnic$label <- str_remove(IN_ethnic$label, "Estimate!!Total!!") 
+
+IN_ethnic <- separate(IN_ethnic,
+                      label,
+                      sep = "!!",
+                      into = c("Hispanic_Latino", "Race"))
+
+IN_ethnic$Hispanic_Latino <- if_else(IN_ethnic$Hispanic_Latino == "Hispanic or Latino", "Yes", "No")
+
+IN_ethnic$Hispanic_Latino <- as_factor(IN_ethnic$Hispanic_Latino)
+IN_ethnic$Race <- as_factor(IN_ethnic$Race)
 
 ######################################
 # Retrieve Gini Index data (income inequality)
