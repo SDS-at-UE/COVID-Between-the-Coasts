@@ -26,7 +26,7 @@ IN_income <- get_data("IN", "B06010") %>%
 
 IN_income <- left_join(IN_income, variables_2018[,1:2], by = "variable")
 
-IN_income$label <- str_replace(IN_income$label, ".*!!(.*)", "\\1")
+IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
 
 
 
