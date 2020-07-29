@@ -42,10 +42,10 @@ IN_sex_age <- IN_sex_age %>% filter(str_count(label, "!!") >= 4)
   
 IN_sex_age$label <- str_remove(IN_sex_age$label, "Estimate!!Total!!")
 
-IN_sex_age <- separate(IN_sex_age, 
-                            label, 
-                            sep = "!!", 
-                            into = c("Sex", "Age", "HI_Coverage"))
+IN_sex_age <- separate(IN_sex_age,
+                       label,
+                       sep = "!!",
+                       into = c("Sex", "Age", "HI_Coverage"))
 
 IN_sex_age$HI_Coverage <- if_else(IN_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
 
@@ -70,14 +70,14 @@ IN_health_public <- IN_health_public %>% filter(str_count(label, "!!") >= 4)
 IN_health_private$label <- str_remove(IN_health_private$label, "Estimate!!Total!!")
 IN_health_public$label <- str_remove(IN_health_public$label, "Estimate!!Total!!")
 
-IN_health_private <- separate(IN_health_private, 
-                       label, 
-                       sep = "!!", 
-                       into = c("Sex", "Age", "Private_HI"))
-IN_health_public <- separate(IN_health_public, 
-                              label, 
-                              sep = "!!", 
-                              into = c("Sex", "Age", "Public_HI"))
+IN_health_private <- separate(IN_health_private,
+                              label,
+                              sep = "!!",
+                              into = c("Sex", "Age", "Private_HI"))
+IN_health_public <- separate(IN_health_public,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Public_HI"))
 
 IN_health_private$Private_HI <- if_else(IN_health_private$Private_HI == "No private health insurance", "No", "Yes")
 IN_health_public$Public_HI <- if_else(IN_health_public$Public_HI == "No public coverage", "No", "Yes")
@@ -108,6 +108,21 @@ IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
 ######################################
 
 IN_edu <- get_data("IN", "B15001")
+
+IN_edu <- left_join(IN_edu, variables_2018[,1:2], by = "variable")
+
+IN_edu <- IN_edu %>% filter(str_count(label, "!!") == 4)
+
+IN_edu$label <- str_remove(IN_edu$label, "Estimate!!Total!!")
+
+IN_edu <- separate(IN_edu,
+                   label,
+                   sep = "!!",
+                   into = c("Sex", "Age", "Education"))
+
+IN_edu$Sex <- as_factor(IN_edu$Sex)
+IN_edu$Age <- as_factor(IN_edu$Age)
+IN_edu$Education <- as_factor(IN_edu$Education)  
 
 
 ######################################
