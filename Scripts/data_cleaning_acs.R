@@ -19,10 +19,8 @@ census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 # Retrieve Income data
 ######################################
 
-IN_income <- get_data("IN", "B06010") %>% 
-  filter(variable %in% c("B06010_002",
-                         str_c("B06010_00", 4:9),
-                         str_c("B06010_0", 10:11)))
+IN_income <- get_data("IN", "B19101") %>% 
+  filter(!variable %in% c("B19101_001"))
 
 IN_income <- left_join(IN_income, variables_2018[,1:2], by = "variable")
 
