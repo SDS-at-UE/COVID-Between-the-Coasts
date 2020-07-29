@@ -26,7 +26,7 @@ IN_income <- get_data("IN", "B19101") %>%
 
 IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
 
-
+write_csv(IN_income, "Data/IN_income.csv")
 
 
 ######################################
@@ -50,6 +50,8 @@ IN_sex_age$HI_Coverage <- if_else(IN_sex_age$HI_Coverage == "No health insurance
 IN_sex_age$Sex <- as_factor(IN_sex_age$Sex)
 IN_sex_age$Age <- as_factor(IN_sex_age$Age)
 IN_sex_age$HI_Coverage <- as_factor(IN_sex_age$HI_Coverage)  
+
+write_csv(IN_sex_age, "Data/IN_sex_age.csv")
 
 
 ######################################
@@ -84,6 +86,8 @@ IN_health_public$Age <- as_factor(IN_health_public$Age)
 IN_health_private$Private_HI <- as_factor(IN_health_private$Private_HI)
 IN_health_public$Public_HI <- as_factor(IN_health_public$Public_HI) 
 
+write_csv(IN_health_private, "Data/IN_health_private.csv")
+write_csv(IN_health_public, "Data/IN_health_public.csv")
 
 ######################################
 # Retrieve Race data
@@ -94,6 +98,8 @@ IN_race <- get_data("IN", "B02001")
 IN_race <- IN_race %>% filter(str_count(label, "!!") == 2)
 
 IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
+
+write_csv(IN_race, "Data/IN_race.csv")
 
 
 ######################################
@@ -115,6 +121,7 @@ IN_edu$Sex <- as_factor(IN_edu$Sex)
 IN_edu$Age <- as_factor(IN_edu$Age)
 IN_edu$Education <- as_factor(IN_edu$Education)  
 
+write_csv(IN_edu, "Data/IN_edu.csv")
 
 ######################################
 # Retrieve Employment data
@@ -136,6 +143,7 @@ IN_employ <- separate(IN_employ,
                       sep = "!!",
                       into = c("Sex", "Age", "Employment"))
 
+write_csv(IN_employ, "Data/IN_employ.csv")
 
 ######################################
 # Retrieve Ethnic data
@@ -157,6 +165,9 @@ IN_ethnic$Hispanic_Latino <- if_else(IN_ethnic$Hispanic_Latino == "Hispanic or L
 IN_ethnic$Hispanic_Latino <- as_factor(IN_ethnic$Hispanic_Latino)
 IN_ethnic$Race <- as_factor(IN_ethnic$Race)
 
+write_csv(IN_ethnic, "Data/IN_ethnic.csv")
+
+
 ######################################
 # Retrieve Gini Index data (income inequality)
 ######################################
@@ -165,6 +176,7 @@ IN_gini <- get_data("IN", "B19083")
 
 IN_gini$label <- str_remove(IN_gini$label, "Estimate!!")
 
+write_csv(IN_gini, "Data/IN_gini.csv")
 
 
 
