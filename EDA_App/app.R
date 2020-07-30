@@ -3,10 +3,18 @@
 ## demographic and COVID data for several states
 
 library(shiny)
+library(tidycensus)
 library(tidyverse)
+library(leaflet)
+library(stringr)
+library(sf)
 
+census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 
-IN_income <- read_csv("../Data/IN_income.csv",
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
+    rename(variable = name)
+
+IN_income <- read_csv("Data/IN_income.csv",
                       col_types = cols(
                           County = col_character(),
                           State = col_character(),
@@ -14,7 +22,7 @@ IN_income <- read_csv("../Data/IN_income.csv",
                           estimate = col_double(),
                           label = col_factor()
                       ))
-IN_edu <- read_csv("../Data/IN_edu.csv",
+IN_edu <- read_csv("Data/IN_edu.csv",
                    col_types = cols(
                        County = col_character(),
                        State = col_character(),

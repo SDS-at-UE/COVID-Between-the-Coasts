@@ -1,0 +1,12 @@
+name: WNIN_COVID-EDA_App
+title: WNIN_COVID-EDA_App
+username:
+account: darrinweber
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2626858
+bundleId: 3453995
+url: https://darrinweber.shinyapps.io/WNIN_COVID-EDA_App/
+when: 1596099016.63276
+asMultiple: FALSE
+asStatic: FALSE
