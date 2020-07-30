@@ -5,6 +5,7 @@
 library(shiny)
 library(tidyverse)
 
+
 IN_income <- read_csv("../Data/IN_income.csv",
                       col_types = cols(
                           County = col_character(),
@@ -60,8 +61,11 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             leafletOutput("map"),
-            plotOutput("income_plot"),
-            plotOutput("edu_plot")
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            plotOutput("income_plot"),
+                            plotOutput("edu_plot"))
+            )
         )
     )
 )
@@ -80,7 +84,9 @@ server <- function(input, output) {
     
     output$county <- renderUI({
         county <- filter(IN_income, State == input$state) %>% 
-            select(County) %>% pull()
+            select(County) %>% 
+            arrange(County) %>% 
+            pull()
         selectInput("county",
                     "County",
                     county)
