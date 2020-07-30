@@ -48,6 +48,7 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville."),
+    h3("Exploratory Data Analysis"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
