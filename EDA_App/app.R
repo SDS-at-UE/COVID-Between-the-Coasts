@@ -24,6 +24,24 @@ IN_edu <- read_csv("../Data/IN_edu.csv",
                        Education = col_factor()
                    ))
 
+### Map Data/Code
+
+map_data <- get_acs(geography = "county",
+                    variables = "B25077_001",
+                    state = "IN",
+                    year = 2018,
+                    geometry = TRUE)
+map_data <- map_data %>% select(NAME, variable, estimate, geometry) %>% 
+    separate(NAME, into = c("County", "State"), sep = " County,")
+map_data <- left_join(map_data, variables_2018[, 1:2], by = "variable") %>% 
+    filter(!variable %in% c("B19101_001"))
+map_data$label <- as_factor(str_replace(map_data$label, ".*!!(.*)", "\\1"))
+
+
+pal2 <- colorNumeric(palette = "viridis", domain = map_data$estimate)
+popup <- paste0("<strong>", map_data$County,
+                "</strong><br /> Median Home Value: ", map_data$estimate)
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -41,8 +59,9 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("income_plot"),
-           plotOutput("edu_plot")
+            leafletOutput("map"),
+            plotOutput("income_plot"),
+            plotOutput("edu_plot")
         )
     )
 )
@@ -58,6 +77,7 @@ server <- function(input, output) {
         # draw the histogram with the specified number of bins
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
+    
     output$county <- renderUI({
         county <- filter(IN_income, State == input$state) %>% 
             select(County) %>% pull()
@@ -88,6 +108,24 @@ server <- function(input, output) {
                  title = str_c("Educational Attainment in ", input$county, " County, ", input$state)) +
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
+    })
+    
+    output$map <- renderLeaflet({
+        map_data %>% 
+            st_transform(crs = "+init=epsg:4326") %>% 
+            leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(popup = ~ popup,
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal2(estimate)) %>% 
+            addLegend("bottomright",
+                      pal = pal2,
+                      values = ~estimate,
+                      title = "Median Home Value",
+                      labFormat = labelFormat(prefix = "$"),
+                      opacity = 1)
     })
 }
 
