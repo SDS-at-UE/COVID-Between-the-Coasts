@@ -2,6 +2,9 @@
 ## The following are functions used throughout the COVID/WNIN project
 ## This script should be run first in order to store the functions
 
+library(tidycensus)
+library(tidyverse)
+
 
 ### This loads the necessary variable-to-table data to connect table
 ### numbers in the Census dataset to their actual meanings. It should
@@ -15,8 +18,9 @@ get_data <- function(state, table){
   data <- get_acs(geography = "county",
                   table = table,
                   state = state,
-                  year = 2018)
-  data <- data %>% select(NAME, variable, estimate) %>% 
+                  year = 2018,
+                  geometry = TRUE)
+  data <- data %>% select(NAME, variable, estimate, geometry) %>% 
     separate(NAME, into = c("County", "State"), sep = " County,")
   data <- left_join(data, variables_2018[, 1:2], by = "variable")
   return(data)
