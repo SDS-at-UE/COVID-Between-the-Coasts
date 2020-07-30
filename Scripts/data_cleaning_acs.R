@@ -7,8 +7,8 @@ library(tidycensus)
 source("Scripts/functions.R")
 
 
-census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5",
-               install = TRUE)
+# census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5",
+#               install = TRUE)
 
 # Do not need to run next line all of the time. Since it's
 # cached, it should already be loaded whenever you start R.
