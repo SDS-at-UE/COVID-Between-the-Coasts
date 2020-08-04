@@ -8,6 +8,7 @@ library(tidyverse)
 library(leaflet)
 library(stringr)
 library(sf)
+library(tigris)
 
 census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 
@@ -35,21 +36,32 @@ IN_edu <- read_csv("Data/IN_edu.csv",
 
 ### Map Data/Code
 
-map_data <- get_acs(geography = "county",
-                    variables = "B25077_001",
-                    state = "IN",
-                    year = 2018,
-                    geometry = TRUE)
-map_data <- map_data %>% select(NAME, variable, estimate, geometry) %>% 
-    separate(NAME, into = c("County", "State"), sep = " County,")
-map_data <- left_join(map_data, variables_2018[, 1:2], by = "variable") %>% 
-    filter(!variable %in% c("B19101_001"))
-map_data$label <- as_factor(str_replace(map_data$label, ".*!!(.*)", "\\1"))
+covid_cases <- read_csv("Data/covid_cases.csv")
+states_map <- read_sf("Data/All_counties.shp", type = 6)
+map_data <- geo_join(states_map, covid_cases, by = "NAME") %>%
+    separate(NAME, into = c("County", "State"), sep = " County, ")
+
+map_data_sans_Cook <- filter(map_data, County != "Cook" | State != "Illinois")
+map_data_Cook <- filter(map_data, County == "Cook", State == "Illinois")
+
+# map_data <- get_acs(geography = "county",
+#                     variables = "B25077_001",
+#                     state = "IN",
+#                     year = 2018,
+#                     geometry = TRUE)
+# map_data <- map_data %>% select(NAME, variable, estimate, geometry) %>% 
+#     separate(NAME, into = c("County", "State"), sep = " County,")
+# map_data <- left_join(map_data, variables_2018[, 1:2], by = "variable") %>% 
+#     filter(!variable %in% c("B19101_001"))
+# map_data$label <- as_factor(str_replace(map_data$label, ".*!!(.*)", "\\1"))
 
 
-pal2 <- colorNumeric(palette = "viridis", domain = map_data$estimate)
-popup <- paste0("<strong>", map_data$County,
-                "</strong><br /> Median Home Value: ", map_data$estimate)
+pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
+pal_Cook <- colorNumeric("Black", domain = map_data_Cook$Cases)
+popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
+                "</strong><br /> Confirmed Cases: ", map_data_sans_Cook$Cases)
+popup_msg_Cook <- paste0("<strong>", map_data_Cook$County, " County, ", map_data_Cook$State,
+                    "</strong><br /> Confirmed Cases: ", map_data_Cook$Cases)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -130,16 +142,22 @@ server <- function(input, output) {
             st_transform(crs = "+init=epsg:4326") %>% 
             leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(popup = ~ popup,
+            addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
+                        popup = ~ popup_msg,
                         stroke = FALSE,
                         smoothFactor = 0,
                         fillOpacity = 0.7,
-                        color = ~ pal2(estimate)) %>% 
+                        color = ~ pal(Cases)) %>%
+            addPolygons(data = st_transform(map_data_Cook, crs = "+init=epsg:4326"),
+                        popup = ~ popup_msg_Cook,
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = "03F") %>% 
             addLegend("bottomright",
-                      pal = pal2,
-                      values = ~estimate,
-                      title = "Median Home Value",
-                      labFormat = labelFormat(prefix = "$"),
+                      pal = pal,
+                      values = ~ Cases,
+                      title = "Confirmed Cases",
                       opacity = 1)
     })
 }
