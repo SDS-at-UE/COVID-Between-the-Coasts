@@ -57,7 +57,7 @@ map_data_Cook <- filter(map_data, County == "Cook", State == "Illinois")
 
 
 pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
-pal_Cook <- colorNumeric("Black", domain = map_data_Cook$Cases)
+pal_Cook <- colorFactor("Black", domain = map_data_Cook$Cases)
 popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
                 "</strong><br /> Confirmed Cases: ", map_data_sans_Cook$Cases)
 popup_msg_Cook <- paste0("<strong>", map_data_Cook$County, " County, ", map_data_Cook$State,
@@ -138,8 +138,6 @@ server <- function(input, output) {
     })
     
     output$map <- renderLeaflet({
-        map_data %>% 
-            st_transform(crs = "+init=epsg:4326") %>% 
             leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
             addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
@@ -153,11 +151,18 @@ server <- function(input, output) {
                         stroke = FALSE,
                         smoothFactor = 0,
                         fillOpacity = 0.7,
-                        color = "03F") %>% 
-            addLegend("bottomright",
+                        color = "03F") %>%
+            addLegend(data = st_transform(map_data_sans_Cook),
+                      "bottomright",
                       pal = pal,
                       values = ~ Cases,
                       title = "Confirmed Cases",
+                      opacity = 1) %>% 
+            addLegend(data = st_transform(map_data_Cook),
+                      "bottomleft",
+                      pal = pal_Cook,
+                      values = map_data_Cook$Cases,
+                      title = paste0(map_data_Cook$County, " County, ", map_data_Cook$State, "<br />", "Confirmed Cases"),
                       opacity = 1)
     })
 }
