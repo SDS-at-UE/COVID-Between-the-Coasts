@@ -16,10 +16,6 @@ source("Scripts/functions.R")
 #variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
 #  rename(variable = name)
 
-# This creates a reference database to convert between the 
-# name of a state and its abbreviation
-state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
-
 
 ######################################
 # Retrieve Income data

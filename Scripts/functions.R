@@ -12,6 +12,7 @@ library(tidyverse)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
 
+
 ### This function retrieves the 5-year ACS data from the Census Bureau
 ### for the given state and defined data/table.
 get_data <- function(state, table){
@@ -25,4 +26,9 @@ get_data <- function(state, table){
   data <- left_join(data, variables_2018[, 1:2], by = "variable")
   return(data)
 }
+
+
+### This creates a reference database to convert between the 
+### name of a state and its abbreviation
+state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
