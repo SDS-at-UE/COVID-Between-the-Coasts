@@ -65,6 +65,7 @@ pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
 pal_Cook <- colorFactor("Black", domain = map_data_Cook$Cases)
 pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
 pal_death_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Deaths)
+pal_rates <- colorNumeric(palette = "viridis", domain = covid_map_data$case_fatality)
 
 
 popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
@@ -96,6 +97,7 @@ ui <- fluidPage(
         mainPanel(
             leafletOutput("map_cases"),
             leafletOutput("map_deaths"),
+            leafletOutput("map_rates"),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("income_plot"),
@@ -206,6 +208,24 @@ server <- function(input, output) {
                       pal = pal_death_Cook,
                       values = covid_map_data_Cook$Deaths,
                       title = str_c(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Deaths"),
+                      opacity = 1)
+    })
+    
+    output$map_rates <- renderLeaflet({
+        leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(data = st_transform(covid_map_data, crs = "+init=epsg:4326"),
+                        popup = ~ str_c("<strong>", covid_map_data$County, ", ", covid_map_data$State_abb,
+                                        "</strong><br /> ", "Case Fatality", ": ", covid_map_data$case_fatality),
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal_rates(case_fatality)) %>%
+            addLegend(data = st_transform(covid_map_data),
+                      "bottomright",
+                      pal = pal_rates,
+                      values = ~ case_fatality,
+                      title = "Case Fatality Rate",
                       opacity = 1)
     })
 }
