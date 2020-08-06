@@ -61,20 +61,24 @@ covid_map_data_Cook <- filter(covid_map_data, NAME == "Cook County, Illinois")
 # map_data$label <- as_factor(str_replace(map_data$label, ".*!!(.*)", "\\1"))
 
 
-pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
-pal_Cook <- colorFactor("Black", domain = map_data_Cook$Cases)
+pal <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Cases)
+pal_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Cases)
 pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
 pal_death_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Deaths)
 
 
-popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
-                    "</strong><br /> Confirmed Cases: ", map_data_sans_Cook$Cases)
-popup_msg_Cook <- paste0("<strong>", map_data_Cook$County, " County, ", map_data_Cook$State,
-                         "</strong><br /> Confirmed Cases: ", map_data_Cook$Cases)
-popup_msg_death_sans_Cook <- str_c("<strong>", covid_map_data_sans_Cook$County, ", ", covid_map_data_sans_Cook$State_abb,
-                                   "</strong><br /> Deaths: ", covid_map_data_sans_Cook$Deaths)
-popup_msg_death_Cook <- str_c("<strong>", covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb,
-                              "</strong><br /> Deaths: ", covid_map_data_Cook$Deaths)
+popup_msg <- str_c("<strong>", covid_map_data_sans_Cook$County, ", ", covid_map_data_sans_Cook$State_abb,
+                   "</strong><br /> Cases: ", covid_map_data_sans_Cook$Cases,
+                   "<br /> Deaths: ", covid_map_data_sans_Cook$Deaths,
+                   "<br /> Case Fatality: ", covid_map_data_sans_Cook$case_fatality, " %",
+                   "<br /> Cases per capita: ", covid_map_data_sans_Cook$case_rate,
+                   "<br /> Deaths per capita: ", covid_map_data_sans_Cook$death_rate)
+popup_msg_Cook <- str_c("<strong>", covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb,
+                        "</strong><br /> Cases: ", covid_map_data_Cook$Cases,
+                        "<br /> Deaths: ", covid_map_data_Cook$Deaths,
+                        "<br /> Case Fatality: ", covid_map_data_Cook$case_fatality, " %",
+                        "<br /> Cases per capita: ", covid_map_data_Cook$case_rate,
+                        "<br /> Deaths per capita: ", covid_map_data_Cook$death_rate)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -231,7 +235,7 @@ server <- function(input, output) {
                         popup = ~ str_c("<strong>", covid_map_data$County, ", ", covid_map_data$State_abb,
                                         "</strong><br /> Cases: ", covid_map_data$Cases,
                                         "<br /> Deaths: ", covid_map_data$Deaths,
-                                        "<br /> Case Fatality: ", covid_map_data$case_fatality,
+                                        "<br /> Case Fatality: ", covid_map_data$case_fatality, " %",
                                         "<br /> Cases per capita: ", covid_map_data$case_rate,
                                         "<br /> Deaths per capita: ", covid_map_data$death_rate),
                         stroke = FALSE,
@@ -247,41 +251,41 @@ server <- function(input, output) {
         } else if(input$rate == "Cases"){
             leaflet(width = "100%") %>% 
                 addProviderTiles(provider = "CartoDB.Positron") %>% 
-                addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
+                addPolygons(data = st_transform(covid_map_data_sans_Cook, crs = "+init=epsg:4326"),
                             popup = ~ popup_msg,
                             stroke = FALSE,
                             smoothFactor = 0,
                             fillOpacity = 0.7,
                             color = ~ pal(Cases)) %>%
-                addPolygons(data = st_transform(map_data_Cook, crs = "+init=epsg:4326"),
+                addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
                             popup = ~ popup_msg_Cook,
                             stroke = FALSE,
                             smoothFactor = 0,
                             fillOpacity = 0.7,
                             color = "03F") %>%
-                addLegend(data = st_transform(map_data_sans_Cook),
+                addLegend(data = st_transform(covid_map_data_sans_Cook),
                           "bottomright",
                           pal = pal,
                           values = ~ Cases,
                           title = "Confirmed Cases",
                           opacity = 1) %>% 
-                addLegend(data = st_transform(map_data_Cook),
+                addLegend(data = st_transform(covid_map_data_Cook),
                           "bottomleft",
                           pal = pal_Cook,
-                          values = map_data_Cook$Cases,
-                          title = paste0(map_data_Cook$County, " County, ", map_data_Cook$State, "<br />", "Confirmed Cases"),
+                          values = covid_map_data_Cook$Cases,
+                          title = paste0(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Confirmed Cases"),
                           opacity = 1)
         } else if(input$rate == "Deaths"){
             leaflet(width = "100%") %>% 
                 addProviderTiles(provider = "CartoDB.Positron") %>% 
                 addPolygons(data = st_transform(covid_map_data_sans_Cook, crs = "+init=epsg:4326"),
-                            popup = ~ popup_msg_death_sans_Cook,
+                            popup = ~ popup_msg,
                             stroke = FALSE,
                             smoothFactor = 0,
                             fillOpacity = 0.7,
                             color = ~ pal_death_sans_Cook(Deaths)) %>%
                 addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
-                            popup = ~ popup_msg_death_Cook,
+                            popup = ~ popup_msg_Cook,
                             stroke = FALSE,
                             smoothFactor = 0,
                             fillOpacity = 0.7,
