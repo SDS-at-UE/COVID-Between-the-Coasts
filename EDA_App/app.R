@@ -65,7 +65,6 @@ pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
 pal_Cook <- colorFactor("Black", domain = map_data_Cook$Cases)
 pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
 pal_death_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Deaths)
-pal_rates <- colorNumeric(palette = "viridis", domain = covid_map_data$case_fatality)
 
 
 popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
@@ -90,7 +89,12 @@ ui <- fluidPage(
             selectInput("state",
                         "State",
                         IN_income$State),
-            uiOutput("county")
+            uiOutput("county"),
+            radioButtons("rate",
+                        "Which rate?",
+                        c("Case Fatality Rate (as %)" = "case_fatality", 
+                          "Death rate (per 100,000)" = "death_rate", 
+                          "Case rate (per 100,000)" = "case_rate"))
         ),
 
         # Show a plot of the generated distribution
@@ -211,21 +215,29 @@ server <- function(input, output) {
                       opacity = 1)
     })
     
+    
+    
     output$map_rates <- renderLeaflet({
+        rate <- switch(input$rate,
+                       case_fatality = covid_map_data$case_fatality,
+                       death_rate = covid_map_data$death_rate,
+                       case_rate = covid_map_data$case_rate,
+                       covid_map_data$case_fatality)
+        pal_rates <- colorNumeric(palette = "viridis", domain = rate)
         leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
             addPolygons(data = st_transform(covid_map_data, crs = "+init=epsg:4326"),
                         popup = ~ str_c("<strong>", covid_map_data$County, ", ", covid_map_data$State_abb,
-                                        "</strong><br /> ", "Case Fatality", ": ", covid_map_data$case_fatality),
+                                        "</strong><br /> ", input$rate, ": ", rate),
                         stroke = FALSE,
                         smoothFactor = 0,
                         fillOpacity = 0.7,
-                        color = ~ pal_rates(case_fatality)) %>%
+                        color = ~ pal_rates(rate)) %>%
             addLegend(data = st_transform(covid_map_data),
                       "bottomright",
                       pal = pal_rates,
-                      values = ~ case_fatality,
-                      title = "Case Fatality Rate",
+                      values = ~ rate,
+                      title = input$rate,
                       opacity = 1)
     })
 }
