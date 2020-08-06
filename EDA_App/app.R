@@ -215,8 +215,6 @@ server <- function(input, output) {
                       opacity = 1)
     })
     
-    
-    
     output$map_rates <- renderLeaflet({
         rate <- switch(input$rate,
                        case_fatality = covid_map_data$case_fatality,
@@ -228,7 +226,11 @@ server <- function(input, output) {
             addProviderTiles(provider = "CartoDB.Positron") %>% 
             addPolygons(data = st_transform(covid_map_data, crs = "+init=epsg:4326"),
                         popup = ~ str_c("<strong>", covid_map_data$County, ", ", covid_map_data$State_abb,
-                                        "</strong><br /> ", input$rate, ": ", rate),
+                                        "</strong><br /> Cases: ", covid_map_data$Cases,
+                                        "<br /> Deaths: ", covid_map_data$Deaths,
+                                        "<br /> Case Fatality: ", covid_map_data$case_fatality,
+                                        "<br /> Cases per capita: ", covid_map_data$case_rate,
+                                        "<br /> Deaths per capita: ", covid_map_data$death_rate),
                         stroke = FALSE,
                         smoothFactor = 0,
                         fillOpacity = 0.7,
