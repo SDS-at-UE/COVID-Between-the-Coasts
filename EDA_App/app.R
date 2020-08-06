@@ -36,30 +36,12 @@ IN_edu <- read_csv("Data/IN_edu.csv",
 
 ### Map Data/Code
 
-covid_cases <- read_csv("Data/covid_cases.csv")
 states_map <- read_sf("Data/All_counties.shp", type = 6)
-map_data <- geo_join(states_map, covid_cases, by = "NAME") %>%
-    separate(NAME, into = c("County", "State"), sep = " County, ")
-
-map_data_sans_Cook <- filter(map_data, County != "Cook" | State != "Illinois")
-map_data_Cook <- filter(map_data, County == "Cook", State == "Illinois")
 
 covid_data <- read_csv("Data/covid_data.csv")
 covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data_sans_Cook <- filter(covid_map_data, NAME != "Cook County, Illinois")
 covid_map_data_Cook <- filter(covid_map_data, NAME == "Cook County, Illinois")
-
-# map_data <- get_acs(geography = "county",
-#                     variables = "B25077_001",
-#                     state = "IN",
-#                     year = 2018,
-#                     geometry = TRUE)
-# map_data <- map_data %>% select(NAME, variable, estimate, geometry) %>% 
-#     separate(NAME, into = c("County", "State"), sep = " County,")
-# map_data <- left_join(map_data, variables_2018[, 1:2], by = "variable") %>% 
-#     filter(!variable %in% c("B19101_001"))
-# map_data$label <- as_factor(str_replace(map_data$label, ".*!!(.*)", "\\1"))
-
 
 pal <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Cases)
 pal_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Cases)
@@ -161,64 +143,6 @@ server <- function(input, output) {
                  title = str_c("Educational Attainment in ", input$county, " County, ", input$state)) +
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
-    })
-    
-    output$map_cases <- renderLeaflet({
-        leaflet(width = "100%") %>% 
-            addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
-                        popup = ~ popup_msg,
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = ~ pal(Cases)) %>%
-            addPolygons(data = st_transform(map_data_Cook, crs = "+init=epsg:4326"),
-                        popup = ~ popup_msg_Cook,
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = "03F") %>%
-            addLegend(data = st_transform(map_data_sans_Cook),
-                      "bottomright",
-                      pal = pal,
-                      values = ~ Cases,
-                      title = "Confirmed Cases",
-                      opacity = 1) %>% 
-            addLegend(data = st_transform(map_data_Cook),
-                      "bottomleft",
-                      pal = pal_Cook,
-                      values = map_data_Cook$Cases,
-                      title = paste0(map_data_Cook$County, " County, ", map_data_Cook$State, "<br />", "Confirmed Cases"),
-                      opacity = 1)
-    })
-    
-    output$map_deaths <- renderLeaflet({
-        leaflet(width = "100%") %>% 
-            addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(data = st_transform(covid_map_data_sans_Cook, crs = "+init=epsg:4326"),
-                        popup = ~ popup_msg_death_sans_Cook,
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = ~ pal_death_sans_Cook(Deaths)) %>%
-            addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
-                        popup = ~ popup_msg_death_Cook,
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = "03F") %>%
-            addLegend(data = st_transform(covid_map_data_sans_Cook),
-                      "bottomright",
-                      pal = pal_death_sans_Cook,
-                      values = ~ Deaths,
-                      title = "Deaths",
-                      opacity = 1) %>% 
-            addLegend(data = st_transform(covid_map_data_Cook),
-                      "bottomleft",
-                      pal = pal_death_Cook,
-                      values = covid_map_data_Cook$Deaths,
-                      title = str_c(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Deaths"),
-                      opacity = 1)
     })
     
     output$map_rates <- renderLeaflet({
