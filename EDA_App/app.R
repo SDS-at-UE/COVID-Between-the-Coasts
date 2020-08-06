@@ -86,21 +86,23 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
+            radioButtons("rate",
+                        "Which graph?",
+                        c("Case Fatality Rate (as %)" = "case_fatality", 
+                          "Death rate (per 100,000)" = "death_rate", 
+                          "Case rate (per 100,000)" = "case_rate",
+                          "Confirmed Cases" = "Cases",
+                          "Deaths" = "Deaths")),
             selectInput("state",
                         "State",
                         IN_income$State),
             uiOutput("county"),
-            radioButtons("rate",
-                        "Which rate?",
-                        c("Case Fatality Rate (as %)" = "case_fatality", 
-                          "Death rate (per 100,000)" = "death_rate", 
-                          "Case rate (per 100,000)" = "case_rate"))
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("map_cases"),
-            leafletOutput("map_deaths"),
+            # leafletOutput("map_cases"),
+            # leafletOutput("map_deaths"),
             leafletOutput("map_rates"),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
@@ -158,7 +160,7 @@ server <- function(input, output) {
     })
     
     output$map_cases <- renderLeaflet({
-            leaflet(width = "100%") %>% 
+        leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
             addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
                         popup = ~ popup_msg,
@@ -216,6 +218,7 @@ server <- function(input, output) {
     })
     
     output$map_rates <- renderLeaflet({
+        if(input$rate %in% c("case_fatality", "death_rate", "case_rate")){
         rate <- switch(input$rate,
                        case_fatality = covid_map_data$case_fatality,
                        death_rate = covid_map_data$death_rate,
@@ -239,8 +242,63 @@ server <- function(input, output) {
                       "bottomright",
                       pal = pal_rates,
                       values = ~ rate,
-                      title = input$rate,
+                      title = str_to_title(str_replace(input$rate, "_", " ")),
                       opacity = 1)
+        } else if(input$rate == "Cases"){
+            leaflet(width = "100%") %>% 
+                addProviderTiles(provider = "CartoDB.Positron") %>% 
+                addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
+                            popup = ~ popup_msg,
+                            stroke = FALSE,
+                            smoothFactor = 0,
+                            fillOpacity = 0.7,
+                            color = ~ pal(Cases)) %>%
+                addPolygons(data = st_transform(map_data_Cook, crs = "+init=epsg:4326"),
+                            popup = ~ popup_msg_Cook,
+                            stroke = FALSE,
+                            smoothFactor = 0,
+                            fillOpacity = 0.7,
+                            color = "03F") %>%
+                addLegend(data = st_transform(map_data_sans_Cook),
+                          "bottomright",
+                          pal = pal,
+                          values = ~ Cases,
+                          title = "Confirmed Cases",
+                          opacity = 1) %>% 
+                addLegend(data = st_transform(map_data_Cook),
+                          "bottomleft",
+                          pal = pal_Cook,
+                          values = map_data_Cook$Cases,
+                          title = paste0(map_data_Cook$County, " County, ", map_data_Cook$State, "<br />", "Confirmed Cases"),
+                          opacity = 1)
+        } else if(input$rate == "Deaths"){
+            leaflet(width = "100%") %>% 
+                addProviderTiles(provider = "CartoDB.Positron") %>% 
+                addPolygons(data = st_transform(covid_map_data_sans_Cook, crs = "+init=epsg:4326"),
+                            popup = ~ popup_msg_death_sans_Cook,
+                            stroke = FALSE,
+                            smoothFactor = 0,
+                            fillOpacity = 0.7,
+                            color = ~ pal_death_sans_Cook(Deaths)) %>%
+                addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
+                            popup = ~ popup_msg_death_Cook,
+                            stroke = FALSE,
+                            smoothFactor = 0,
+                            fillOpacity = 0.7,
+                            color = "03F") %>%
+                addLegend(data = st_transform(covid_map_data_sans_Cook),
+                          "bottomright",
+                          pal = pal_death_sans_Cook,
+                          values = ~ Deaths,
+                          title = "Deaths",
+                          opacity = 1) %>% 
+                addLegend(data = st_transform(covid_map_data_Cook),
+                          "bottomleft",
+                          pal = pal_death_Cook,
+                          values = covid_map_data_Cook$Deaths,
+                          title = str_c(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Deaths"),
+                          opacity = 1)
+        }
     })
 }
 
