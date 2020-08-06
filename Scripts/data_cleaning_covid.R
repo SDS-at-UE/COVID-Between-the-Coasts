@@ -79,4 +79,23 @@ usafacts_covid <- usafacts_covid %>%
 write_csv(usafacts_covid, "Data/covid_data.csv")
 
 
+######################################
+# EDA on USA Facts data
+######################################
 
+# Check outliers in deaths data
+
+summary(usafacts_covid$Deaths)
+boxplot(usafacts_covid$Deaths)
+
+filter(usafacts_covid, Deaths > 2000) %>% select(NAME)
+
+usafacts_covid %>% 
+  arrange(Deaths) %>% 
+  tail(n = 10)
+
+filter(usafacts_covid, Deaths > 500) %>% select(NAME, Deaths, Cases)
+
+usafacts_covid %>% 
+  arrange(Cases) %>% 
+  tail(n = 10)
