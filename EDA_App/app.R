@@ -44,6 +44,11 @@ map_data <- geo_join(states_map, covid_cases, by = "NAME") %>%
 map_data_sans_Cook <- filter(map_data, County != "Cook" | State != "Illinois")
 map_data_Cook <- filter(map_data, County == "Cook", State == "Illinois")
 
+covid_data <- read_csv("Data/covid_data.csv")
+covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
+covid_map_data_sans_Cook <- filter(covid_map_data, NAME != "Cook County, Illinois")
+covid_map_data_Cook <- filter(covid_map_data, NAME == "Cook County, Illinois")
+
 # map_data <- get_acs(geography = "county",
 #                     variables = "B25077_001",
 #                     state = "IN",
@@ -58,10 +63,18 @@ map_data_Cook <- filter(map_data, County == "Cook", State == "Illinois")
 
 pal <- colorNumeric(palette = "viridis", domain = map_data_sans_Cook$Cases)
 pal_Cook <- colorFactor("Black", domain = map_data_Cook$Cases)
+pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
+pal_death_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Deaths)
+
+
 popup_msg <- paste0("<strong>", map_data_sans_Cook$County, " County, ", map_data_sans_Cook$State,
-                "</strong><br /> Confirmed Cases: ", map_data_sans_Cook$Cases)
+                    "</strong><br /> Confirmed Cases: ", map_data_sans_Cook$Cases)
 popup_msg_Cook <- paste0("<strong>", map_data_Cook$County, " County, ", map_data_Cook$State,
-                    "</strong><br /> Confirmed Cases: ", map_data_Cook$Cases)
+                         "</strong><br /> Confirmed Cases: ", map_data_Cook$Cases)
+popup_msg_death_sans_Cook <- str_c("<strong>", covid_map_data_sans_Cook$County, ", ", covid_map_data_sans_Cook$State_abb,
+                                   "</strong><br /> Deaths: ", covid_map_data_sans_Cook$Deaths)
+popup_msg_death_Cook <- str_c("<strong>", covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb,
+                              "</strong><br /> Deaths: ", covid_map_data_Cook$Deaths)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -81,7 +94,8 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("map"),
+            leafletOutput("map_cases"),
+            leafletOutput("map_deaths"),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("income_plot"),
@@ -137,7 +151,7 @@ server <- function(input, output) {
                                              hjust = 1))
     })
     
-    output$map <- renderLeaflet({
+    output$map_cases <- renderLeaflet({
             leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
             addPolygons(data = st_transform(map_data_sans_Cook, crs = "+init=epsg:4326"),
@@ -163,6 +177,35 @@ server <- function(input, output) {
                       pal = pal_Cook,
                       values = map_data_Cook$Cases,
                       title = paste0(map_data_Cook$County, " County, ", map_data_Cook$State, "<br />", "Confirmed Cases"),
+                      opacity = 1)
+    })
+    
+    output$map_deaths <- renderLeaflet({
+        leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(data = st_transform(covid_map_data_sans_Cook, crs = "+init=epsg:4326"),
+                        popup = ~ popup_msg_death_sans_Cook,
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal_death_sans_Cook(Deaths)) %>%
+            addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
+                        popup = ~ popup_msg_death_Cook,
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = "03F") %>%
+            addLegend(data = st_transform(covid_map_data_sans_Cook),
+                      "bottomright",
+                      pal = pal_death_sans_Cook,
+                      values = ~ Deaths,
+                      title = "Deaths",
+                      opacity = 1) %>% 
+            addLegend(data = st_transform(covid_map_data_Cook),
+                      "bottomleft",
+                      pal = pal_death_Cook,
+                      values = covid_map_data_Cook$Deaths,
+                      title = str_c(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Deaths"),
                       opacity = 1)
     })
 }
