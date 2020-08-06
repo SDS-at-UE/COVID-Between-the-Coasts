@@ -72,9 +72,9 @@ usafacts_covid <- left_join(covid_conf, covid_death, by = c("NAME", "County", "S
   select(NAME, County, State, State_abb, everything())
 
 usafacts_covid <- usafacts_covid %>% 
-  mutate(case_fatality = Deaths/na_if(Cases, 0)*100,
-         death_rate = Deaths/na_if(Population, 0)*100000,
-         case_rate = Cases/na_if(Population, 0)*100000) 
+  mutate(case_fatality = round(Deaths/na_if(Cases, 0)*100, 3),
+         death_rate = round(Deaths/na_if(Population, 0)*100000, 3),
+         case_rate = round(Cases/na_if(Population, 0)*100000, 3)) 
 
 write_csv(usafacts_covid, "Data/covid_data.csv")
 
