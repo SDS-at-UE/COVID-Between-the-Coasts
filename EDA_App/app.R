@@ -38,7 +38,19 @@ IN_edu <- read_csv("Data/IN_edu.csv",
 
 states_map <- read_sf("Data/All_counties.shp", type = 6)
 
-covid_data <- read_csv("Data/covid_data.csv")
+covid_data <- read_csv("Data/covid_data.csv",
+                       col_types = cols(
+                           NAME = col_character(),
+                           County = col_character(),
+                           State = col_character(),
+                           State_abb = col_character(),
+                           Cases = col_double(),
+                           Deaths = col_double(),
+                           Population = col_double(),
+                           case_fatality = col_double(),
+                           death_rate = col_double(),
+                           case_rate = col_double()
+                       ))
 covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data_sans_Cook <- filter(covid_map_data, NAME != "Cook County, Illinois")
 covid_map_data_Cook <- filter(covid_map_data, NAME == "Cook County, Illinois")
