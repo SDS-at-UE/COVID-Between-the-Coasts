@@ -15,14 +15,16 @@ census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
     rename(variable = name)
 
-IN_income <- read_csv("Data/IN_income.csv",
-                      col_types = cols(
-                          County = col_character(),
-                          State = col_character(),
-                          variable = col_character(),
-                          estimate = col_double(),
-                          label = col_factor()
-                      ))
+income <- read_csv("Data/income.csv",
+                   col_types = cols(
+                       NAME = col_character(),
+                       County = col_character(),
+                       State = col_character(),
+                       variable = col_character(),
+                       estimate = col_double(),
+                       label = col_factor()
+                   ))
+
 IN_edu <- read_csv("Data/IN_edu.csv",
                    col_types = cols(
                        County = col_character(),
@@ -74,7 +76,7 @@ popup_msg_Cook <- str_c("<strong>", covid_map_data_Cook$County, ", ", covid_map_
                         "<br /> Cases per capita: ", covid_map_data_Cook$case_rate,
                         "<br /> Deaths per capita: ", covid_map_data_Cook$death_rate)
 
-# Define UI for application that draws a histogram
+
 ui <- fluidPage(
 
     # Application title
@@ -93,7 +95,7 @@ ui <- fluidPage(
                           "Deaths" = "Deaths")),
             selectInput("state",
                         "State",
-                        IN_income$State),
+                        income$State),
             uiOutput("county"),
         ),
 
@@ -111,20 +113,11 @@ ui <- fluidPage(
     )
 )
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
     
     output$county <- renderUI({
-        county <- filter(IN_income, State == input$state) %>% 
+        county <- filter(income, State == input$state) %>% 
             select(County) %>% 
             arrange(County) %>% 
             pull()
@@ -134,16 +127,16 @@ server <- function(input, output) {
     })
     
     output$income_plot <- renderPlot({
-        ggplot(filter(IN_income, 
+        ggplot(filter(income,
                       State == input$state,
-                      County == input$county)) + 
+                      County == input$county)) +
             geom_col(aes(x = label, y = estimate)) +
-            labs(x = "Family Income", 
+            labs(x = "Family Income",
                  y = "Number of People",
                  title = str_c("Distribution of Income in ", input$county, " County, ", input$state)) +
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
-    })
+        })
     
     output$edu_plot <- renderPlot({
         ggplot(filter(IN_edu, 
@@ -155,7 +148,7 @@ server <- function(input, output) {
                  title = str_c("Educational Attainment in ", input$county, " County, ", input$state)) +
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
-    })
+        })
     
     output$map_rates <- renderLeaflet({
         if(input$rate %in% c("case_fatality", "death_rate", "case_rate")){
@@ -242,9 +235,9 @@ server <- function(input, output) {
                           colors = c("Black", "Red"),
                           title = "Outliers",
                           opacity = 1)
-        }
-    })
-}
+            }
+        })
+    }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
