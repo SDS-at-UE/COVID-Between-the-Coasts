@@ -51,14 +51,14 @@ covid_data <- read_csv("Data/covid_data.csv",
                            death_rate = col_double(),
                            case_rate = col_double()
                        ))
+outlier_counties <- c("Cook County, Illinois",
+                      "Wayne County, Michigan")
 covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
-covid_map_data_sans_Cook <- filter(covid_map_data, NAME != "Cook County, Illinois")
-covid_map_data_Cook <- filter(covid_map_data, NAME == "Cook County, Illinois")
+covid_map_data_sans_Cook <- filter(covid_map_data, !(NAME %in% outlier_counties))
+covid_map_data_Cook <- filter(covid_map_data, NAME %in% outlier_counties)
 
 pal <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Cases)
-pal_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Cases)
 pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
-pal_death_Cook <- colorFactor("Black", domain = covid_map_data_Cook$Deaths)
 
 
 popup_msg <- str_c("<strong>", covid_map_data_sans_Cook$County, ", ", covid_map_data_sans_Cook$State_abb,
@@ -198,7 +198,7 @@ server <- function(input, output) {
                             stroke = FALSE,
                             smoothFactor = 0,
                             fillOpacity = 0.7,
-                            color = "03F") %>%
+                            color = c("Black", "Red")) %>%
                 addLegend(data = st_transform(covid_map_data_sans_Cook),
                           "bottomright",
                           pal = pal,
@@ -207,9 +207,11 @@ server <- function(input, output) {
                           opacity = 1) %>% 
                 addLegend(data = st_transform(covid_map_data_Cook),
                           "bottomleft",
-                          pal = pal_Cook,
-                          values = covid_map_data_Cook$Cases,
-                          title = paste0(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Confirmed Cases"),
+                          labels = str_c(covid_map_data_Cook$County, ", ", 
+                                         covid_map_data_Cook$State_abb, " - ",
+                                         covid_map_data_Cook$Cases, " Cases"),
+                          colors = c("Black", "Red"),
+                          title = "Outliers",
                           opacity = 1)
         } else if(input$rate == "Deaths"){
             leaflet(width = "100%") %>% 
@@ -223,9 +225,9 @@ server <- function(input, output) {
                 addPolygons(data = st_transform(covid_map_data_Cook, crs = "+init=epsg:4326"),
                             popup = ~ popup_msg_Cook,
                             stroke = FALSE,
-                            smoothFactor = 0,
+                            smoothFactor = 0,                       
                             fillOpacity = 0.7,
-                            color = "03F") %>%
+                            color = c("Black", "Red")) %>%
                 addLegend(data = st_transform(covid_map_data_sans_Cook),
                           "bottomright",
                           pal = pal_death_sans_Cook,
@@ -234,9 +236,11 @@ server <- function(input, output) {
                           opacity = 1) %>% 
                 addLegend(data = st_transform(covid_map_data_Cook),
                           "bottomleft",
-                          pal = pal_death_Cook,
-                          values = covid_map_data_Cook$Deaths,
-                          title = str_c(covid_map_data_Cook$County, ", ", covid_map_data_Cook$State_abb, "<br />", "Deaths"),
+                          labels = str_c(covid_map_data_Cook$County, ", ",
+                                         covid_map_data_Cook$State_abb, " - ",
+                                         covid_map_data_Cook$Deaths, " Deaths"),
+                          colors = c("Black", "Red"),
+                          title = "Outliers",
                           opacity = 1)
         }
     })
