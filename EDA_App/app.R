@@ -62,6 +62,16 @@ employ <- read_csv("Data/employ.csv",
                        Employment = col_factor()
                    ))
 
+race <- read_csv("Data/race.csv",
+                 col_types = cols(
+                     NAME = col_character(),
+                     County = col_character(),
+                     State = col_character(),
+                     variable = col_character(),
+                     estimate = col_double(),
+                     label = col_character()
+                 ))
+
 ### Map Data/Code
 
 states_map <- read_sf("Data/All_counties.shp", type = 6)
@@ -163,6 +173,10 @@ ui <- fluidPage(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("ethnic_plot"),
                             plotOutput("employ_plot"))
+            ),
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            plotOutput("race_plot"))
             )
         )
     )
@@ -245,6 +259,18 @@ server <- function(input, output) {
             labs(x = "Age by Employment Status",
                  y = "Number of People",
                  title = str_c("Employment Status in ", input$county, " County, ", input$state)) +
+            theme(axis.text.x = element_text(angle = 45,
+                                             hjust = 1))
+    })
+    
+    output$race_plot <- renderPlot({
+        ggplot(filter(race,
+                      State == input$state,
+                      County == input$county)) +
+            geom_col(aes(x = label, y = estimate)) +
+            labs(x = "Race",
+                 y = "Number of People",
+                 title = str_c("Race Breakdown in ", input$county, " County, ", input$state)) +
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
     })
