@@ -16,17 +16,18 @@ source("Scripts/functions.R")
 #variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
 #  rename(variable = name)
 
+states_of_interest <- c("IN","IL","KY", "OH", "MI", "MN", "WI")
 
 ######################################
 # Retrieve Income data
 ######################################
 
-IN_income <- get_data("IN", "B19101") %>% 
+income <- get_data(states_of_interest, "B19101") %>% 
   filter(!variable %in% c("B19101_001"))
 
-IN_income$label <- as_factor(str_replace(IN_income$label, ".*!!(.*)", "\\1"))
+income$label <- as_factor(str_replace(income$label, ".*!!(.*)", "\\1"))
 
-write_csv(IN_income, "Data/IN_income.csv")
+write_csv(income, "Data/income.csv")
 
 
 ######################################
