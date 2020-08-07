@@ -15,6 +15,8 @@ census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5")
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>% 
     rename(variable = name)
 
+# Demographic Data
+
 income <- read_csv("Data/income.csv",
                    col_types = cols(
                        NAME = col_character(),
@@ -36,6 +38,17 @@ edu <- read_csv("Data/edu.csv",
                     Age = col_factor(),
                     Education = col_factor()
                 ))
+
+ethnic <- read_csv("Data/ethnic.csv",
+                   col_types = cols(
+                       NAME = col_character(),
+                       County = col_character(),
+                       State = col_character(),
+                       variable = col_character(),
+                       estimate = col_double(),
+                       Hispanic_Latino = col_factor(),
+                       Race = col_factor()
+                   ))
 
 ### Map Data/Code
 
@@ -111,6 +124,11 @@ ui <- fluidPage(
                         "State",
                         income$State),
             uiOutput("county"),
+            radioButtons("ethnic_race",
+                         "Ethnic/Race Display",
+                         c("Race by Ethnicity" = "facet_ethnic",
+                           "Ethnicity by Race" = "facet_race"),
+                         inline = TRUE)
         ),
 
         # Show a plot of the generated distribution
@@ -129,6 +147,10 @@ ui <- fluidPage(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("income_plot"),
                             plotOutput("edu_plot"))
+            ),
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            plotOutput("ethnic_plot"))
             )
         )
     )
@@ -170,6 +192,37 @@ server <- function(input, output) {
             theme(axis.text.x = element_text(angle = 45,
                                              hjust = 1))
         })
+    
+    output$ethnic_plot <- renderPlot({
+        if(input$ethnic_race == "facet_ethnic"){
+            ggplot(filter(ethnic,
+                          State == input$state,
+                          County == input$county)) +
+                geom_col(aes(x = Race, y = estimate)) +
+                facet_grid(~ Hispanic_Latino,
+                           labeller = labeller(Hispanic_Latino = c(Yes = "Hispanic or Latino",
+                                                                   No = "Not Hispanic or Latino"))) +
+                labs(x = "Race by Ethnicity",
+                     y = "Number of People",
+                     title = str_c("Ethnicity/Race in ", input$county, " County, ", input$state)) +
+                theme(axis.text.x = element_text(angle = 45,
+                                                 hjust = 1))
+        } else{
+            ggplot(filter(ethnic,
+                          State == input$state,
+                          County == input$county)) +
+                geom_col(aes(x = Hispanic_Latino, y = estimate)) +
+                facet_grid(~ Race) +
+                labs(x = "Ethnicity by Race",
+                     y = "Number of People",
+                     title = str_c("Ethnicity/Race in ", input$county, " County, ", input$state)) +
+                theme(axis.text.x = element_text(angle = 45,
+                                                 hjust = 1)) +
+                scale_x_discrete(labels = c("Yes" = "Hispanic/Latino",
+                                            "No" = "Not"))
+        }
+        
+    })
     
     output$map_rates <- renderLeaflet({
         if(input$rate %in% c("case_fatality", "death_rate", "case_rate")){
