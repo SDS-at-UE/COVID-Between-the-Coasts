@@ -25,16 +25,17 @@ income <- read_csv("Data/income.csv",
                        label = col_factor()
                    ))
 
-IN_edu <- read_csv("Data/IN_edu.csv",
-                   col_types = cols(
-                       County = col_character(),
-                       State = col_character(),
-                       variable = col_character(),
-                       estimate = col_double(),
-                       Sex = col_factor(),
-                       Age = col_factor(),
-                       Education = col_factor()
-                   ))
+edu <- read_csv("Data/edu.csv",
+                col_types = cols(
+                    NAME = col_character(),
+                    County = col_character(),
+                    State = col_character(),
+                    variable = col_character(),
+                    estimate = col_double(),
+                    Sex = col_factor(),
+                    Age = col_factor(),
+                    Education = col_factor()
+                ))
 
 ### Map Data/Code
 
@@ -101,8 +102,6 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            # leafletOutput("map_cases"),
-            # leafletOutput("map_deaths"),
             leafletOutput("map_rates"),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
@@ -139,7 +138,7 @@ server <- function(input, output) {
         })
     
     output$edu_plot <- renderPlot({
-        ggplot(filter(IN_edu, 
+        ggplot(filter(edu, 
                       State == input$state,
                       County == input$county)) + 
             geom_col(aes(x = Education, y = estimate)) +
