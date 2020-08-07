@@ -173,11 +173,11 @@ write_csv(IN_ethnic, "Data/IN_ethnic.csv")
 # Retrieve Gini Index data (income inequality)
 ######################################
 
-IN_gini <- get_data("IN", "B19083")
+gini <- get_data(states_of_interest, "B19083")
 
-IN_gini$label <- str_remove(IN_gini$label, "Estimate!!")
+gini$label <- str_remove(gini$label, "Estimate!!")
 
-write_csv(IN_gini, "Data/IN_gini.csv")
+write_csv(gini, "Data/gini.csv")
 
 
 
