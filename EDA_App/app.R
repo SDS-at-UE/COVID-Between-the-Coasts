@@ -84,6 +84,30 @@ sex_age <- read_csv("Data/sex_age.csv",
                         HI_Coverage = col_factor()
                     ))
 
+health_public <- read_csv("Data/health_public.csv",
+                          col_types = cols(
+                              NAME = col_character(),
+                              County = col_character(),
+                              State = col_character(),
+                              variable = col_character(),
+                              estimate = col_double(),
+                              Sex = col_factor(),
+                              Age = col_factor(),
+                              Public_HI = col_factor()
+                          ))
+
+health_private <- read_csv("Data/health_private.csv",
+                           col_types = cols(
+                               NAME = col_character(),
+                               County = col_character(),
+                               State = col_character(),
+                               variable = col_character(),
+                               estimate = col_double(),
+                               Sex = col_factor(),
+                               Age = col_factor(),
+                               Public_HI = col_factor()
+                          ))
+
 ### Map Data/Code
 
 states_map <- read_sf("Data/All_counties.shp", type = 6)
@@ -193,6 +217,12 @@ ui <- fluidPage(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("race_plot"),
                             plotOutput("sex_age_plot"))
+            ),
+            tags$hr(),
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            plotOutput("health_public_plot"),
+                            plotOutput("health_private_plot"))
             )
         )
     )
@@ -301,6 +331,30 @@ server <- function(input, output) {
             labs(x = "Gender",
                  y = "Number of People", 
                  title = str_c("Age by Gender by Health Insurance Coverage in ", input$county, " County, ", input$state))
+    })
+    
+    output$health_public_plot <- renderPlot({
+        ggplot(filter(health_public,
+                      State == input$state,
+                      County == input$county)) +
+            geom_col(aes(x = Sex, y = estimate, fill = Age),
+                     position = "dodge") +
+            facet_grid(~ Public_HI) + 
+            labs(x = "Gender",
+                 y = "Number of People",
+                 title = str_c("Age by Gender by Coverage from Public Health Insurance in ", input$county, " County, ", input$state))
+    })
+    
+    output$health_private_plot <- renderPlot({
+        ggplot(filter(health_private,
+                      State == input$state,
+                      County == input$county)) +
+            geom_col(aes(x = Sex, y = estimate, fill = Age),
+                     position = "dodge") +
+            facet_grid(~ Private_HI) + 
+            labs(x = "Gender",
+                 y = "Number of People",
+                 title = str_c("Age by Gender by Coverage from Private Health Insurance in ", input$county, " County, ", input$state))
     })
     
     output$map_rates <- renderLeaflet({
