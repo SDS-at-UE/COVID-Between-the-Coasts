@@ -107,22 +107,22 @@ write_csv(IN_race, "Data/IN_race.csv")
 # Retrieve Education data
 ######################################
 
-IN_edu <- get_data("IN", "B15001")
+edu <- get_data(states_of_interest, "B15001")
 
-IN_edu <- IN_edu %>% filter(str_count(label, "!!") == 4)
+edu <- edu %>% filter(str_count(label, "!!") == 4)
 
-IN_edu$label <- str_remove(IN_edu$label, "Estimate!!Total!!")
+edu$label <- str_remove(edu$label, "Estimate!!Total!!")
 
-IN_edu <- separate(IN_edu,
-                   label,
-                   sep = "!!",
-                   into = c("Sex", "Age", "Education"))
+edu <- separate(edu,
+                label,
+                sep = "!!",
+                into = c("Sex", "Age", "Education"))
 
-IN_edu$Sex <- as_factor(IN_edu$Sex)
-IN_edu$Age <- as_factor(IN_edu$Age)
-IN_edu$Education <- as_factor(IN_edu$Education)  
+edu$Sex <- as_factor(edu$Sex)
+edu$Age <- as_factor(edu$Age)
+edu$Education <- as_factor(edu$Education)  
 
-write_csv(IN_edu, "Data/IN_edu.csv")
+write_csv(edu, "Data/edu.csv")
 
 ######################################
 # Retrieve Employment data
