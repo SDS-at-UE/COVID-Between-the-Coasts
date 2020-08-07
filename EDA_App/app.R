@@ -176,16 +176,19 @@ ui <- fluidPage(
                             leafletOutput("map_rates"),
                             leafletOutput("map_gini"))
             ),
+            tags$hr(),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("income_plot"),
                             plotOutput("edu_plot"))
             ),
+            tags$hr(),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("ethnic_plot"),
                             plotOutput("employ_plot"))
             ),
+            tags$hr(),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("race_plot"),
