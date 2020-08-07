@@ -59,36 +59,36 @@ write_csv(sex_age, "Data/sex_age.csv")
 # Retrieve Type of Health Insurance data
 ######################################
 
-IN_health_private <- get_data("IN", "B27002")
-IN_health_public <- get_data("IN", "B27003")
+health_private <- get_data(states_of_interest, "B27002")
+health_public <- get_data(states_of_interest, "B27003")
 
-IN_health_private <- IN_health_private %>% filter(str_count(label, "!!") >= 4)
-IN_health_public <- IN_health_public %>% filter(str_count(label, "!!") >= 4)
+health_private <- health_private %>% filter(str_count(label, "!!") >= 4)
+health_public <- health_public %>% filter(str_count(label, "!!") >= 4)
 
-IN_health_private$label <- str_remove(IN_health_private$label, "Estimate!!Total!!")
-IN_health_public$label <- str_remove(IN_health_public$label, "Estimate!!Total!!")
+health_private$label <- str_remove(health_private$label, "Estimate!!Total!!")
+health_public$label <- str_remove(health_public$label, "Estimate!!Total!!")
 
-IN_health_private <- separate(IN_health_private,
-                              label,
-                              sep = "!!",
-                              into = c("Sex", "Age", "Private_HI"))
-IN_health_public <- separate(IN_health_public,
-                             label,
-                             sep = "!!",
-                             into = c("Sex", "Age", "Public_HI"))
+health_private <- separate(health_private,
+                           label,
+                           sep = "!!",
+                           into = c("Sex", "Age", "Private_HI"))
+health_public <- separate(health_public,
+                          label,
+                          sep = "!!",
+                          into = c("Sex", "Age", "Public_HI"))
 
-IN_health_private$Private_HI <- if_else(IN_health_private$Private_HI == "No private health insurance", "No", "Yes")
-IN_health_public$Public_HI <- if_else(IN_health_public$Public_HI == "No public coverage", "No", "Yes")
+health_private$Private_HI <- if_else(health_private$Private_HI == "No private health insurance", "No", "Yes")
+health_public$Public_HI <- if_else(health_public$Public_HI == "No public coverage", "No", "Yes")
 
-IN_health_private$Sex <- as_factor(IN_health_private$Sex)
-IN_health_public$Sex <- as_factor(IN_health_public$Sex)
-IN_health_private$Age <- as_factor(IN_health_private$Age)
-IN_health_public$Age <- as_factor(IN_health_public$Age)
-IN_health_private$Private_HI <- as_factor(IN_health_private$Private_HI)
-IN_health_public$Public_HI <- as_factor(IN_health_public$Public_HI) 
+health_private$Sex <- as_factor(health_private$Sex)
+health_public$Sex <- as_factor(health_public$Sex)
+health_private$Age <- as_factor(health_private$Age)
+health_public$Age <- as_factor(health_public$Age)
+health_private$Private_HI <- as_factor(health_private$Private_HI)
+health_public$Public_HI <- as_factor(health_public$Public_HI) 
 
-write_csv(IN_health_private, "Data/IN_health_private.csv")
-write_csv(IN_health_public, "Data/IN_health_public.csv")
+write_csv(health_private, "Data/health_private.csv")
+write_csv(health_public, "Data/health_public.csv")
 
 ######################################
 # Retrieve Race data
