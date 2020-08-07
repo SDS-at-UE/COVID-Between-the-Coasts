@@ -54,14 +54,27 @@ covid_data <- read_csv("Data/covid_data.csv",
                            death_rate = col_double(),
                            case_rate = col_double()
                        ))
+
+gini <- read_csv("Data/gini.csv",
+                 col_types = cols(
+                     NAME = col_character(),
+                     County = col_character(),
+                     State = col_character(),
+                     variable = col_character(),
+                     estimate = col_double(),
+                     label = col_character()
+                 ))
+
 outlier_counties <- c("Cook County, Illinois",
                       "Wayne County, Michigan")
+covid_data <- left_join(covid_data, select(gini, NAME, Gini = estimate), by = "NAME")
 covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data_sans_Cook <- filter(covid_map_data, !(NAME %in% outlier_counties))
 covid_map_data_Cook <- filter(covid_map_data, NAME %in% outlier_counties)
 
 pal <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Cases)
 pal_death_sans_Cook <- colorNumeric(palette = "viridis", domain = covid_map_data_sans_Cook$Deaths)
+pal_gini <- colorNumeric(palette = "viridis", domain = covid_map_data$Gini)
 
 
 popup_msg <- str_c("<strong>", covid_map_data_sans_Cook$County, ", ", covid_map_data_sans_Cook$State_abb,
@@ -102,7 +115,16 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("map_rates"),
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            h4("COVID Rates by County (select to the left)"),
+                            h4("Gini Index by County"))
+            ),
+            fluidRow(
+                splitLayout(cellWidths = c("50%", "50%"),
+                            leafletOutput("map_rates"),
+                            leafletOutput("map_gini"))
+            ),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
                             plotOutput("income_plot"),
@@ -236,6 +258,24 @@ server <- function(input, output) {
                           opacity = 1)
             }
         })
+    
+    output$map_gini <- renderLeaflet({
+        covid_map_data %>% 
+            st_transform(crs = "+init=epsg:4326") %>% 
+            leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(popup = str_c("<strong>", covid_map_data$County, ", ", covid_map_data$State_abb,
+                                      "</strong><br /> Gini Index: ", covid_map_data$Gini),
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal_gini(Gini)) %>% 
+            addLegend("bottomright",
+                      pal = pal_gini,
+                      values = ~ Gini,
+                      title = "Gini Index",
+                      opacity = 1)
+    })
     }
 
 # Run the application 
