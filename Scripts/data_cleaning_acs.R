@@ -35,24 +35,24 @@ write_csv(income, "Data/income.csv")
 # Health insurance coverage also obtained
 ######################################
 
-IN_sex_age <- get_data("IN", "B27001")
+sex_age <- get_data(states_of_interest, "B27001")
 
-IN_sex_age <- IN_sex_age %>% filter(str_count(label, "!!") >= 4)
+sex_age <- sex_age %>% filter(str_count(label, "!!") >= 4)
   
-IN_sex_age$label <- str_remove(IN_sex_age$label, "Estimate!!Total!!")
+sex_age$label <- str_remove(sex_age$label, "Estimate!!Total!!")
 
-IN_sex_age <- separate(IN_sex_age,
-                       label,
-                       sep = "!!",
-                       into = c("Sex", "Age", "HI_Coverage"))
+sex_age <- separate(sex_age,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Age", "HI_Coverage"))
 
-IN_sex_age$HI_Coverage <- if_else(IN_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
+sex_age$HI_Coverage <- if_else(sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
 
-IN_sex_age$Sex <- as_factor(IN_sex_age$Sex)
-IN_sex_age$Age <- as_factor(IN_sex_age$Age)
-IN_sex_age$HI_Coverage <- as_factor(IN_sex_age$HI_Coverage)  
+sex_age$Sex <- as_factor(sex_age$Sex)
+sex_age$Age <- as_factor(sex_age$Age)
+sex_age$HI_Coverage <- as_factor(sex_age$HI_Coverage)  
 
-write_csv(IN_sex_age, "Data/IN_sex_age.csv")
+write_csv(sex_age, "Data/sex_age.csv")
 
 
 ######################################
