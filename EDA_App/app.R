@@ -50,6 +50,18 @@ ethnic <- read_csv("Data/ethnic.csv",
                        Race = col_factor()
                    ))
 
+employ <- read_csv("Data/employ.csv",
+                   col_types = cols(
+                       NAME = col_character(),
+                       County = col_character(),
+                       State = col_character(),
+                       variable = col_character(),
+                       estimate = col_double(),
+                       Sex = col_factor(),
+                       Age = col_factor(),
+                       Employment = col_factor()
+                   ))
+
 ### Map Data/Code
 
 states_map <- read_sf("Data/All_counties.shp", type = 6)
@@ -127,8 +139,7 @@ ui <- fluidPage(
             radioButtons("ethnic_race",
                          "Ethnic/Race Display",
                          c("Race by Ethnicity" = "facet_ethnic",
-                           "Ethnicity by Race" = "facet_race"),
-                         inline = TRUE)
+                           "Ethnicity by Race" = "facet_race"))
         ),
 
         # Show a plot of the generated distribution
@@ -150,7 +161,8 @@ ui <- fluidPage(
             ),
             fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"),
-                            plotOutput("ethnic_plot"))
+                            plotOutput("ethnic_plot"),
+                            plotOutput("employ_plot"))
             )
         )
     )
@@ -212,7 +224,7 @@ server <- function(input, output) {
                           State == input$state,
                           County == input$county)) +
                 geom_col(aes(x = Hispanic_Latino, y = estimate)) +
-                facet_grid(~ Race) +
+                facet_wrap(~ Race) +
                 labs(x = "Ethnicity by Race",
                      y = "Number of People",
                      title = str_c("Ethnicity/Race in ", input$county, " County, ", input$state)) +
@@ -222,6 +234,19 @@ server <- function(input, output) {
                                             "No" = "Not"))
         }
         
+    })
+    
+    output$employ_plot <- renderPlot({
+        ggplot(filter(employ,
+                      State == input$state,
+                      County == input$county)) +
+            geom_col(aes(x = Age, y = estimate)) +
+            facet_wrap(~ Employment) +
+            labs(x = "Age by Employment Status",
+                 y = "Number of People",
+                 title = str_c("Employment Status in ", input$county, " County, ", input$state)) +
+            theme(axis.text.x = element_text(angle = 45,
+                                             hjust = 1))
     })
     
     output$map_rates <- renderLeaflet({
