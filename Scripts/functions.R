@@ -19,9 +19,8 @@ get_data <- function(state, table){
   data <- get_acs(geography = "county",
                   table = table,
                   state = state,
-                  year = 2018,
-                  geometry = TRUE)
-  data <- data %>% select(NAME, variable, estimate, geometry) %>% 
+                  year = 2018)
+  data <- data %>% select(NAME, variable, estimate) %>% 
     separate(NAME, into = c("County", "State"), sep = " County,", remove = FALSE)
   data <- left_join(data, variables_2018[, 1:2], by = "variable")
   return(data)
