@@ -128,23 +128,23 @@ write_csv(edu, "Data/edu.csv")
 # Retrieve Employment data
 ######################################
 
-IN_employ <- get_data("IN", "B23001")
+employ <- get_data(states_of_interest, "B23001")
 
-IN_employ <- IN_employ %>% filter(str_count(label, "!!") >= 4,
-                                  str_count(label, "!!In labor force$") < 1,
-                                  str_count(label, "!!Civilian$") < 1)
+employ <- employ %>% filter(str_count(label, "!!") >= 4,
+                            str_count(label, "!!In labor force$") < 1,
+                            str_count(label, "!!Civilian$") < 1)
 
-IN_employ$label <- str_remove(IN_employ$label, "Estimate!!Total!!") 
-IN_employ$label <- str_remove(IN_employ$label, "!!In labor force")
-IN_employ$label <- str_replace(IN_employ$label, "Civilian!!Employed", "Employed Civilian")
-IN_employ$label <- str_replace(IN_employ$label, "Civilian!!Unemployed", "Unemployed Civilian")
+employ$label <- str_remove(employ$label, "Estimate!!Total!!") 
+employ$label <- str_remove(employ$label, "!!In labor force")
+employ$label <- str_replace(employ$label, "Civilian!!Employed", "Employed Civilian")
+employ$label <- str_replace(employ$label, "Civilian!!Unemployed", "Unemployed Civilian")
 
-IN_employ <- separate(IN_employ,
-                      label,
-                      sep = "!!",
-                      into = c("Sex", "Age", "Employment"))
+employ <- separate(employ,
+                   label,
+                   sep = "!!",
+                   into = c("Sex", "Age", "Employment"))
 
-write_csv(IN_employ, "Data/IN_employ.csv")
+write_csv(employ, "Data/employ.csv")
 
 ######################################
 # Retrieve Ethnic data
