@@ -94,13 +94,13 @@ write_csv(IN_health_public, "Data/IN_health_public.csv")
 # Retrieve Race data
 ######################################
 
-IN_race <- get_data("IN", "B02001")
+race <- get_data(states_of_interest, "B02001")
 
-IN_race <- IN_race %>% filter(str_count(label, "!!") == 2)
+race <- race %>% filter(str_count(label, "!!") == 2)
 
-IN_race$label <- as_factor(str_remove(IN_race$label, "Estimate!!Total!!"))
+race$label <- as_factor(str_remove(race$label, "Estimate!!Total!!"))
 
-write_csv(IN_race, "Data/IN_race.csv")
+write_csv(race, "Data/race.csv")
 
 
 ######################################
