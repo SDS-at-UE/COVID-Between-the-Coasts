@@ -150,23 +150,23 @@ write_csv(IN_employ, "Data/IN_employ.csv")
 # Retrieve Ethnic data
 ######################################
 
-IN_ethnic <- get_data("IN", "B03002")
+ethnic <- get_data(states_of_interest, "B03002")
 
-IN_ethnic <- IN_ethnic %>% filter(str_count(label, "!!") == 3)
+ethnic <- ethnic %>% filter(str_count(label, "!!") == 3)
 
-IN_ethnic$label <- str_remove(IN_ethnic$label, "Estimate!!Total!!") 
+ethnic$label <- str_remove(ethnic$label, "Estimate!!Total!!") 
 
-IN_ethnic <- separate(IN_ethnic,
-                      label,
-                      sep = "!!",
-                      into = c("Hispanic_Latino", "Race"))
+ethnic <- separate(ethnic,
+                   label,
+                   sep = "!!",
+                   into = c("Hispanic_Latino", "Race"))
 
-IN_ethnic$Hispanic_Latino <- if_else(IN_ethnic$Hispanic_Latino == "Hispanic or Latino", "Yes", "No")
+ethnic$Hispanic_Latino <- if_else(ethnic$Hispanic_Latino == "Hispanic or Latino", "Yes", "No")
 
-IN_ethnic$Hispanic_Latino <- as_factor(IN_ethnic$Hispanic_Latino)
-IN_ethnic$Race <- as_factor(IN_ethnic$Race)
+ethnic$Hispanic_Latino <- as_factor(ethnic$Hispanic_Latino)
+ethnic$Race <- as_factor(ethnic$Race)
 
-write_csv(IN_ethnic, "Data/IN_ethnic.csv")
+write_csv(ethnic, "Data/ethnic.csv")
 
 
 ######################################
