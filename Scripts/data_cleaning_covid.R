@@ -11,6 +11,8 @@ source("Scripts/functions.R")
 # Clean USA Facts data
 ######################################
 
+## This data comes from https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/
+
 ### #####################
 ### Clean Confirmed Cases data
 ### #####################
