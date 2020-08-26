@@ -1,4 +1,6 @@
 # Data Cleaning of ACS Files
+# Used for cleaning the files obtained
+# from the American Community Survey
 
 library(tidyverse)
 library(tidycensus)
