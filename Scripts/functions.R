@@ -15,8 +15,8 @@ variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
 
 ### This function retrieves the 5-year ACS data from the Census Bureau
 ### for the given state and defined data/table.
-get_data <- function(state, table){
-  data <- get_acs(geography = "county",
+get_data <- function(state, table, region = "county"){
+  data <- get_acs(geography = region,
                   table = table,
                   state = state,
                   year = 2018)
