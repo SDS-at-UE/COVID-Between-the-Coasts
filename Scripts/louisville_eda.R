@@ -26,6 +26,9 @@ louis_income <- left_join(louis_income, variables_2018[, 1:2], by = "variable")
 
 louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1"))
 
+# Graph income data to see differences in zip codes
+
+## attempt to order the x-axis of the graph
 levels_income <- names(sort(tapply(filter(louis_income, label == "$200,000 or more")$estimate, louis_income$GEOID, mean)))
 
 ggplot(louis_income) +
