@@ -28,11 +28,23 @@ louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1
 
 # Graph income data to see differences in zip codes
 
-## attempt to order the x-axis of the graph
-levels_income <- names(sort(tapply(filter(louis_income, label == "$200,000 or more")$estimate, louis_income$GEOID, mean)))
+## Order the x-axis of the graph based on income
+lvls <- louis_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(sum = sum(prop)) %>% 
+  select(GEOID, sum) %>% 
+  distinct() %>% 
+  arrange(sum) %>% 
+  pull(GEOID)
 
 ggplot(louis_income) +
-  geom_col(aes(GEOID, estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
