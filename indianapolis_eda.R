@@ -119,8 +119,8 @@ merge14 <- inner_join(merge13 %>% as.data.frame(), onehundred50_to_200 %>% as.da
 indy_income_final <- inner_join(merge14 %>% as.data.frame(), greater_than_200 %>% as.data.frame(), 
                                 by = "GEOID") 
 # Cleaning it up 
-indy_income_final <- indy_income_final[,-c(2,4,5,6,8,9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,33,34,
-                                           36,37,38,40,41,42,44,45,46,48,49,50)]
+indy_income_final <- indy_income_final[,-c(2,4,5,6,8,9,10,12,13,14,16,17,18,20,21,22,24,25,26,28,29,30,32,
+                                           33,34,36,37,38,40,41,42,44,45,46,48,49,50)]
 indy_income_final <- indy_income_final[,-c(15,16,17,19,20,21,23,24,25,27,28)]
 
 ## putting the income level into a different data set that has 3 brackets (low,med,high)
@@ -143,3 +143,37 @@ income_and_covid <- merge(indy_income_brackets, indiana_cases_by_zip, by = "GEOI
 ## Want to maybe look at populate > 65% and some race demographic %'s and add those columns to the 
 #  income and covid data set. 
 # since they match up to be able to view everything at once. 
+
+## race
+indy_white_race <- get_acs(geography = "zcta",
+                         year = 2018,
+                         table = "B02001",
+                         geometry = TRUE) %>%   
+                         filter(GEOID %in% zip_code_indy$zip, variable %in% c("B02001_002"))
+colnames(indy_white_race)[4] <- ("white estimate")
+
+indy_black_race <- get_acs(geography = "zcta",
+                           year = 2018,
+                           table = "B02001",
+                           geometry = TRUE) %>%   
+                           filter(GEOID %in% zip_code_indy$zip, variable %in% c("B02001_003"))
+colnames(indy_black_race)[4] <- ("black estimate")
+
+indy_asian_race <- get_acs(geography = "zcta",
+                           year = 2018,
+                           table = "B02001",
+                           geometry = TRUE) %>%   
+                           filter(GEOID %in% zip_code_indy$zip, variable %in% c("B02001_004"))
+colnames(indy_asian_race)[4] <- ("asian estimate")
+
+## merging the 3 race (black, white, asian) estimates into one data set 
+merge20 <- inner_join(indy_white_race %>% as.data.frame(), 
+                      indy_black_race %>% as.data.frame(), by = "GEOID")
+
+indy_race_dem <- inner_join(merge20 %>% as.data.frame(), 
+                           indy_asian_race %>% as.data.frame(), by = "GEOID")
+
+indy_race_dem <- indy_race_dem[,-c(2,3,5,6,7,8,10,11,12,13,15,16)] # got rid of unnecesary columns
+
+# combining the race to the indy income/covid data set 
+race_income_covid <- merge(indy_race_dem, income_and_covid, by = "GEOID")
