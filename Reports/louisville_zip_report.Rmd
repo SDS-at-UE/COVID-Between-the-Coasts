@@ -28,6 +28,19 @@ louis_covid <- louis_covid %>%
   rename(zip = ZIP,
          population = Population,
          cases = Cases)
+```
+
+## Background
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Louisville. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Louisville Metro Department of Public Health and Wellness ([https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/](https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/)). 
+
+**This paragraph would summarize some of the results for a quick reference**
+
+## Analysis
+
+### Income
+
+```{r}
 louis_income <- get_acs(geography = "zcta",
                         table = "B19101",
                         geometry = TRUE) %>% 
@@ -55,18 +68,8 @@ lvls <- louis_income_six_figure %>%
   pull(GEOID)
 
 louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
-
 ```
 
-## Background
-
-The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Louisville. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Louisville Metro Department of Public Health and Wellness ([https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/](https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/)). 
-
-**This paragraph would summarize some of the results for a quick reference**
-
-## Analysis
-
-### Income
 
 We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the zip codes on the $x$-axis in the following graph. 
 
@@ -107,7 +110,6 @@ louis_income %>%
 ```{r}
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 ```
-
 
 It appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. To test this, we run a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically significant ($p=$ `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$estimate`. This verifies that there is indeed a negative correlation with case rate and higher incomes.
 
