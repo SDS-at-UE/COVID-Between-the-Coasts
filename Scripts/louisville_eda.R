@@ -14,11 +14,25 @@ zip_code_louis <- zip_code %>% filter(primary_city == "Louisville",
                                       state == "KY")
 
 ######################################
+# Retrieve COVID case data for Louisville
+# collected from https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/
+#####################################
+
+louis_covid <- read_csv("Data/louisville_covid.csv",
+                        col_types = cols(ZIP = col_character()))
+louis_covid <- louis_covid %>% 
+  mutate(case_rate = Cases/Population) %>% 
+  rename(zip = ZIP,
+         population = Population,
+         cases = Cases)
+
+######################################
 # Retrieve Income data
 ######################################
 
 louis_income <- get_acs(geography = "zcta",
-                        table = "B19101") %>% 
+                        table = "B19101",
+                        geometry = TRUE) %>% 
   filter(GEOID %in% zip_code_louis$zip,
          !variable %in% c("B19101_001"))
 
@@ -28,11 +42,57 @@ louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1
 
 # Graph income data to see differences in zip codes
 
-## attempt to order the x-axis of the graph
-levels_income <- names(sort(tapply(filter(louis_income, label == "$200,000 or more")$estimate, louis_income$GEOID, mean)))
+## Order the x-axis of the graph based on income. 
+### We group 6-figure incomes together and look
+### at their proportion of the zip code and 
+### sort in ascending order.
+louis_income_six_figure <- louis_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- louis_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
 
 ggplot(louis_income) +
-  geom_col(aes(GEOID, estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
+
+### Test Correlation between percentage of population making 6-figure
+### incomes to the case rate of COVID
+
+louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
+cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")
+
+## Plot COVID data for zip code
+
+louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
+
+
+pal <- colorNumeric(palette = "viridis", domain = louis_income$case_rate)
+
+louis_income %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_income$GEOID,
+                            "</strong><br /> Case Rate ", louis_income$case_rate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)
