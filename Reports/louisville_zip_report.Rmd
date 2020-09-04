@@ -11,6 +11,19 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Introduction
+## Background
 
 The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Louisville. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Louisville Metro Department of Public Health and Wellness ([https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/](https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/)). 
+
+**This paragraph would summarize some of the results for a quick reference**
+
+## Analysis
+
+### Income
+
+
+
+
+
+
+## Conclusions
