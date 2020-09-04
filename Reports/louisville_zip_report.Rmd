@@ -7,8 +7,55 @@ urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+#See louisville_eda.R for code comments
+library(tidycensus)
 library(tidyverse)
+library(leaflet)
+library(stringr)
+library(sf)
+library(tigris)
+options(tigris_use_cache = TRUE)
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+zip_code <- read_csv("../Data/zip_county.csv")
+zip_code_louis <- zip_code %>% filter(primary_city == "Louisville",
+                                      state == "KY")
+louis_covid <- read_csv("../Data/louisville_covid.csv",
+                        col_types = cols(ZIP = col_character()))
+louis_covid <- louis_covid %>% 
+  mutate(case_rate = Cases/Population) %>% 
+  rename(zip = ZIP,
+         population = Population,
+         cases = Cases)
+louis_income <- get_acs(geography = "zcta",
+                        table = "B19101",
+                        geometry = TRUE) %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         !variable %in% c("B19101_001"))
+
+louis_income <- left_join(louis_income, variables_2018[, 1:2], by = "variable")
+
+louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1"))
+
+louis_income_six_figure <- louis_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- louis_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
+
 ```
 
 ## Background
@@ -20,6 +67,50 @@ The goal of this analysis is to find any connections, if they exist, between dem
 ## Analysis
 
 ### Income
+
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the zip codes on the $x$-axis in the following graph. 
+
+```{r}
+ggplot(louis_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Income Distribution for Each Louisville Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Income Level")
+  
+```
+
+Zip code 40231 has no data. We can compare the remaining zip codes with the case rate (per 100000) of COVID in the same zip codes. 
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = louis_income$case_rate)
+louis_income %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_income$GEOID,
+                            "</strong><br /> Case Rate ", louis_income$case_rate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)
+```
+
+```{r}
+louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
+```
+
+
+It appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. To test this, we run a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically significant ($p=$ `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$estimate`. This verifies that there is indeed a negative correlation with case rate and higher incomes.
+
 
 
 
