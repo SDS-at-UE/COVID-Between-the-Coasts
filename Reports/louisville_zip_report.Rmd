@@ -1,0 +1,16 @@
+---
+title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Louisville Zip Code Analysis"
+date: "9/4/2020"
+output: html_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Introduction
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Louisville. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Louisville Metro Department of Public Health and Wellness ([https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/](https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/)). 
