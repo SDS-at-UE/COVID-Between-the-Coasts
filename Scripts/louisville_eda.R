@@ -31,7 +31,8 @@ louis_covid <- louis_covid %>%
 ######################################
 
 louis_income <- get_acs(geography = "zcta",
-                        table = "B19101") %>% 
+                        table = "B19101",
+                        geometry = TRUE) %>% 
   filter(GEOID %in% zip_code_louis$zip,
          !variable %in% c("B19101_001"))
 
@@ -55,7 +56,7 @@ louis_income_six_figure <- louis_income %>%
                       "$100,000 to $124,999")) %>% 
   mutate(prop_100K = sum(prop)) %>% 
   select(GEOID, prop_100K) %>% 
-  distinct()
+  distinct(GEOID, prop_100K)
 
 lvls <- louis_income_six_figure %>% 
   arrange(prop_100K) %>% 
@@ -72,3 +73,26 @@ ggplot(louis_income) +
 
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")
+
+## Plot COVID data for zip code
+
+louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
+
+
+pal <- colorNumeric(palette = "viridis", domain = louis_income$case_rate)
+
+louis_income %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_income$GEOID,
+                            "</strong><br /> Case Rate ", louis_income$case_rate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)

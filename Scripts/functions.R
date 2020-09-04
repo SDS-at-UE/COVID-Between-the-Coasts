@@ -4,6 +4,10 @@
 
 library(tidycensus)
 library(tidyverse)
+library(leaflet)
+library(stringr)
+library(sf)
+library(tigris)
 
 
 ### This loads the necessary variable-to-table data to connect table
