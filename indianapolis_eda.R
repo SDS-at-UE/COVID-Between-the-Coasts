@@ -177,3 +177,211 @@ indy_race_dem <- indy_race_dem[,-c(2,3,5,6,7,8,10,11,12,13,15,16)] # got rid of 
 
 # combining the race to the indy income/covid data set 
 race_income_covid <- merge(indy_race_dem, income_and_covid, by = "GEOID")
+
+### Age demographics (Looked at 75 and up)
+seventy5_to_79 <- get_acs(geography = "zcta",
+                         year = 2018,
+                         table = "B01001",
+                         geometry = TRUE) %>%   
+                         filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_023"))
+colnames(seventy5_to_79)[4] <- ("75_to_79")
+
+eighty_to_84 <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B01001",
+                          geometry = TRUE) %>%   
+                          filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_024"))
+colnames(eighty_to_84)[4] <- ("80_to_84")
+
+eighty5_and_up <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B01001",
+                        geometry = TRUE) %>%   
+                        filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_025"))
+colnames(eighty5_and_up)[4] <- ("85_and_up")
+
+# merging the above 3 datasets (they're male numbers only) and cleaning it up 
+merge30 <- inner_join(seventy5_to_79 %>% as.data.frame(), eighty_to_84 %>% as.data.frame(), by = "GEOID")
+male_age <- inner_join(merge30 %>% as.data.frame(), eighty5_and_up %>% as.data.frame(), by = "GEOID")
+
+male_age <- male_age[,-c(2,3,5,6,7,8,10,11,12,13,15,16)]
+male_age <- male_age %>% mutate(total_75_and_up = `75_to_79` + `80_to_84` + `85_and_up`)
+male_age <- male_age[,-c(2:4)]
+
+# Now doing female 
+seventy5_to_79F <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B01001",
+                          geometry = TRUE) %>%   
+                          filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_047"))
+colnames(seventy5_to_79F)[4] <- ("75_to_79F")
+
+eighty_to_84F <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B01001",
+                        geometry = TRUE) %>%   
+                        filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_048"))
+colnames(eighty_to_84F)[4] <- ("80_to_84F")
+
+eighty5_and_upF <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B01001",
+                          geometry = TRUE) %>%   
+                          filter(GEOID %in% zip_code_indy$zip, variable %in% c("B01001_049"))
+colnames(eighty5_and_upF)[4] <- ("85_and_upF")
+
+# merging the above 3 datasets (they're male numbers only) and cleaning it up 
+merge40 <- inner_join(seventy5_to_79F %>% as.data.frame(), eighty_to_84F %>% as.data.frame(), by = "GEOID")
+female_age <- inner_join(merge40 %>% as.data.frame(), eighty5_and_upF %>% as.data.frame(), by = "GEOID")
+
+female_age <- female_age[,-c(2,3,5,6,7,8,10,11,12,13,15,16)]
+female_age <- female_age %>% mutate(total_75_and_upF = `75_to_79F` + `80_to_84F` + `85_and_upF`)
+female_age <- female_age[,-c(2:4)]
+
+# Combining male and female age (75 and up)
+indy_age <- merge(male_age,female_age, by = "GEOID")
+indy_age <- indy_age %>% mutate(aged_75_and_up = total_75_and_up + total_75_and_upF)
+indy_age <- indy_age[,-c(2,3)]
+
+# Combining with the race, income and covid data
+age_race_income_covid <- merge(indy_age, race_income_covid, by = "GEOID")
+
+## Converting the demographics to be proportions 
+age_race_income_covid$POPULATION <- as.numeric(age_race_income_covid$POPULATION)
+age_race_income_covid <- age_race_income_covid %>% mutate(`white estimate` = `white estimate`/POPULATION,
+                                                          `black estimate` = `black estimate`/POPULATION,
+                                                          `asian estimate` = `asian estimate`/POPULATION,
+                                                          aged_75_and_up = aged_75_and_up/POPULATION,
+                                                          high = high/POPULATION,
+                                                          medium = medium/POPULATION,
+                                                          low = low/POPULATION)
+
+
+## Statistics and graphs
+age_race_income_covid$PERCENTAGE <- as.numeric(age_race_income_covid$PERCENTAGE)
+age_race_income_covid <- age_race_income_covid[-37,]  ## Got rid of the suppressed zip code 
+mean(age_race_income_covid$PERCENTAGE) ## 1.85% = average % of the population in that zip code that has covid
+
+ggplot(data = age_race_income_covid) + 
+  stat_summary(
+    mapping = aes(x = GEOID, y = PATIENT_COUNT),
+    fun.min = min,
+    fun.max = max,
+    fun = median
+  )
+
+# Corelation test age above 75 and percentage: NOT SIGNIFICANT
+cor.test(age_race_income_covid$aged_75_and_up, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of black proportion and percentage: SIGNIFICANT 
+cor.test(age_race_income_covid$`black estimate`, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of whites proportion and percentage: NOT SIGNIFICANT 
+cor.test(age_race_income_covid$`white estimate`, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of asian proportion and percentage: NOT SIGNIFICANT 
+cor.test(age_race_income_covid$`asian estimate`, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of high income proportion and percentage: NOT SIGNIFICANT 
+cor.test(age_race_income_covid$high, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of low income proportion and percentage: NOT SIGNIFICANT 
+cor.test(age_race_income_covid$low, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+# Corelation test of medium income proportion and percentage: SIGNIFICANT 
+cor.test(age_race_income_covid$medium, age_race_income_covid$PERCENTAGE, use = "complete.obs")
+
+######################################
+# Retrieve zip code to county dataset
+######################################
+
+zip_code <- read_csv("Data/zip_county.csv")
+zip_code_indy <- zip_code %>% filter(primary_city == "Indianapolis",
+                                     state == "IN")
+
+######################################
+# Retrieve COVID case data for Indianapolis
+# collected from 
+#####################################
+
+indy_covid <- read_xlsx("Data/indiana_cases_by_zip.xlsx")
+indy_covid <- indy_covid %>% rename(zip = ZIP_CD,
+                                    population = POPULATION,
+                                    cases = PATIENT_COUNT,
+                                    percentage = PERCENTAGE)
+
+indy_covid$zip <- as.character(indy_covid$zip)
+indy_covid$cases <- as.numeric(indy_covid$cases)
+indy_covid$population <- as.numeric(indy_covid$population)
+indy_covid <- indy_covid %>% mutate(case_rate = cases/population)
+######################################
+# Retrieve Income data
+######################################
+
+indy_income <- get_acs(geography = "zcta",
+                       table = "B19101",
+                       geometry = TRUE) %>% 
+  filter(GEOID %in% zip_code_indy$zip,
+         !variable %in% c("B19101_001"))
+
+indy_income <- left_join(indy_income, variables_2018[, 1:2], by = "variable")
+
+indy_income$label <- as_factor(str_replace(indy_income$label, ".*!!(.*)", "\\1"))
+
+# Graph income data to see differences in zip codes
+
+## Order the x-axis of the graph based on income. 
+### We group 6-figure incomes together and look
+### at their proportion of the zip code and 
+### sort in ascending order.
+indy_income_six_figure <- indy_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- indy_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+ggplot(indy_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+### Test Correlation between percentage of population making 6-figure
+### incomes to the case rate of COVID
+#### RESULT = Not significant 
+indy_income_cor <- left_join(indy_income_six_figure, indy_covid, by = c("GEOID"="zip"))
+cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")
+
+## Plot COVID data for zip code
+
+indy_income <- left_join(indy_income, indy_covid, by = c("GEOID" = "zip"))
+
+
+pal <- colorNumeric(palette = "viridis", domain = indy_income$case_rate)
+
+indy_income %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", indy_income$GEOID,
+                            "</strong><br /> Case Rate ", indy_income$case_rate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)
+
+

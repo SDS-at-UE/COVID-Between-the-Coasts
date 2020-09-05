@@ -1,0 +1,122 @@
+---
+title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Indianapolis Zip Code Analysis"
+date: "9/4/2020"
+output: html_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(stringr)
+library(sf)
+library(tigris)
+library(readxl)
+
+options(tigris_use_cache = TRUE)
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+zip_code <- read_csv("../Data/zip_county.csv")
+
+indy_covid <- read_excel("../Data/indiana_cases_by_zip.xlsx")
+indy_covid <- indy_covid %>% rename(zip = ZIP_CD,
+                                    population = POPULATION,
+                                    cases = PATIENT_COUNT,
+                                    percentage = PERCENTAGE)
+
+indy_covid$zip <- as.character(indy_covid$zip)
+indy_covid$cases <- as.numeric(indy_covid$cases)
+indy_covid$population <- as.numeric(indy_covid$population)
+indy_covid <- indy_covid %>% mutate(case_rate = cases/population)
+```
+
+## Background
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Indianapolis Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Indiana State Department of Health. ([https://hub.mph.in.gov/dataset/covid-19-cases-by-zip])
+
+**This paragraph would summarize some of the results for a quick reference**
+
+## Analysis
+
+### Income
+```{r}
+indy_income <- get_acs(geography = "zcta",
+                        table = "B19101",
+                        geometry = TRUE) %>% 
+  filter(GEOID %in% zip_code_indy$zip,
+         !variable %in% c("B19101_001"))
+
+indy_income <- left_join(indy_income, variables_2018[, 1:2], by = "variable")
+indy_income$label <- as_factor(str_replace(indy_income$label, ".*!!(.*)", "\\1"))
+
+indy_income_six_figure <- indy_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- indy_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+indy_income <- left_join(indy_income, indy_covid, by = c("GEOID" = "zip"))
+```
+
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the zip codes on the $x$-axis in the following graph. 
+
+```{r}
+ggplot(indy_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Income Distribution for Each Indianapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Income Level")
+```
+
+We can compare zip codes with the case rate (per 100000) of COVID in the same zip codes.
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = indy_income$case_rate)
+
+indy_income %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", indy_income$GEOID,
+                            "</strong><br /> Case Rate ", indy_income$case_rate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)
+```
+
+```{r}
+indy_income_cor <- left_join(indy_income_six_figure, indy_covid, by = c("GEOID"="zip"))
+```
+
+It appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. To test this, we run a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically non-significant ($p=$ `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$estimate`. This indicates that there is not a negative correlation between case rates and higher incomes. 
+
+
+
+
+
+
+
+
+
