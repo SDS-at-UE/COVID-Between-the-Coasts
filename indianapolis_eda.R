@@ -4,8 +4,7 @@
 library(tidycensus)
 library(tidyverse)
 
-variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
-  rename(variable = name)
+source("Scripts/functions.R")
 
 ######################################
 # Retrieve zip code to county dataset
@@ -30,6 +29,7 @@ indy_data_pop <- left_join(indy_data_pop, variables_2018[, 1:2], by = "variable"
 # POPULATION = population count as of 2010
 # PERCENTAGE = percentage of COVID cases to population in a given zip code 
 
+indiana_cases_by_zip <- read_excel("Data/indiana_cases_by_zip.xlsx")
 # Filtering the cases by zip to the zip codes just for Indianapolis. 
 indiana_cases_by_zip <- indiana_cases_by_zip %>% filter(ZIP_CD %in% zip_code_indy$zip)
 
@@ -145,6 +145,20 @@ income_and_covid <- merge(indy_income_brackets, indiana_cases_by_zip, by = "GEOI
 # since they match up to be able to view everything at once. 
 
 ## race
+indy_race <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B02001") %>% 
+  filter(GEOID %in% zip_code_indy$zip,
+         !variable %in% c("B02001_001"))
+indy_race <- left_join(indy_race, variables_2018[, 1:2], by = "variable")
+indy_race$label <- as_factor(str_replace(indy_race$label, ".*!!(.*)", "\\1"))
+
+ggplot(indy_race) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
 indy_white_race <- get_acs(geography = "zcta",
                          year = 2018,
                          table = "B02001",
@@ -261,6 +275,12 @@ age_race_income_covid <- age_race_income_covid %>% mutate(`white estimate` = `wh
 age_race_income_covid$PERCENTAGE <- as.numeric(age_race_income_covid$PERCENTAGE)
 age_race_income_covid <- age_race_income_covid[-37,]  ## Got rid of the suppressed zip code 
 mean(age_race_income_covid$PERCENTAGE) ## 1.85% = average % of the population in that zip code that has covid
+
+white <- age_race_income_covid %>% filter(`white estimate` > .50) 
+mean(white$PERCENTAGE) ## case rate for zip codes that are > 50% white
+
+black <- age_race_income_covid %>% filter(`black estimate` > .50) 
+mean(black$PERCENTAGE) ## case rate for zip codes that are > 50% black
 
 ggplot(data = age_race_income_covid) + 
   stat_summary(
