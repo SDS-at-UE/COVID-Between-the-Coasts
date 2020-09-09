@@ -281,3 +281,44 @@ ggplot(louis_age_cor) +
 louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
 
 cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")
+
+
+##################################
+# Private vs. Public HI
+##################################
+
+louis_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+louis_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+louis_hi_private$label <- str_remove(louis_hi_private$label, "Estimate!!Total!!")
+louis_hi_public$label <- str_remove(louis_hi_public$label, "Estimate!!Total!!")
+
+louis_hi_private <- separate(louis_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+louis_hi_public <- separate(louis_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+louis_hi_private$Private_HI <- if_else(louis_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+louis_hi_public$Public_HI <- if_else(louis_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+louis_hi_private$Sex <- as_factor(louis_hi_private$Sex)
+louis_hi_public$Sex <- as_factor(louis_hi_public$Sex)
+louis_hi_private$Age <- as_factor(louis_hi_private$Age)
+louis_hi_public$Age <- as_factor(louis_hi_public$Age)
+louis_hi_private$Private_HI <- as_factor(louis_hi_private$Private_HI)
+louis_hi_public$Public_HI <- as_factor(louis_hi_public$Public_HI) 
+
+
