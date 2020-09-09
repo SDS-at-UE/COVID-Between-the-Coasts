@@ -74,6 +74,25 @@ ggplot(louis_income) +
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")
 
+### Scatterplot of six-figure income vs. case rate
+
+ggplot(louis_income_cor) +
+  geom_point(aes(prop_100K, case_rate))
+
+### Determine outlier from above scatterplot
+
+filter(louis_income_cor, case_rate > .025)
+
+#### ZIP 40202 is an outlier. Remove and retest correlation
+
+louis_income_cor_sans40202 <- louis_income_cor %>% 
+  filter(case_rate < .025)
+
+cor.test(louis_income_cor_sans40202$prop_100K, louis_income_cor_sans40202$case_rate, use = "complete.obs")
+
+ggplot(louis_income_cor_sans40202) +
+  geom_point(aes(prop_100K, case_rate))
+
 ################################
 # Plot COVID data for zip code
 ################################
