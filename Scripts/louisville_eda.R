@@ -162,9 +162,17 @@ louis_gini %>%
 ### Test Correlation between Gini index and the case rate of COVID
 
 louis_gini_cor <- left_join(louis_gini, louis_covid, by = c("GEOID"="zip"))
-cor.test(louis_gini_cor$estimate, louis_income_cor$case_rate, use = "complete.obs")
+cor.test(louis_gini_cor$estimate, louis_gini_cor$case_rate, use = "complete.obs")
 
 ### Scatterplot Gini Index and Case rate
 
 ggplot(louis_gini_cor) +
   geom_point(aes(estimate, case_rate))
+
+### Remove outlier and retest correlation for gini to case rate
+
+filter(louis_gini_cor, case_rate > .03)
+
+louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < .03)
+
+cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")
