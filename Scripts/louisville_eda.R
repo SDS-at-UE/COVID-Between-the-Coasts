@@ -176,3 +176,108 @@ filter(louis_gini_cor, case_rate > .03)
 louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < .03)
 
 cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")
+
+
+#################################
+# Retrieve Sex, Age data
+# Health insurance coverage also obtained
+#################################
+
+louis_sex_age <- get_acs(geography = "zcta",
+                         table = "B27001") %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
+
+louis_sex_age <- louis_sex_age %>% filter(str_count(label, "!!") >= 4)
+
+louis_sex_age$label <- str_remove(louis_sex_age$label, "Estimate!!Total!!")
+
+louis_sex_age <- separate(louis_sex_age,
+                          label,
+                          sep = "!!",
+                          into = c("Sex", "Age", "HI_Coverage"))
+
+louis_sex_age$HI_Coverage <- if_else(louis_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
+
+louis_sex_age$Sex <- as_factor(louis_sex_age$Sex)
+louis_sex_age$Age <- as_factor(louis_sex_age$Age)
+louis_sex_age$HI_Coverage <- as_factor(louis_sex_age$HI_Coverage)  
+
+## Look at Health Insurance Coverage
+
+louis_HI <- louis_sex_age %>% group_by(GEOID, HI_Coverage) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+### Graph Health Insurance Coverage by proportion
+
+louis_HI_levels <- louis_HI %>% 
+  filter(HI_Coverage == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_HI) +
+  geom_col(aes(factor(GEOID, levels = louis_HI_levels), count, fill = HI_Coverage),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+### Scatterplot HI_Coverage vs case rate
+
+louis_HI_cor <- left_join(louis_HI, louis_covid, by = c("GEOID"="zip"))
+
+filter(louis_HI_cor, HI_Coverage == "Yes") %>%
+  ggplot() +
+  geom_point(aes(prop, case_rate))
+
+#### Remove 40202 as outlier and conduct correlation test
+
+louis_HI_cor_sans40202 <- louis_HI_cor %>% 
+  filter(HI_Coverage == "Yes",
+         case_rate < .03)
+cor.test(louis_HI_cor_sans40202$prop, louis_HI_cor_sans40202$case_rate, use = "complete.obs")
+
+## Look at Ages of the zip codes
+
+louis_age <- louis_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65)
+
+age_lvls <- louis_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65) %>% 
+  select(GEOID, prop_over65) %>% 
+  distinct(GEOID< prop_over65) %>% 
+  pull(GEOID)
+
+ggplot(louis_sex_age) +
+  geom_col(aes(factor(GEOID, levels = age_lvls), estimate, fill = Age),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+### Correlation test between proportion over 65 and case rate
+
+louis_age_cor <- left_join(louis_age, louis_covid, by = c("GEOID"="zip"))
+
+ggplot(louis_age_cor) +
+  geom_point(aes(prop_over65, case_rate))
+
+#### Take out 40202 outlier
+
+louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
+
+cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")
