@@ -26,7 +26,7 @@ library(ggplot2)
 ```{r, echo=FALSE}
 #data set for Milwaukee Metropolitan COVID data
 
-Milwaukee_Covid_Data <- read_excel("~/Library/Mobile Documents/com~apple~CloudDocs/Stat 300/Milwaukee Covid Data.xls")
+Milwaukee_Covid_Data <- read_excel("Data/Milwaukee Covid Data.xls")
 ```
 
 
