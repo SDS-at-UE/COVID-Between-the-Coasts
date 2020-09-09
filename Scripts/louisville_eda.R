@@ -74,7 +74,9 @@ ggplot(louis_income) +
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")
 
-## Plot COVID data for zip code
+################################
+# Plot COVID data for zip code
+################################
 
 louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
 
@@ -96,3 +98,45 @@ louis_income %>%
             values = ~ case_rate,
             title = "Case Rate (per 100000)",
             opacity = 1)
+
+#################################
+# Retrieve Gini Index
+#################################
+
+louis_gini <- get_acs(geography = "zcta",
+                      table = "B19083",
+                      geometry = TRUE)
+
+# Export/Write ZIP code geometry data for use in other scripts
+
+geometry_zip_export <- select(louis_gini, GEOID, geometry)
+write_sf(geometry_zip_export, "Data/All_zips.shp")
+
+# Back to Gini Index
+
+louis_gini <- louis_gini %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
+
+louis_gini$label <- as_factor(str_replace(louis_gini$label, ".*!!(.*)", "\\1"))
+
+# Map Gini Index
+
+pal_gini <- colorNumeric(palette = "viridis", domain = louis_gini$estimate)
+
+louis_gini %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_gini$GEOID,
+                            "</strong><br /> Gini Index: ", louis_gini$estimate),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_gini(estimate)) %>% 
+  addLegend("bottomright",
+            pal = pal_gini,
+            values = ~ estimate,
+            title = "Gini Index",
+            opacity = 1)
+
