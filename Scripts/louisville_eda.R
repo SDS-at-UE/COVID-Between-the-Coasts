@@ -398,8 +398,10 @@ ggplot(louis_hi_public_2) +
 louis_hi_public_cor <- left_join(louis_hi_public_2, louis_covid, by = c("GEOID"="zip"))
 
 filter(louis_hi_public_cor, Public_HI == "Yes") %>%
-  ggplot() +
-  geom_point(aes(prop, case_rate))
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(aes(label = GEOID)) +
+  labs(title = "Public HI vs Case Rate")
 
 #### Remove 40202 as outlier and conduct correlation test
 
