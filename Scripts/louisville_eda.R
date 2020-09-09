@@ -321,4 +321,97 @@ louis_hi_public$Age <- as_factor(louis_hi_public$Age)
 louis_hi_private$Private_HI <- as_factor(louis_hi_private$Private_HI)
 louis_hi_public$Public_HI <- as_factor(louis_hi_public$Public_HI) 
 
+## Look at Private HI Coverage
+
+louis_hi_private_2 <- louis_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+### Graph Private HI Coverage by proportion
+
+lvls_louis_hi_private <- louis_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_hi_private), count, fill = Private_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+### Scatterplot Private HI vs case rate
+
+louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID"="zip"))
+
+filter(louis_hi_private_cor, Private_HI == "Yes") %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(aes(label = GEOID))
+
+#### Remove 40202 as outlier and conduct correlation test
+
+louis_hi_private_cor_sans40202 <- louis_hi_private_cor %>% 
+  filter(Private_HI == "Yes",
+         case_rate < .03)
+cor.test(louis_hi_private_cor_sans40202$prop, louis_hi_private_cor_sans40202$case_rate, use = "complete.obs")
+
+
+## Look at Public HI Coverage
+
+louis_hi_public_2 <- louis_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+### Graph Public HI Coverage by proportion
+
+lvls_louis_hi_public <- louis_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_hi_public), count, fill = Public_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+#### Order the x-axis based on proportion of Private HI to see how it matches up
+#### with the public HI option.
+ggplot(louis_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_hi_private), count, fill = Public_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Proportion of Population with Public Health Insurance",
+       subtitle = "Ordered by Increasing Proportion of Population with Private Health Insurance")
+
+### Scatterplot Public HI vs case rate
+
+louis_hi_public_cor <- left_join(louis_hi_public_2, louis_covid, by = c("GEOID"="zip"))
+
+filter(louis_hi_public_cor, Public_HI == "Yes") %>%
+  ggplot() +
+  geom_point(aes(prop, case_rate))
+
+#### Remove 40202 as outlier and conduct correlation test
+
+louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>% 
+  filter(Public_HI == "Yes",
+         case_rate < .03)
+cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")
+
+## In looking at the private HI vs. case rate scatterplot, there are some definitive
+## groups. What is causing that?
+
+
+
+
+
 
