@@ -1,0 +1,510 @@
+---
+title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Chicago Zip Code Analysis"
+date: "9/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidycensus)
+library(tidyverse)
+library(sf)
+chicago_covid <- read_csv("chicago_zip_positive_cases.csv",
+                          col_types = cols(Zip = col_character()))
+chicago_covid <- na.omit(chicago_covid)
+chicago_covid <- chicago_covid %>% 
+  mutate(case_rate = Cases/Population) %>% 
+  mutate(pos_rate = Cases/Tested)
+zip_code <- read_csv("zip_county.csv")
+zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
+                                        state == "IL")
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+```
+
+## Background
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Chicago. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). 
+
+COVID-19 case numbers were obtained from the Illinois Department of Public Health
+(https://www.dph.illinois.gov/covid19/covid19-statistics)
+
+## Summary
+Essential workers see the largest positive correlation of all variables analyzed in this report with a correlation of 0.63. The next strongest correlation is the negative correlation between nonessential workers and COVID-19 at a value of -0.54. Public transportation's correlation is -0.45 when comparing it to COVID-19. Families who make six figures were seen to have a correlation with COVID-19 of -0.43. Non-citizens and families who make under $30,000 a year both saw correlation at 0.33. Individuals above and below the poverty line had correation of -0.31 and -.31, respectively. Two variables of interest came back with no values of correlation. These two variables were individuals over the age of 60 and the African American race.
+
+## Analysis
+
+# Family Income in the Past 12 Months
+```{r}
+chicago_income <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B19101") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         !variable %in% c("B19101_001"))
+chicago_income <- left_join(chicago_income, variables_2018[, 1:2], by = "variable")
+chicago_income$label <- as_factor(str_replace(chicago_income$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing 6 figure income
+```{r}
+chicago_income_six_figure <- chicago_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>%
+  distinct(GEOID, prop_100K)
+
+lvls <- chicago_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+chicago_income <- left_join(chicago_income, chicago_covid, by = c("GEOID" = "Zip"))
+
+ggplot(chicago_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Income Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Income Level")
+```
+
+Test Correlation between percentage of population making 6-figure incomes to the case rate of COVID
+```{r}
+chicago_income_six_figure_cor <- left_join(chicago_income_six_figure, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_income_six_figure_cor$prop_100K, chicago_income_six_figure_cor$case_rate, use = "complete.obs")
+```
+6 figure incomes and case rate are shown to have a correlation of -0.43. This is a moderate negative relationship between the two variables of interest. For example, the higher the income of a family, the lower the probability of contracting COVID-19 cases
+
+
+Analyzing 30K and under income
+```{r}
+chicago_income_under_30K <- chicago_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$25,000 to $29,999",
+                      "$20,000 to $24,999",
+                      "$15,000 to $19,999",
+                      "$10,000 to $14,999",
+                      "Less than $10,000")) %>% 
+  mutate(prop_30K = sum(prop)) %>% 
+  select(GEOID, prop_30K) %>% 
+  distinct(GEOID, prop_30K)
+
+lvls <- chicago_income_under_30K %>% 
+  arrange(prop_30K) %>% 
+  pull(GEOID)
+
+ggplot(chicago_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Income Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Income Level")
+```
+
+Test Correlation between percentage of population making 6-figure incomes to the case rate of COVID
+```{r}
+chicago_income_under_30K_cor <- left_join(chicago_income_under_30K, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_income_under_30K_cor$prop_30K, chicago_income_under_30K_cor$case_rate, use = "complete.obs")
+```
+On the flip side of our previous variable of interest, families with annual incomes under $30,000 tend to see more COVID cases. This is a little less strong than the correlation between 6 figure incomes and COVID, but still present. Correlation is 0.33.
+
+COVID data for zip code
+```{r}
+chicago_income <- left_join(chicago_income, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+
+# Poverty Status in Past 12 Months by Age
+```{r}
+chicago_pov <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B17020") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B17020_001"))
+chicago_pov <- left_join(chicago_pov, variables_2018[, 1:2], by = "variable")
+chicago_pov$label <- as_factor(str_replace(chicago_pov$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing below poverty level data
+```{r}
+chicago_below_pov_lvl <- chicago_pov %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Income in the past 12 months below poverty level")) %>% 
+  mutate(prop_below_pov = sum(prop)) %>% 
+  select(GEOID, prop_below_pov) %>% 
+  distinct(GEOID, prop_below_pov)
+
+lvls <- chicago_below_pov_lvl %>% 
+  arrange(prop_below_pov) %>% 
+  pull(GEOID)
+
+ggplot(chicago_pov) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Poverty Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Poverty Level")
+```
+
+Test Correlation between percentage of population income in the past 12 months below poverty level to the case rate of COVID
+```{r}
+chicago_pov_cor <- left_join(chicago_below_pov_lvl, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_pov_cor$prop_below_pov, chicago_pov_cor$case_rate, use = "complete.obs")
+```
+Individuals below the poverty line are likely to see a positive correlation with COVID cases.Close to low income, the correlation is 0.31
+
+
+Analyzing above poverty level data
+```{r}
+chicago_above_pov_lvl <- chicago_pov %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Income in the past 12 months at or above poverty level")) %>% 
+  mutate(prop_above_pov = sum(prop)) %>% 
+  select(GEOID, prop_above_pov) %>% 
+  distinct(GEOID, prop_above_pov)
+
+lvls <- chicago_above_pov_lvl %>% 
+  arrange(prop_above_pov) %>% 
+  pull(GEOID)
+
+ggplot(chicago_pov) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Poverty Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Poverty Level")
+```
+
+Test Correlation between percentage of population income in the past 12 months above the poverty level to the case rate of COVID
+```{r}
+chicago_above_pov_cor <- left_join(chicago_above_pov_lvl, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_above_pov_cor$prop_above_pov, chicago_above_pov_cor$case_rate, use = "complete.obs")
+```
+People who reported to be above the poverty line see less cases of COVID with evidence from a negative correlation value of -0.31.
+
+COVID data for zip code
+```{r}
+chicago_pov <- left_join(chicago_pov, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+
+# Occupation by Class of Worker for the Civilian Employed Population 16 Years and Over
+```{r}
+chicago_occ <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "C24060") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("C24060_001"))
+chicago_occ <- left_join(chicago_occ, variables_2018[, 1:2], by = "variable")
+chicago_occ$label <- as_factor(str_replace(chicago_occ$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing Essential Occupations
+```{r}
+chicago_occ_essential <- chicago_occ %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Natural resources, construction, and maintenance occupations",
+                      "Production, transportation, and material moving occupations")) %>% 
+  mutate(prop_essential = sum(prop)) %>% 
+  select(GEOID, prop_essential) %>% 
+  distinct(GEOID, prop_essential)
+
+lvls <- chicago_occ_essential %>% 
+  arrange(prop_essential) %>% 
+  pull(GEOID)
+
+ggplot(chicago_occ) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Occupation Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Occupation Category")
+```
+
+Test Correlation between percentage of population that have essential occupationsto the case rate of COVID
+```{r}
+chicago_occ_cor <- left_join(chicago_occ_essential, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_occ_cor$prop_essential, chicago_occ_cor$case_rate, use = "complete.obs")
+```
+We see our strongest correlation so far comparing essential workers to the number of COVID cases with a correlation value of 0.63! The essential occupations I considered were 2 categories: number one was "Natural resources, construction, and maintenance occupations", and number two was "Production, transportation, and material moving occupations."
+
+Nonessential occupations analysis
+```{r}
+chicago_occ_nonessential <- chicago_occ %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Management, business, science, and arts occupations",
+                      "Service occupations",
+                      "Sales and office occupations",
+                      "Employee of private company workers")) %>% 
+  mutate(prop_nonessential = sum(prop)) %>% 
+  select(GEOID, prop_nonessential) %>% 
+  distinct(GEOID, prop_nonessential)
+
+lvls <- chicago_occ_nonessential %>% 
+  arrange(prop_nonessential) %>% 
+  pull(GEOID)
+
+ggplot(chicago_occ) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Occupation Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Occupation Category")
+```
+
+Test Correlation between percentage of population that have nonessential occupations to the case rate of COVID
+```{r}
+chicago_occ_nonessential_cor <- left_join(chicago_occ_nonessential, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_occ_nonessential_cor$prop_nonessential, chicago_occ_nonessential_cor$case_rate, use = "complete.obs")
+```
+Looking at again the opposite of our first interest, we compare nonessential workers to the number of cases they have. The correlation between these two variables is -0.54, meaning as the number of nonessential workers increases, the number of COVID cases goes down and vice versa. The occupations I considered to be nonessential was "Management, business, science, and arts occupations", "Service occupations", "Sales and office occupations", and "Employee of private company workers."
+
+COVID data for zip code
+```{r}
+chicago_occ <- left_join(chicago_occ, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+# Sex By Age
+```{r}
+chicago_sex <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B01001") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B01001_001"))
+chicago_sex <- left_join(chicago_sex, variables_2018[, 1:2], by = "variable")
+chicago_sex$label <- as_factor(str_replace(chicago_sex$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing ages over sixty
+```{r}
+chicago_over_sixty <- chicago_sex %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("60 and 61 years",
+                      "62 to 64 years",
+                      "65 and 66 years",
+                      "67 to 69 years",
+                      "70 to 74 years",
+                      "75 to 79 years",
+                      "80 to 84 years",
+                      "85 years and over")) %>% 
+  mutate(prop_60 = sum(prop)) %>% 
+  select(GEOID, prop_60) %>% 
+  distinct(GEOID, prop_60)
+
+lvls <- chicago_over_sixty %>% 
+  arrange(prop_60) %>% 
+  pull(GEOID)
+
+ggplot(chicago_sex) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Age Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Age")
+```
+
+Test Correlation between percentage of population over 60 to the case rate of COVID
+```{r}
+chicago_sex_cor <- left_join(chicago_over_sixty, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_sex_cor$prop_60, chicago_sex_cor$case_rate, use = "complete.obs")
+```
+This correlation is very close to zero meaning there really is no correlation between people over the age of 60 and the number of cases for COVID-19.
+
+COVID data for zip code
+```{r}
+chicago_sex <- left_join(chicago_sex, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+# Race
+```{r}
+chicago_race <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B02001") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B02001_001"))
+chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
+chicago_race$label <- as_factor(str_replace(chicago_race$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing African American data
+```{r}
+chicago_black <- chicago_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Black or African American alone")) %>% 
+  mutate(prop_black = sum(prop)) %>% 
+  select(GEOID, prop_black) %>% 
+  distinct(GEOID, prop_black)
+
+lvls <- chicago_black %>% 
+  arrange(prop_black) %>% 
+  pull(GEOID)
+
+ggplot(chicago_race) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Race Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Race")
+```
+
+Test Correlation between percentage of population that is black to the case rate of COVID
+```{r}
+chicago_race_cor <- left_join(chicago_black, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_race_cor$prop_black, chicago_race_cor$case_rate, use = "complete.obs")
+```
+This correlation value is close to zero. There is little evidence of the correlation of COVID cases and African American individuals.
+
+COVID data for zip code
+```{r}
+chicago_race <- left_join(chicago_race, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+
+# Nativity and Citizenship Status in the United States
+```{r}
+chicago_citizen <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B05001") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B05001_001"))
+chicago_citizen <- left_join(chicago_citizen, variables_2018[, 1:2], by = "variable")
+chicago_citizen$label <- as_factor(str_replace(chicago_citizen$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing non-citizen data
+```{r}
+chicago_not_citizen <- chicago_citizen %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Not a U.S. citizen")) %>% 
+  mutate(prop_not_citizen = sum(prop)) %>% 
+  select(GEOID, prop_not_citizen) %>% 
+  distinct(GEOID, prop_not_citizen)
+
+lvls <- chicago_not_citizen %>% 
+  arrange(prop_not_citizen) %>% 
+  pull(GEOID)
+
+ggplot(chicago_citizen) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Citizen Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Citizenship Status")
+```
+
+Test Correlation between percentage of population that are not citizens to the case rate of COVID
+```{r}
+chicago_citizen_cor <- left_join(chicago_not_citizen, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_citizen_cor$prop_not_citizen, chicago_citizen_cor$case_rate, use = "complete.obs")
+```
+We see a correlation of 0.33 between individuals who are not citizens and COVID rates. The two variables increase and decrease together with their positive correlation.
+
+COVID data for zip code
+```{r}
+chicago_citizen <- left_join(chicago_citizen, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+# Means of Transportation to Work
+```{r}
+chicago_trans <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B08301") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B08301_001"))
+chicago_trans <- left_join(chicago_trans, variables_2018[, 1:2], by = "variable")
+chicago_trans$label <- as_factor(str_replace(chicago_trans$label, ".*!!(.*)", "\\1"))
+```
+
+Analyzing Public Transportation Data
+```{r}
+chicago_public_trans <- chicago_trans %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Public transportation (excluding taxicab)",
+                      "Bus or trolley bus",
+                      "Streetcar or trolley car (carro publico in Puerto Rico)",
+                      "Subway or elevated",
+                      "Railroad")) %>% 
+  mutate(prop_public = sum(prop)) %>% 
+  select(GEOID, prop_public) %>% 
+  distinct(GEOID, prop_public)
+
+lvls <- chicago_public_trans %>% 
+  arrange(prop_public) %>% 
+  pull(GEOID)
+
+ggplot(chicago_trans) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Transportation Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Means of Transportation")
+```
+
+Test Correlation between percentage of population using public transportation to the case rate of COVID
+```{r}
+chicago_trans_cor <- left_join(chicago_public_trans, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_trans_cor$prop_public, chicago_trans_cor$case_rate, use = "complete.obs")
+```
+We have found a negative value of -0.45 for the correlation regarding public transportation and COVID cases. Interpreting the correlation, as more people use pubic transportation and, in Chicago's case, the L, there are less cases of COVID-19. I used "Public transportation (excluding taxicab)", "Bus or trolley bus", "Streetcar or trolley car (carro publico in Puerto Rico)", "Subway or elevated", and "Railroad" all as the variable public transportation.
+
+COVID data for zip code
+```{r}
+chicago_income <- left_join(chicago_income, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+# Conclusions
+We analyzed 7 categories and 10 variables throughout the zip codes in Chicago. We saw two variables stick out as they crossed over 0.5. Half of the variables were positively correlated when the other half were negatively correlated. Essential workers and non essential workers saw some higher correlations numbers attached to them. A couple variables that I thought would definitely have correlation in favor of COVID cases did not show any correlations including age and race. I think we could dig into these two variables more and see if we could find other ranges in those categories to show some correlation. For public transportation, I expected a high positive number, but the results showed a high negative number. Are there underlying reasons why people who use public transportation are getting less sick? Individuals who are not citizens are seeing higher rates of COVID-19. Are they able to get the help they need with new government restrictions in place? I'm sure we can dig and find some more insight on these factors to see as to why they have the correlation they do.

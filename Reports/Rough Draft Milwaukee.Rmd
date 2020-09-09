@@ -6,7 +6,7 @@ output: word_document
 ---
 
 
-The COVID-19 pandemic disproportionately impacts lower-income communities. The Milwaukee Metropolitan area, consisting of Milwaukee, Washington, Waukesha, and Ozaukee counties, exemplifies this disparity. Milwaukee County, which has a much greater non-white population percentage and a lower median household income than the other metropolitan counties, expereinces more cases and deaths per 100000 people than the rest of the metropolitan counties. When taking into consideration conditions or demographics pre-exposed to death from COVID-19, smoking is much more prevalent in Milwaukee County, which could explain some of the difference in deaths between counties. However, the average age in Milwaukee County is much lower than the other counties, which is surprising given the rate at which individuals 65 and older die from COVID in comparison to the rest of society. 
+The COVID-19 pandemic disproportionately impacts lower-income communities. The Milwaukee Metropolitan area, consisting of Milwaukee, Washington, Waukesha, and Ozaukee counties, exemplifies this disparity. Milwaukee County, which has a much greater non-white population percentage and a lower median household income than the other metropolitan counties, expereinces more cases and deaths per 100000 people than the rest of the metropolitan counties. When taking into consideration conditions or demographics pre-exposed to death from COVID-19, smoking is much more prevalent in Milwaukee County, which could explain some of the difference in deaths between counties. However, the average age in Milwaukee County is much lower than the other counties, which is surprising given the rate at which individuals 65 and older die from COVID in comparison to the rest of society. Unfortunately, downloadable ZIP code data for Milwaukee was not able to be found at this time, so a more specific analysis could not be performed. 
 
 
 
@@ -24,9 +24,9 @@ library(ggplot2)
 
 
 ```{r, echo=FALSE}
-#data set for Milwaukee Metropolitan COVID data
+#data set for Milwaukee Metropolitan COVID data, use the ../ to back up a folder
 
-Milwaukee_Covid_Data <- read_excel("~/Library/Mobile Documents/com~apple~CloudDocs/Stat 300/Milwaukee Covid Data.xls")
+Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
 ```
 
 
