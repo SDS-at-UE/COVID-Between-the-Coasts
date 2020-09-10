@@ -1,0 +1,319 @@
+---
+title: 'COVID-19:  A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Minneapolis Zip Code Analysis"
+date: "9/6/2020"
+output: html_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(stringr)
+library(sf)
+library(tigris)
+source("../Scripts/functions.R")
+options(tigris_use_cache = TRUE)
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+zip_code <- read_csv("../Data/zip_county.csv")
+zip_code_minn <- zip_code %>% filter(primary_city == "Minneapolis",
+                                      state == "MN")
+minn_covid <- read_csv("../Data/minnesota_covid_data.csv",
+                        col_types = cols(ZIP = col_character())) %>%
+  filter(ZIP %in% zip_code_minn$zip)
+minn_covid$Cases <- if_else(minn_covid$Cases == "<=5", 5, as.numeric(minn_covid$Cases))
+minn_population <- get_acs(geography = "zcta",
+                           variable = "B01003_001") %>%
+  filter(GEOID %in% zip_code_minn$zip)
+minneapolis_covid <- left_join(minn_population, minn_covid, by = c("GEOID" = "ZIP"))
+minneapolis_covid <- minneapolis_covid %>% 
+  rename(ZIP = GEOID,
+         Population = estimate) %>%
+  mutate(case_rate = Cases/Population)
+minneapolis_covid <- select(minneapolis_covid, ZIP, Population, Cases, case_rate)
+```
+
+## Background
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Minneapolis. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Minnesota Department of Health and minnesota_covid_data. (https://www.health.state.mn.us/diseases/coronavirus/situation.html#map1). 
+
+## Summary
+
+## Income 
+
+```{r}
+minn_income <- get_acs(geography = "zcta",
+                        variable = "B19101") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B19101_001"))
+
+minn_income <- left_join(minn_income, variables_2018[, 1:2], by = "variable")
+
+minn_income$label <- as_factor(str_replace(minn_income$label, ".*!!(.*)", "\\1"))
+
+minn_income__past_year <- minn_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Allocated")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_income__past_year %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_income <- left_join(minn_income, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_income) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Income Status in past year per household for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Income Status")
+```
+
+## Race
+
+```{r}
+minn_race <- get_acs(geography = "zcta",
+                        variable = "B02001") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B02001_001"))
+
+minn_race <- left_join(minn_race, variables_2018[, 1:2], by = "variable")
+
+minn_race$label <- as_factor(str_replace(minn_race$label, ".*!!(.*)", "\\1"))
+
+minn_race_status <- minn_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Allocated")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_race_status %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_race <- left_join(minn_race, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_race) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Racial Status for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Racial Status")
+
+```
+
+## Gini Index
+
+```{r}
+minn_gini <- get_acs(geography = "zcta",
+                        variable = "B19083") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B19083_001"))
+
+minn_gini <- left_join(minn_gini, variables_2018[, 1:2], by = "variable")
+
+minn_gini$label <- as_factor(str_replace(minn_gini$label, ".*!!(.*)", "\\1"))
+
+minn_gini_index <- minn_gini %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Gini Index")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_gini_index %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_gini <- left_join(minn_gini, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_gini) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Gini Index for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Gini Index")
+
+```
+
+## Employment (16+)
+
+```{r}
+minn_employment <- get_acs(geography = "zcta",
+                        variable = "B99242") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B99242_002"))
+
+minn_employment <- left_join(minn_employment, variables_2018[, 1:2], by = "variable")
+
+minn_employment$label <- as_factor(str_replace(minn_employment$label, ".*!!(.*)", "\\1"))
+
+minn_employment_yes_no <- minn_employment %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Allocated")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_employment_yes_no %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_employment <- left_join(minn_employment, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_employment) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Employment Status for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Employment Status")
+
+```
+
+## Insurance Coverage
+
+```{r}
+minn_insurance <- get_acs(geography = "zcta",
+                           table = "B18135") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B18135_023"))
+
+minn_insurance <- left_join(minn_insurance, variables_2018[, 1:2], by = "variable")
+
+minn_insurance$label <- as_factor(str_replace(minn_insurance$label, ".*!!(.*)", "\\1"))
+
+minn_insurance_public_private <- minn_insurance %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("With private health insurance coverage",
+                      "WIth public health coverage")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_insurance_with_without %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+#minn_insurance <- filter(minn_insurance, "With private health insurance coverage", "With public health coverage")
+minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_insurance) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Insurance Coverage for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Insurance Coverage")
+```
+
+## Public Assistance Income
+
+```{r}
+minn_stamps <- get_acs(geography = "zcta",
+                          table = "B19058") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B19058_002"))
+
+minn_stamps <- left_join(minn_stamps, variables_2018[, 1:2], by = "variable")
+
+minn_stamps$label <- as_factor(str_replace(minn_stamps$label, ".*!!(.*)", "\\1"))
+
+minn_stamps_with_without <- minn_stamps %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Total",
+                      "No cash public assistance or Food Stamps/SNAP")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_stamps_with_without %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_stamps <- left_join(minn_stamps, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_stamps) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Public Assistance Distribution for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Public Assistance")
+
+```
+
+## Transportation to Work
+
+```{r}
+minn_transport <- get_acs(geography = "zcta",
+                       table = "B08301") %>% 
+  filter(GEOID %in% zip_code_minn$zip,
+         !variable %in% c("B08301_010"))
+
+minn_transport <- left_join(minn_transport, variables_2018[, 1:2], by = "variable")
+
+minn_transport$label <- as_factor(str_replace(minn_transport$label, ".*!!(.*)", "\\1"))
+
+minn_transport_public <- minn_transport %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Bus or trolley bus",
+                      "Streetcar or trolley car (carro publico in Puerto Rico)",
+                      "Subway or elevated",
+                      "Railroad")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- minn_transport_public %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+minn_transport <- left_join(minn_transport, minneapolis_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(minn_transport) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Transportation Distribution for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Transportation")
+```
