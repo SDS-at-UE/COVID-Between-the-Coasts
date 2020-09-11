@@ -410,11 +410,70 @@ louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>%
          case_rate < .03)
 cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")
 
-## In looking at the private HI vs. case rate scatterplot, there are some definitive
-## groups. What is causing that?
+### In looking at the private HI vs. case rate scatterplot, there are some definitive
+### groups. What is causing that?
 
 
+################################
+# Occupation (essential vs. non-essential)
+################################
 
+louis_occ <- get_acs(geography = "zcta",
+                     table = "C24060") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("C24060_00", 2:6))
+louis_occ <- left_join(louis_occ, variables_2018[, 1:2], by = "variable")
+louis_occ$label <- as_factor(str_replace(louis_occ$label, ".*!!(.*)", "\\1"))
 
+# Graph occupation data to see differences in zip codes
+
+## Order the x-axis of the graph based on occupation. 
+### We group essential occupations together and look
+### at their proportion of the zip code and 
+### sort in ascending order.
+louis_occ_ess <- louis_occ %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(str_detect(label,
+                    "(Service.*)|(Natural.*)|(Production.*)")) %>% 
+  mutate(prop_ess = sum(prop)) %>% 
+  select(GEOID, prop_ess) %>% 
+  distinct(GEOID, prop_ess)
+
+lvls_louis_ess <- louis_occ_ess %>% 
+  arrange(prop_ess) %>% 
+  pull(GEOID)
+
+ggplot(louis_occ) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_ess), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+### Test Correlation between percentage of population deemed essential
+###  to the case rate of COVID
+
+louis_occ_cor <- left_join(louis_occ_ess, louis_covid, by = c("GEOID"="zip"))
+cor.test(louis_occ_cor$prop_ess, louis_occ_cor$case_rate, use = "complete.obs")
+
+### Scatterplot of essential workers vs. case rate
+
+ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(aes(label = GEOID)) +
+  labs(title = "Proportion of ZIP Code Deemed Essential vs. Case Rate")
+
+### Remove outlier and retest correlation for gini to case rate
+
+louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
+
+cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")
+
+### We see a grouping here as well. Map the ZIPs that have proportion of essential workers
+### greater than 44%
+
+louis_occ_ess <- louis_occ_ess %>% 
+  mutate(ess_group = prop_ess > .44)
 
 
