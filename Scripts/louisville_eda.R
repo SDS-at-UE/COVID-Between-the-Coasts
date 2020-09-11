@@ -377,15 +377,15 @@ louis_hi_private_cor <- louis_hi_private_cor %>%
 
 louis_hi_private_cor <- geo_join(geometry_zip_louis, louis_hi_private_cor, by = "GEOID")
 
-pal_hi <- colorFactor(palette = "viridis", domain = louis_hi_private_cor$hi_group)
+pal_hi <- colorFactor(palette = c('purple', 'seagreen', 'red3'), domain = louis_hi_private_cor$hi_group)
 
 louis_hi_private_cor %>% 
   st_transform(crs = "+init=epsg:4326") %>% 
   leaflet(width = "100%") %>% 
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_hi_private_cor$GEOID,
-                            "</strong><br /> Prop Private HI ", louis_hi_private_cor$prop),
-              stroke = FALSE,
+                            "</strong><br /> Prop Private HI: ", louis_hi_private_cor$prop),
+              weight = 4,
               smoothFactor = 0,
               fillOpacity = 0.7,
               color = ~ pal_hi(hi_group)) %>% 
@@ -515,7 +515,7 @@ louis_occ_ess <- louis_occ_ess %>%
 ##### in order to create an 'sf' object that works with leaflet.
 louis_occ_ess <- geo_join(geometry_zip_louis, louis_occ_ess, by = "GEOID")
 
-pal_ess <- colorFactor(palette = "viridis", domain = louis_occ_ess$ess_group)
+pal_ess <- colorFactor(palette = c('seagreen', 'red3'), domain = louis_occ_ess$ess_group)
 
 louis_occ_ess %>% 
   st_transform(crs = "+init=epsg:4326") %>% 
@@ -523,7 +523,7 @@ louis_occ_ess %>%
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_occ_ess$GEOID,
                             "</strong><br /> Prop Ess ", louis_occ_ess$prop_ess),
-              stroke = FALSE,
+              weight = 4,
               smoothFactor = 0,
               fillOpacity = 0.7,
               color = ~ pal_ess(ess_group)) %>% 
