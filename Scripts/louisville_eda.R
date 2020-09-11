@@ -361,6 +361,40 @@ louis_hi_private_cor_sans40202 <- louis_hi_private_cor %>%
          case_rate < .03)
 cor.test(louis_hi_private_cor_sans40202$prop, louis_hi_private_cor_sans40202$case_rate, use = "complete.obs")
 
+### In looking at the private HI vs. case rate scatterplot, there are some definitive
+### groups. What is causing that?
+
+louis_hi_private_cor <- louis_hi_private_cor %>% 
+  mutate(hi_group = factor(if_else(prop < .5, "low",
+                            if_else(prop < .65, "medium",
+                                    "high")),
+                           levels = c("low", "medium", "high")))
+
+##### Because leaflet requires the data frame to be of class 'sf'
+##### we can't join like we usually would or else the leaflet will
+##### throw an error. We use geo_join() from the tigris package
+##### in order to create an 'sf' object that works with leaflet.
+
+louis_hi_private_cor <- geo_join(geometry_zip_louis, louis_hi_private_cor, by = "GEOID")
+
+pal_hi <- colorFactor(palette = "viridis", domain = louis_hi_private_cor$hi_group)
+
+louis_hi_private_cor %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_hi_private_cor$GEOID,
+                            "</strong><br /> Prop Private HI ", louis_hi_private_cor$prop),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_hi(hi_group)) %>% 
+  addLegend("bottomright",
+            pal = pal_hi,
+            values = ~ hi_group,
+            title = "Perc. have Private HI",
+            opacity = 1)
+
 
 ## Look at Public HI Coverage
 
@@ -411,8 +445,6 @@ louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>%
          case_rate < .03)
 cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")
 
-### In looking at the private HI vs. case rate scatterplot, there are some definitive
-### groups. What is causing that?
 
 
 ################################
