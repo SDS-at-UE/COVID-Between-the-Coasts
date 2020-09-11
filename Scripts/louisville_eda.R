@@ -419,7 +419,8 @@ cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_
 ################################
 
 louis_occ <- get_acs(geography = "zcta",
-                     table = "C24060") %>% 
+                     table = "C24060",
+                     geometry = TRUE) %>% 
   filter(GEOID %in% zip_code_louis$zip,
          variable %in% str_c("C24060_00", 2:6))
 louis_occ <- left_join(louis_occ, variables_2018[, 1:2], by = "variable")
@@ -476,4 +477,20 @@ cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, us
 louis_occ_ess <- louis_occ_ess %>% 
   mutate(ess_group = prop_ess > .44)
 
+pal_ess <- colorFactor(palette = "viridis", domain = louis_occ_ess$ess_group)
 
+louis_occ_ess %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_occ_ess$GEOID,
+                            "</strong><br /> Prop Ess ", louis_occ_ess$prop_ess),
+              stroke = FALSE,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_ess(ess_group)) %>% 
+  addLegend("bottomright",
+            pal = pal_ess,
+            values = ~ ess_group,
+            title = "Prop of Ess over 44%",
+            opacity = 1)
