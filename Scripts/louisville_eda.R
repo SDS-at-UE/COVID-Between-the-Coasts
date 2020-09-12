@@ -361,9 +361,10 @@ ggplot(louis_hi_private_2) +
 
 ### Scatterplot Private HI vs case rate
 
-louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID"="zip"))
+louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID"="zip")) %>% 
+  filter(Private_HI == "Yes")
 
-filter(louis_hi_private_cor, Private_HI == "Yes") %>%
+louis_hi_private_cor %>%
   ggplot(aes(prop, case_rate)) +
   geom_point() +
   ggrepel::geom_label_repel(aes(label = GEOID)) +
@@ -372,8 +373,7 @@ filter(louis_hi_private_cor, Private_HI == "Yes") %>%
 #### Remove 40202 as outlier and conduct correlation test
 
 louis_hi_private_cor_sans40202 <- louis_hi_private_cor %>% 
-  filter(Private_HI == "Yes",
-         case_rate < .03)
+  filter(case_rate < .03)
 cor.test(louis_hi_private_cor_sans40202$prop, louis_hi_private_cor_sans40202$case_rate, use = "complete.obs")
 
 ### In looking at the private HI vs. case rate scatterplot, there are some definitive
@@ -513,7 +513,7 @@ ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
   ggrepel::geom_label_repel(aes(label = GEOID)) +
   labs(title = "Proportion of ZIP Code Deemed Essential vs. Case Rate")
 
-### Remove outlier and retest correlation for gini to case rate
+### Remove outlier and retest correlation for occupation to case rate
 
 louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
 
@@ -527,9 +527,11 @@ louis_occ_ess <- louis_occ_ess %>%
 
 ##### Because leaflet requires the data frame to be of class 'sf'
 ##### we can't join like we usually would or else the leaflet will
-##### throw an error. We use geo_join() from the tigris package
-##### in order to create an 'sf' object that works with leaflet.
-louis_occ_ess <- geo_join(geometry_zip_louis, louis_occ_ess, by = "GEOID")
+##### throw an error. We use a join and st_as_sf() command to 
+##### create an 'sf' object that works with leaflet.
+
+louis_occ_ess <- left_join(louis_occ_ess, geometry_zip_louis, by = "GEOID")
+louis_occ_ess <- st_as_sf(louis_occ_ess, sf_column_name = "geometry")
 
 pal_ess <- colorFactor(palette = c('seagreen', 'red3'), domain = louis_occ_ess$ess_group)
 
