@@ -14,6 +14,14 @@ zip_code_louis <- zip_code %>% filter(primary_city == "Louisville",
                                       state == "KY")
 
 ######################################
+# Retrieve ZIP geometry data
+######################################
+
+geometry_zip <- read_sf("Data/All_zips.shp", type = 6)
+geometry_zip_louis <- filter(geometry_zip, GEOID %in% zip_code_louis$zip)
+
+
+######################################
 # Retrieve COVID case data for Louisville
 # collected from https://covid-19-in-jefferson-county-ky-lojic.hub.arcgis.com/
 #####################################
@@ -31,8 +39,7 @@ louis_covid <- louis_covid %>%
 ######################################
 
 louis_income <- get_acs(geography = "zcta",
-                        table = "B19101",
-                        geometry = TRUE) %>% 
+                        table = "B19101") %>% 
   filter(GEOID %in% zip_code_louis$zip,
          !variable %in% c("B19101_001"))
 
@@ -40,6 +47,9 @@ louis_income <- left_join(louis_income, variables_2018[, 1:2], by = "variable")
 
 louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1"))
 
+louis_income <- left_join(louis_income, geometry_zip_louis, by = "GEOID")
+
+louis_income <- st_as_sf(louis_income, sf_column_name = )
 # Graph income data to see differences in zip codes
 
 ## Order the x-axis of the graph based on income. 
@@ -127,10 +137,12 @@ louis_gini <- get_acs(geography = "zcta",
                       geometry = TRUE)
 
 # Export/Write ZIP code geometry data for use in other scripts
+### This is no longer needed. We an read in the geometry data
+### that was saved from these lines of code.
 
-geometry_zip_export <- select(louis_gini, GEOID, geometry)
-write_sf(geometry_zip_export, "Data/All_zips.shp")
-geometry_zip_louis <- filter(geometry_zip_export, GEOID %in% zip_code_louis$zip)
+# geometry_zip_export <- select(louis_gini, GEOID, geometry)
+# write_sf(geometry_zip_export, "Data/All_zips.shp")
+# geometry_zip_louis <- filter(geometry_zip_export, GEOID %in% zip_code_louis$zip)
 
 # Back to Gini Index
 
@@ -469,7 +481,7 @@ louis_occ_ess <- louis_occ %>%
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
   filter(str_detect(label,
-                    "(Service.*)|(Natural.*)|(Production.*)")) %>% 
+                    "(Natural.*)|(Production.*)")) %>% 
   mutate(prop_ess = sum(prop)) %>% 
   select(GEOID, prop_ess) %>% 
   distinct(GEOID, prop_ess)
