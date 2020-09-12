@@ -49,7 +49,7 @@ louis_income$label <- as_factor(str_replace(louis_income$label, ".*!!(.*)", "\\1
 
 louis_income <- left_join(louis_income, geometry_zip_louis, by = "GEOID")
 
-louis_income <- st_as_sf(louis_income, sf_column_name = )
+louis_income <- st_as_sf(louis_income, sf_column_name = "geometry")
 # Graph income data to see differences in zip codes
 
 ## Order the x-axis of the graph based on income. 
@@ -133,8 +133,11 @@ louis_income %>%
 #################################
 
 louis_gini <- get_acs(geography = "zcta",
-                      table = "B19083",
-                      geometry = TRUE)
+                      table = "B19083")
+
+louis_gini <- left_join(louis_gini, geometry_zip_louis, by = "GEOID")
+
+louis_gini <- st_as_sf(louis_gini, sf_column_name = "geometry")
 
 # Export/Write ZIP code geometry data for use in other scripts
 ### This is no longer needed. We an read in the geometry data
