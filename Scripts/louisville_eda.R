@@ -387,10 +387,11 @@ louis_hi_private_cor <- louis_hi_private_cor %>%
 
 ##### Because leaflet requires the data frame to be of class 'sf'
 ##### we can't join like we usually would or else the leaflet will
-##### throw an error. We use geo_join() from the tigris package
-##### in order to create an 'sf' object that works with leaflet.
+##### throw an error. We use a join and st_as_sf() command to 
+##### create an 'sf' object that works with leaflet.
 
-louis_hi_private_cor <- geo_join(geometry_zip_louis, louis_hi_private_cor, by = "GEOID")
+louis_hi_private_cor <- left_join(louis_hi_private_cor, geometry_zip_louis, by = "GEOID")
+louis_hi_private_cor <- st_as_sf(louis_hi_private_cor, sf_column_name = "geometry")
 
 pal_hi <- colorFactor(palette = c('purple', 'seagreen', 'red3'), domain = louis_hi_private_cor$hi_group)
 
