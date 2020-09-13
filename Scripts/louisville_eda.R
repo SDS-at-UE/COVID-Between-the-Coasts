@@ -555,3 +555,63 @@ louis_occ_ess %>%
 ### Not adding in service occupation to class of essential workers
 ### made the two groups (essential vs. non-essential) in the scatterplot
 ### of proportion of essential vs. case rate not as pronounced.
+
+#################################
+# Public Transportation
+#################################
+
+louis_trans <- get_acs(geography = "zcta",
+                       table = "B08301") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
+
+louis_trans <- left_join(louis_trans, variables_2018[, 1:2], by = "variable")
+louis_trans$label <- as_factor(str_replace(louis_trans$label, ".*!!(.*)", "\\1"))
+
+louis_trans <- louis_trans %>% 
+  mutate(use_public = if_else(str_detect(label, "^Pub.*")|str_detect(label, "Taxicab"), TRUE, FALSE))
+
+louis_trans <- left_join(louis_trans, louis_covid, by = c("GEOID"="zip"))
+
+## Graph it in a geom_col plot
+
+louis_trans_public <- louis_trans %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(use_public == TRUE) %>% 
+  mutate(prop_public = sum(prop)) 
+
+lvls_trans <- louis_trans_public %>% 
+  arrange(prop_public) %>% 
+  distinct(GEOID) %>% 
+  pull(GEOID)
+
+ggplot(louis_trans) +
+  geom_col(aes(factor(GEOID, levels = lvls_trans), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+## Graph a scatterplot between proportion who use public transporation
+## and the case rate
+
+louis_trans_public %>%
+  filter(variable == "B08301_010") %>% 
+ggplot() +
+  geom_point(aes(prop_public, case_rate))
+
+#### We see three zip codes have a distinctly higher proportion
+#### of population that takes public transportation.
+
+filter(louis_trans_public, prop_public > .1) %>% 
+  pull(GEOID) %>% 
+  unique()
+
+#### These zip codes are concentrated around the downtown area
+
+### Correlation test, removal of outlier, and test correlation for transportation to case rate
+
+louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < .03)
+cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")
+
+
