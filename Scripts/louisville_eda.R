@@ -118,7 +118,7 @@ louis_income %>%
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_income$GEOID,
                             "</strong><br /> Case Rate ", louis_income$case_rate),
-              stroke = FALSE,
+              weight = 2,
               smoothFactor = 0,
               fillOpacity = 0.7,
               color = ~ pal(case_rate)) %>% 
@@ -165,7 +165,7 @@ louis_gini %>%
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_gini$GEOID,
                             "</strong><br /> Gini Index: ", louis_gini$estimate),
-              stroke = FALSE,
+              weight = 2,
               smoothFactor = 0,
               fillOpacity = 0.7,
               color = ~ pal_gini(estimate)) %>% 
@@ -510,7 +510,7 @@ cor.test(louis_occ_cor$prop_ess, louis_occ_cor$case_rate, use = "complete.obs")
 
 ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
   geom_point() +
-  ggrepel::geom_label_repel(aes(label = GEOID)) +
+#  ggrepel::geom_label_repel(aes(label = GEOID)) +
   labs(title = "Proportion of ZIP Code Deemed Essential vs. Case Rate")
 
 ### Remove outlier and retest correlation for occupation to case rate
@@ -523,7 +523,7 @@ cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, us
 ### greater than 44%
 
 louis_occ_ess <- louis_occ_ess %>% 
-  mutate(ess_group = prop_ess > .44)
+  mutate(ess_group = prop_ess > .25)
 
 ##### Because leaflet requires the data frame to be of class 'sf'
 ##### we can't join like we usually would or else the leaflet will
@@ -548,5 +548,10 @@ louis_occ_ess %>%
   addLegend("bottomright",
             pal = pal_ess,
             values = ~ ess_group,
-            title = "Prop of Ess over 44%",
+            title = "Prop of Ess over 25%",
             opacity = 1)
+
+
+### Not adding in service occupation to class of essential workers
+### made the two groups (essential vs. non-essential) in the scatterplot
+### of proportion of essential vs. case rate not as pronounced.
