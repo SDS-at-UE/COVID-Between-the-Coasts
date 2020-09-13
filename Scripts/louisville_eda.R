@@ -609,9 +609,69 @@ filter(louis_trans_public, prop_public > .1) %>%
 
 #### These zip codes are concentrated around the downtown area
 
-### Correlation test, removal of outlier, and test correlation for transportation to case rate
+### Removal of outlier and test correlation for transportation to case rate
 
 louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < .03)
 cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")
+
+
+###################################
+# Citizenship
+###################################
+
+louis_citizen_clean <- get_acs(geography = "zcta",
+                         table = "B05001") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("B05001_00", 2:6))
+  
+louis_citizen <- left_join(louis_citizen_clean, variables_2018[, 1:2], by = "variable")
+louis_citizen$label <- as_factor(str_replace(louis_citizen$label, ".*!!(.*)", "\\1"))
+
+louis_citizen <- louis_citizen %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+louis_citizen <- left_join(louis_citizen, louis_covid, by = c("GEOID"="zip"))
+
+## Create bar graph with breakdown of citizenship for each zip
+
+louis_citizen_prop_us <- louis_citizen %>% 
+  filter(str_detect(label,
+                    "^U.S.")) %>% 
+  mutate(prop_us_citizen = sum(prop)) %>% 
+  select(GEOID, prop_us_citizen) %>% 
+  distinct(GEOID, prop_us_citizen)
+
+lvls_louis_citizen <- louis_citizen_prop_us %>% 
+  arrange(prop_us_citizen) %>% 
+  pull(GEOID)
+
+ggplot(louis_citizen) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_citizen), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+## Create a scatterplot with proportion of US citizens vs case rate
+louis_citizen <- left_join(louis_citizen, louis_citizen_prop_us, by = "GEOID")
+
+ggplot(louis_citizen) + 
+  geom_point(aes(prop_us_citizen, case_rate))
+
+#### We detect an outlier and some groups. It's zips are 40218, 40214, 40219
+
+filter(louis_citizen, prop_us_citizen < .92) %>% 
+  pull(GEOID) %>% 
+  unique()
+  
+## Correlation test with COVID
+### We take out 40202 as an outlier, and test the rest
+
+louis_citizen_sans40202 <- filter(louis_citizen, case_rate < .03)
+cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")
+
+
+
 
 
