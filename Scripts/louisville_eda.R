@@ -671,7 +671,47 @@ filter(louis_citizen, prop_us_citizen < .92) %>%
 louis_citizen_sans40202 <- filter(louis_citizen, case_rate < .03)
 cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")
 
+##################################
+# Race
+##################################
 
+louis_race_clean <- get_acs(geography = "zcta",
+                            table = "B02001") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("B02001_00", 2:8))
 
+louis_race <- left_join(louis_race_clean, variables_2018[, 1:2], by = "variable")
+louis_race$label <- as_factor(str_replace(louis_race$label, ".*!!(.*)", "\\1"))
 
+louis_race <- louis_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+louis_race <- left_join(louis_race, louis_covid, by = c("GEOID"="zip"))
+
+## Graph race proportions by zip code in bar graph
+
+lvls_louis_race <- louis_race %>% 
+  filter(str_detect(label, "White alone")) %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_race) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_race), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+## Scatterplot of case rate vs proportion of white alone
+
+louis_race %>% 
+  filter(label == "White alone") %>% 
+ggplot() + 
+  geom_point(aes(prop, case_rate))
+
+## Correlation test between proportion of white population in zip to case rate
+
+louis_race_cor <- filter(louis_race, label == "White alone")
+cor.test(louis_race_cor$prop, louis_race_cor$case_rate, use = "complete.obs")
 
