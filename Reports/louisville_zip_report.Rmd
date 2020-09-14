@@ -21,6 +21,8 @@ variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_louis <- zip_code %>% filter(primary_city == "Louisville",
                                       state == "KY")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_louis <- filter(geometry_zip, GEOID %in% zip_code_louis$zip)
 louis_covid <- read_csv("../Data/louisville_covid.csv",
                         col_types = cols(ZIP = col_character()))
 louis_covid <- louis_covid %>% 
@@ -42,10 +44,12 @@ The goal of this analysis is to find any connections, if they exist, between dem
 
 ```{r}
 louis_income <- get_acs(geography = "zcta",
-                        table = "B19101",
-                        geometry = TRUE) %>% 
+                        table = "B19101") %>% 
   filter(GEOID %in% zip_code_louis$zip,
          !variable %in% c("B19101_001"))
+
+louis_income <- left_join(louis_income, geometry_zip_louis, by = "GEOID")
+louis_income <- st_as_sf(louis_income, sf_column_name = "geometry")
 
 louis_income <- left_join(louis_income, variables_2018[, 1:2], by = "variable")
 
@@ -63,7 +67,7 @@ louis_income_six_figure <- louis_income %>%
   select(GEOID, prop_100K) %>% 
   distinct(GEOID, prop_100K)
 
-lvls <- louis_income_six_figure %>% 
+lvls_income <- louis_income_six_figure %>% 
   arrange(prop_100K) %>% 
   pull(GEOID)
 
@@ -75,18 +79,18 @@ We look at the income data in increments designated by the Census Bureau. We cal
 
 ```{r}
 ggplot(louis_income) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_income), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
   labs(title = "Income Distribution for Each Louisville Zip Code",
        x = "Zip Code",
-       y = "Proportion", 
+       y = "Proportion of Population", 
        fill = "Income Level")
   
 ```
 
-Zip code 40231 has no data. We can compare the remaining zip codes with the case rate (per 100000) of COVID in the same zip codes. 
+Zip code 40231 has no data, which is true throughout the analysis. We can compare the remaining zip codes with the case rate (per 100000) of COVID in the same zip codes. 
 
 ```{r}
 pal <- colorNumeric(palette = "viridis", domain = louis_income$case_rate)
@@ -95,8 +99,8 @@ louis_income %>%
   leaflet(width = "100%") %>% 
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_income$GEOID,
-                            "</strong><br /> Case Rate ", louis_income$case_rate),
-              stroke = FALSE,
+                            "</strong><br /> Case Rate ", signif(louis_income$case_rate, digits = 4)),
+              weight = 4,
               smoothFactor = 0,
               fillOpacity = 0.7,
               color = ~ pal(case_rate)) %>% 
@@ -111,13 +115,81 @@ louis_income %>%
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 ```
 
-It appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. To test this, we run a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically significant ($p=$ `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(louis_income_cor$prop_100K, louis_income_cor$case_rate, use = "complete.obs")$estimate`. This verifies that there is indeed a negative correlation with case rate and higher incomes.
+The next graph shows that it appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. 
+
+```{r}
+ggplot(louis_income_cor, aes(prop_100K, case_rate)) +
+  geom_point() +
+  labs(title = "Slight Negative Correlation Between Infection and Income",
+       subtitle = "ZIP code 40202 is an outlier.",
+       x = "Proportion of Population that Makes >$100,000",
+       y = "Case Rate (per 100,000)") +
+  ggrepel::geom_label_repel(data = filter(louis_income_cor, case_rate > .03),
+                            aes(label = GEOID))
+```
+
+```{r}
+louis_income_cor_sans40202 <- louis_income_cor %>% 
+  filter(case_rate < .03)
+```
+
+The 40202 ZIP code is a clear outlier. We remove this from the data to run a viable correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically significant ($p=$ `r cor.test(louis_income_cor_sans40202$prop_100K, louis_income_cor_sans40202$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(louis_income_cor_sans40202$prop_100K, louis_income_cor_sans40202$case_rate, use = "complete.obs")$estimate`. This verifies that there is indeed a moderately negative correlation with case rate and higher incomes.
 
 
+### Gini Index
 
+The Gini index is a measure of income inequality calculated by the Census Bureau using various different factors. The closer to 0 the Gini index, the more equal income is dispersed. A Gini index of 1 would indicate perfect inequality where a single group or individual collects all of the income. 
 
+```{r}
+louis_gini <- get_acs(geography = "zcta",
+                      table = "B19083")
+louis_gini <- left_join(louis_gini, geometry_zip_louis, by = "GEOID")
+louis_gini <- st_as_sf(louis_gini, sf_column_name = "geometry")
+louis_gini <- louis_gini %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
 
+louis_gini$label <- as_factor(str_replace(louis_gini$label, ".*!!(.*)", "\\1"))
+```
 
+Below, we map the Gini index onto each ZIP code to give an idea of the variation between ZIP codes.
+
+```{r}
+pal_gini <- colorNumeric(palette = "viridis", domain = louis_gini$estimate)
+
+louis_gini %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_gini$GEOID,
+                            "</strong><br /> Gini Index: ", louis_gini$estimate),
+              weight = 2,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_gini(estimate)) %>% 
+  addLegend("bottomright",
+            pal = pal_gini,
+            values = ~ estimate,
+            title = "Gini Index",
+            opacity = 1)
+```
+
+We also provide a scatterplot to visualize the connection between COVID case rate and the Gini Index. As we can see, ZIP code 40202 is an outlier and will be removed in future analysis. 
+
+```{r}
+louis_gini_cor <- left_join(louis_gini, louis_covid, by = c("GEOID"="zip"))
+ggplot(louis_gini_cor, aes(estimate, case_rate)) +
+  geom_point() +
+  labs(title = "No Discernible Correlation Between Gini Index and COVID",
+       x = "Gini Index",
+       y = "Case Rate (per 100,000)") +
+  ggrepel::geom_label_repel(data = filter(louis_gini_cor, case_rate > .03),
+                            aes(label = GEOID))
+louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < .03)
+```
+
+After removing 40202, we see that there is no real correlation between the Gini Index and the rate of infection for COVID. We get a correlation of `r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `
+`r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$p.value`), and thus indistinguishable from 0. 
 
 ## Conclusions
 
