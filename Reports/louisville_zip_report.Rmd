@@ -515,6 +515,157 @@ louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
 
 There appears to be a slight correlation. After removal of the 40202 outlier, we get a correlation value of `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
 
+### Occupation
+
+Many "essential" workers tend to be towards the lower end of the income bracket. We look at whether there is a relationship between essential workers and contracting COVID.
+
+The Census Bureau breaks workers into five categories: Management, business, science and arts; service; sales and office; natural resources, construction, and maintenance; and production, transportation, and material moving. Although these categories undoubtedly may not be clear distinctions between essential and non-essential, we feel a good classification is to put natural resources, construction, and maintenance and production, transportation, material moving as essential and the other three categories as non-essential. 
+
+```{r}
+louis_occ <- get_acs(geography = "zcta",
+                     table = "C24060") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("C24060_00", 2:6))
+louis_occ <- left_join(louis_occ, variables_2018[, 1:2], by = "variable")
+louis_occ$label <- as_factor(str_replace(louis_occ$label, ".*!!(.*)", "\\1"))
+```
+
+When we do, we get the following breakdown by ZIP code.
+
+```{r}
+louis_occ_ess <- louis_occ %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(str_detect(label,
+                    "(Natural.*)|(Production.*)")) %>% 
+  mutate(prop_ess = sum(prop)) %>% 
+  select(GEOID, prop_ess) %>% 
+  distinct(GEOID, prop_ess)
+
+lvls_louis_ess <- louis_occ_ess %>% 
+  arrange(prop_ess) %>% 
+  pull(GEOID)
+
+ggplot(louis_occ) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_ess), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Occupation Distribution for Louisville ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Occupation")
+```
+
+ZIP code 40209 clearly has a distinguishing percentage of production, transportation, and material moving occupations. Unfortunately, Jefferson County Health Department has not COVID information on 40209. However, we still have a good spread of different occupations from ZIP code to ZIP code. We can compare the proportion of a ZIP code that has a designated essential job to the COVID case rate.
+
+```{r}
+louis_occ_cor <- left_join(louis_occ_ess, louis_covid, by = c("GEOID"="zip"))
+ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_occ_cor, GEOID == "40202"),
+                                          aes(label = GEOID)) +
+  labs(title = "Essential Worker Proportion Slightly Related to COVID Case Rate",
+       x = "Proportion of Population Deemed to Work Essential Jobs",
+       y = "Case Rate (per 100,000)")
+louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
+```
+
+We find a moderate correlation of `r cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
+
+
+### Public Transportation
+
+The use of public transportation is more prevalent among lower incomes, while at the same time public transportation poses a higher risk of contracting COVID. We look to see if this idea plays out in the data for Louisville.
+
+```{r}
+louis_trans <- get_acs(geography = "zcta",
+                       table = "B08301") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
+
+louis_trans <- left_join(louis_trans, variables_2018[, 1:2], by = "variable")
+louis_trans$label <- as_factor(str_replace(louis_trans$label, ".*!!(.*)", "\\1"))
+
+louis_trans <- louis_trans %>% 
+  mutate(use_public = if_else(str_detect(label, "^Pub.*")|str_detect(label, "Taxicab"), TRUE, FALSE))
+
+louis_trans <- left_join(louis_trans, louis_covid, by = c("GEOID"="zip"))
+```
+
+First, we look at the distribution of the population that uses public transportation broken down by ZIP.
+
+```{r}
+louis_trans_public <- louis_trans %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(use_public == TRUE) %>% 
+  mutate(prop_public = sum(prop)) 
+
+lvls_trans <- louis_trans_public %>% 
+  arrange(prop_public) %>% 
+  distinct(GEOID) %>% 
+  pull(GEOID)
+
+ggplot(louis_trans) +
+  geom_col(aes(factor(GEOID, levels = lvls_trans), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Mode of Transporation for Louisville ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Transporation")
+```
+
+For our analysis, we grouped "Public transportation (excluding taxicab)" and "Taxicab" together to form our public use variable. It's relationship to COVID can be seen in the following graph.
+
+```{r}
+louis_trans_public %>%
+  filter(variable == "B08301_010") %>% 
+  ggplot(aes(prop_public, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_trans_public, GEOID %in% c("40202", 
+                                                                           "40203", 
+                                                                           "40211",
+                                                                           "40210"),
+                                          variable == "B08301_010"),
+                                          aes(label = GEOID)) +
+  labs(title = "Use of Public Transportation Not Related to COVID Case Rate",
+       x = "Proportion of Population Who Use Public Transportation",
+       y = "Case Rate (per 100,000)")
+
+louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < .03)
+```
+
+We notice a group of three ZIP codes with distinctly higher rates of public transportation use. These ZIP codes correspond to the downtown Louisville area. When we remove 40202 as an outlier and test for correlation, we find none (correlation value of `r cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")$estimate` with $p=$ `r cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")$p.value`).
+
+### Citizenship
+
+The Census Bureau provides a distinction between different types of U.S. citizenship (e.g., naturalization, born in U.S., born abroad, etc.). We focus on the simple distinction between being a U.S. citizen and not.
+
+```{r}
+louis_citizen_clean <- get_acs(geography = "zcta",
+                         table = "B05001") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("B05001_00", 2:6))
+  
+louis_citizen <- left_join(louis_citizen_clean, variables_2018[, 1:2], by = "variable")
+louis_citizen$label <- as_factor(str_replace(louis_citizen$label, ".*!!(.*)", "\\1"))
+
+louis_citizen <- louis_citizen %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+louis_citizen <- left_join(louis_citizen, louis_covid, by = c("GEOID"="zip"))
+```
+
+
+
+
 
 ## Conclusions
 
