@@ -663,8 +663,109 @@ louis_citizen <- louis_citizen %>%
 louis_citizen <- left_join(louis_citizen, louis_covid, by = c("GEOID"="zip"))
 ```
 
+Looking at the breakdown of the U.S. citizenship population in each ZIP code we see the expected high rates of citizenship in all ZIP codes. This ranges from 87.6% to 100% of the population being a U.S. citizen. 
 
+```{r}
+louis_citizen_prop_us <- louis_citizen %>% 
+  filter(str_detect(label,
+                    "^U.S.")) %>% 
+  mutate(prop_us_citizen = sum(prop)) %>% 
+  select(GEOID, prop_us_citizen) %>% 
+  distinct(GEOID, prop_us_citizen)
 
+lvls_louis_citizen <- louis_citizen_prop_us %>% 
+  arrange(prop_us_citizen) %>% 
+  pull(GEOID)
+
+ggplot(louis_citizen) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_citizen), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "U.S. Citizenship for Louisville ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Citizenship Status")
+```
+
+Even with high rates of citizenship, we see some correlation and grouping.
+
+```{r}
+louis_citizen <- left_join(louis_citizen, louis_citizen_prop_us, by = "GEOID")
+
+ggplot(louis_citizen, aes(prop_us_citizen, case_rate)) + 
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_citizen, GEOID %in% c("40202",
+                                                                      "40218",
+                                                                      "40214",
+                                                                      "40219"),
+                                          variable == "B05001_002"), 
+                            aes(label = GEOID)) +
+  labs(title = "U.S. Citizenship Related to COVID Case Rate",
+       x = "Proportion of Population U.S. Citizen",
+       y = "Case Rate (per 100,000)")
+louis_citizen_sans40202 <- filter(louis_citizen, case_rate < .03)
+```
+
+There are three ZIP codes that have a distinctively different proportion of their population which are U.S. citizens. These ZIP codes are connected geographically, but not in a seemingly meaningful way. This group, however, fits in with the trend line of the relationship by proportion of U.S. citizens and COVID cases. We get a moderate to strong correlation of `r cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")$p.value`)
+
+### Race
+
+Lastly, we looked at racial breakdown in each ZIP code. We've heard reports about black people being hit harder by COVID. We look to see if the data supports that in Louisville.
+
+```{r}
+louis_race_clean <- get_acs(geography = "zcta",
+                            table = "B02001") %>% 
+  filter(GEOID %in% zip_code_louis$zip,
+         variable %in% str_c("B02001_00", 2:8))
+
+louis_race <- left_join(louis_race_clean, variables_2018[, 1:2], by = "variable")
+louis_race$label <- as_factor(str_replace(louis_race$label, ".*!!(.*)", "\\1"))
+
+louis_race <- louis_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+louis_race <- left_join(louis_race, louis_covid, by = c("GEOID"="zip"))
+```
+
+We view the racial breakdown in each ZIP code. There are significant differences in several of the ZIP codes.
+
+```{r}
+lvls_louis_race <- louis_race %>% 
+  filter(str_detect(label, "White alone")) %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_race) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_race), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Racial Makeup for Louisville ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Race")
+```
+
+For the most part, the rates of "White alone" and "Black or African American alone" are inversely related as the other races remain somewhat constant. As a result, we can focus on the "White alone" population as a measure of the racial breakdown for each ZIP and compare it to the COVID cases.
+
+```{r}
+louis_race %>% 
+  filter(label == "White alone") %>% 
+ggplot(aes(prop, case_rate)) + 
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_race, prop < .25 | case_rate > .03,
+                                          label == "White alone"), 
+                            aes(label = GEOID)) +
+  labs(title = "Racial Makeup of ZIP is Related to COVID Case Rate",
+       x = "Proportion of Population Classified as 'White alone'",
+       y = "Case Rate (per 100,000)")
+louis_race_cor <- filter(louis_race, label == "White alone")
+```
+
+We see a moderate relationship between racial dispersion in ZIP codes and COVID with a correlation value of `r cor.test(louis_race_cor$prop, louis_race_cor$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_race_cor$prop, louis_race_cor$case_rate, use = "complete.obs")$p.value`).
 
 
 ## Conclusions
