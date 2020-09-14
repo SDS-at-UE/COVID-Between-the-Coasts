@@ -267,7 +267,7 @@ louis_age <- louis_sex_age %>%
   mutate(prop_over65 = sum(prop)) %>% 
   arrange(prop_over65)
 
-age_lvls <- louis_sex_age %>% 
+lvls_age <- louis_sex_age %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -280,7 +280,7 @@ age_lvls <- louis_sex_age %>%
   pull(GEOID)
 
 ggplot(louis_sex_age) +
-  geom_col(aes(factor(GEOID, levels = age_lvls), estimate, fill = Age),
+  geom_col(aes(factor(GEOID, levels = lvls_age), estimate, fill = Age),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
