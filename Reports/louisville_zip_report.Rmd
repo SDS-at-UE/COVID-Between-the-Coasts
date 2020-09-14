@@ -1,7 +1,7 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
 author: "Louisville Zip Code Analysis"
-date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber"
+date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 urlcolor: blue
 ---
