@@ -8,7 +8,7 @@ urlcolor: blue
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
-options(scipen = 999)
+options(scipen = 999, digits = 4)
 #See louisville_eda.R for code comments
 library(tidycensus)
 library(tidyverse)
@@ -86,7 +86,7 @@ ggplot(louis_income) +
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Income Distribution for Each Louisville Zip Code",
+  labs(title = "Income Distribution for Each Louisville ZIP Code",
        x = "ZIP Code",
        y = "Proportion of Population", 
        fill = "Income Level")
@@ -242,7 +242,7 @@ ggplot(louis_HI) +
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Health Care Coverage for Each Louisville Zip Code",
+  labs(title = "Health Care Coverage for Each Louisville ZIP Code",
        x = "ZIP Code",
        y = "Proportion of Population", 
        fill = "Health Insurance \nCoverage?")
@@ -273,12 +273,181 @@ There appears to be a definitive correlation, once we remove 40202. We end up wi
 
 ### Private Health Insurance vs. Public Health Insurance
 
+Since access to private health insurance is not universal, we looked at the relationship between having some type of private health insurance and COVID as well as similarly looking at public health insurance. It is possible to have both public and private insurance, so these metrics are not mutually exclusive.
+
+```{r}
+louis_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+louis_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_louis$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+louis_hi_private$label <- str_remove(louis_hi_private$label, "Estimate!!Total!!")
+louis_hi_public$label <- str_remove(louis_hi_public$label, "Estimate!!Total!!")
+
+louis_hi_private <- separate(louis_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+louis_hi_public <- separate(louis_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+louis_hi_private$Private_HI <- if_else(louis_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+louis_hi_public$Public_HI <- if_else(louis_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+louis_hi_private$Sex <- as_factor(louis_hi_private$Sex)
+louis_hi_public$Sex <- as_factor(louis_hi_public$Sex)
+louis_hi_private$Age <- as_factor(louis_hi_private$Age)
+louis_hi_public$Age <- as_factor(louis_hi_public$Age)
+louis_hi_private$Private_HI <- as_factor(louis_hi_private$Private_HI)
+louis_hi_public$Public_HI <- as_factor(louis_hi_public$Public_HI) 
+```
+
+#### Private Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have private health insurance.
+
+```{r}
+louis_hi_private_2 <- louis_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+### Graph Private HI Coverage by proportion
+
+lvls_louis_hi_private <- louis_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(louis_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_hi_private), count, fill = Private_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Prevalence of Private Health Insurance for Each Louisville ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Private Health \nInsurance Coverage?")
+```
+
+As we see, there is a wide range of those populations that have private health insurance, ranging from almost 90% of the population in 40245 to only 31.4% of the residents in 40210 having private health insurance. But how does this relate to COVID cases.
+
+```{r}
+louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID"="zip")) %>% 
+  filter(Private_HI == "Yes")
+
+louis_hi_private_cor %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_hi_private_cor, case_rate > .03),
+                                          aes(label = GEOID)) +
+  labs(title = "Possession of Private Health Insurance Seems \nto be Grouped by Another Factor",
+       x = "Proportion of Population that has Private Health Insurance",
+       y = "Case Rate (per 100,000)")
+```
+
+The graph shows that we don't have a correlation between the case rate of COVID and having private insurance. However, this grouping is interesting. It turns out it is geographically based as the next map shows. We split the proportion of private health insurance into three groups: low, medium, and high. The *low* group has less than 45% of its population possessing private health insurance. The *medium* group has between 45% and 65%, and the *high* group has over 65% of its population with private health insurance.
+
+```{r}
+louis_hi_private_cor <- louis_hi_private_cor %>% 
+  mutate(hi_group = factor(if_else(prop < .5, "low",
+                            if_else(prop < .65, "medium",
+                                    "high")),
+                           levels = c("low", "medium", "high")))
+louis_hi_private_cor <- left_join(louis_hi_private_cor, geometry_zip_louis, by = "GEOID")
+louis_hi_private_cor <- st_as_sf(louis_hi_private_cor, sf_column_name = "geometry")
+
+pal_hi <- colorFactor(palette = c('purple', 'seagreen', 'red3'), domain = louis_hi_private_cor$hi_group)
+
+louis_hi_private_cor %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_hi_private_cor$GEOID,
+                            "</strong><br /> Prop. w/ Private HI: ", louis_hi_private_cor$prop),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_hi(hi_group)) %>% 
+  addLegend("bottomright",
+            pal = pal_hi,
+            values = ~ hi_group,
+            title = "Private Health \n Insurance Groups",
+            opacity = 1)
+```
+
+#### Public Health Insurance
+
+
 
 
 ### Age
 
 We know people over 65 years of age are at higher risk of mortality from COVID. But we wanted to know if they are catching COVID at a higher rate. Is Louisville doing a good job of protecting their senior citizens? To answer this, we can look at the breakdown of ages in each of the ZIP codes and compare the proportion of senior citizens in each ZIP code to the case rate of COVID.
 
+```{r}
+louis_age <- louis_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65)
+```
+
+We start with our basic graphic displaying the distribution of ages throughout the ZIP codes.
+
+```{r}
+lvls_age <- louis_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65) %>% 
+  select(GEOID, prop_over65) %>% 
+  distinct(GEOID, prop_over65) %>% 
+  pull(GEOID)
+ggplot(louis_sex_age) +
+  geom_col(aes(factor(GEOID, levels = lvls_age), estimate, fill = Age),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Age Distribution for Louisville ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Age Ranges")
+```
+
+We focus on the relationship between COVID cases and the proportion of the population that is 65 years or older.
+
+```{r}
+louis_age_cor <- left_join(louis_age, louis_covid, by = c("GEOID"="zip"))
+
+ggplot(louis_age_cor, aes(prop_over65, case_rate)) +
+  geom_point() +
+  labs(title = "Slight Correlation Between Proportion of Population Over 65 and COVID",
+       x = "Proportion of Population Over Age 65",
+       y = "Case Rate (per 100,000)") +
+  ggrepel::geom_label_repel(data = filter(louis_age_cor, case_rate > .03)[1,],
+                            aes(label = GEOID))
+louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
+```
+
+There appears to be a slight correlation. After removal of the 40202 outlier, we get a correlation value of `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
 
 
 ## Conclusions
