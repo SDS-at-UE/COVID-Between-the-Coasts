@@ -375,7 +375,7 @@ louis_hi_private_cor %>%
   leaflet(width = "100%") %>% 
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", louis_hi_private_cor$GEOID,
-                            "</strong><br /> Prop. w/ Private HI: ", louis_hi_private_cor$prop),
+                            "</strong><br /> Prop. w/ Private HI: ", signif(louis_hi_private_cor$prop, digits = 4)),
               weight = 4,
               smoothFactor = 0,
               fillOpacity = 0.7,
@@ -389,9 +389,75 @@ louis_hi_private_cor %>%
 
 #### Public Health Insurance
 
+We breakdown each ZIP code by the proportion of residents who have public health insurance.
 
+```{r}
+louis_hi_public_2 <- louis_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+### Graph Public HI Coverage by proportion
 
+lvls_louis_hi_public <- louis_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
 
+ggplot(louis_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_louis_hi_public), count, fill = Public_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Prevalence of Public Health Insurance for Each Louisville ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Public Health \nInsurance Coverage?")
+```
+
+We still have a descent distinction between ZIP codes as to the proportion of their populations that have public insurance, although it is not as pronounced (ranges from almost 10% to 72%). We can look at how these proportions relate to COVID in the following plot.
+
+```{r}
+louis_hi_public_cor <- left_join(louis_hi_public_2, louis_covid, by = c("GEOID"="zip"))
+
+filter(louis_hi_public_cor, Public_HI == "Yes") %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_hi_public_cor, 
+                                          case_rate > .03,
+                                          Public_HI == "Yes"),
+                                          aes(label = GEOID)) +
+  labs(title = "Public HI vs Case Rate")
+```
+
+We don't see the same groupings as we did before, but there are still 5 ZIP codes that are separated from the rest. Again, it looks as though geography (and all that it encompasses) explains this:
+
+```{r}
+louis_hi_public_cor <- louis_hi_public_cor %>% 
+  mutate(hi_group = factor(if_else(prop < .5, "low", "high"),
+                           levels = c("low", "high")))
+louis_hi_public_cor <- left_join(louis_hi_public_cor, geometry_zip_louis, by = "GEOID")
+louis_hi_public_cor <- st_as_sf(louis_hi_public_cor, sf_column_name = "geometry")
+
+pal_hi <- colorFactor(palette = c('seagreen', 'red3'), domain = louis_hi_public_cor$hi_group)
+
+louis_hi_public_cor %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_hi_public_cor$GEOID,
+                            "</strong><br /> Prop. w/ Public HI: ", signif(louis_hi_public_cor$prop, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_hi(hi_group)) %>% 
+  addLegend("bottomright",
+            pal = pal_hi,
+            values = ~ hi_group,
+            title = "Public Health \n Insurance Groups",
+            opacity = 1)
+```
 ### Age
 
 We know people over 65 years of age are at higher risk of mortality from COVID. But we wanted to know if they are catching COVID at a higher rate. Is Louisville doing a good job of protecting their senior citizens? To answer this, we can look at the breakdown of ages in each of the ZIP codes and compare the proportion of senior citizens in each ZIP code to the case rate of COVID.
