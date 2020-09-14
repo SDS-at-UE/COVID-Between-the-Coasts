@@ -230,13 +230,13 @@ louis_HI <- louis_sex_age %>% group_by(GEOID, HI_Coverage) %>%
 
 ### Graph Health Insurance Coverage by proportion
 
-louis_HI_levels <- louis_HI %>% 
+lvls_louis_HI <- louis_HI %>% 
   filter(HI_Coverage == "Yes") %>% 
   arrange(prop) %>% 
   pull(GEOID)
 
 ggplot(louis_HI) +
-  geom_col(aes(factor(GEOID, levels = louis_HI_levels), count, fill = HI_Coverage),
+  geom_col(aes(factor(GEOID, levels = lvls_louis_HI), count, fill = HI_Coverage),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
