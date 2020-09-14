@@ -1,7 +1,7 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
 author: "Louisville Zip Code Analysis"
-date: "9/4/2020"
+date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber"
 output: html_document
 urlcolor: blue
 ---
@@ -39,7 +39,9 @@ The goal of this analysis is to find any connections, if they exist, between dem
 
 Throughout the document, we report the $p$-value for several statistical tests. This does nothing more than provide a measure on the amount of evidence we have to suggest statistical significance. The closer the $p$-value is to 0 the stronger the evidence that our measure (correlation most of the time) is different than 0. 
 
-**This paragraph would summarize some of the results for a quick reference**
+**Conclusions:** Through correlation and visualization tests, we found that the rate of COVID has a moderate relationship to income, age, population of essential workers, and race; and a strong relationship to health insurance coverage and citizenship. We also found that while having private health insurance is not related linearly to COVID, it does have a relationship when combined with the geographical location. A person who knows Louisville might be able to shed some better light on this aspect. We also looked at the Gini index (a measure of income inequality), use of public transporation, and public health insurance, all of which had no evidence to support a relationship.
+
+Of particular note is ZIP code 40202. This ZIP has an unusually high case rate of COVID, although the other demographic characteristics of this ZIP code are not extreme. The exception to that is the Gini index, where ZIP 40202 has a large inequality situation, and use of public transportation, where a higher percentage of residents use public transportation.
 
 ## Analysis
 
@@ -428,7 +430,9 @@ filter(louis_hi_public_cor, Public_HI == "Yes") %>%
                                           case_rate > .03,
                                           Public_HI == "Yes"),
                                           aes(label = GEOID)) +
-  labs(title = "Public HI vs Case Rate")
+  labs(title = "Public Health Insurance Seems to have No Relation to Case Rate",
+       x = "Proportion of Population that has Public Health Insurance",
+       y = "Case Rate (per 100,000)")
 ```
 
 We don't see the same groupings as we did before, but there are still 5 ZIP codes that are separated from the rest. Again, it looks as though geography (and all that it encompasses) explains this:
@@ -457,7 +461,15 @@ louis_hi_public_cor %>%
             values = ~ hi_group,
             title = "Public Health \n Insurance Groups",
             opacity = 1)
+
+louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>% 
+  filter(Public_HI == "Yes",
+         case_rate < .03)
 ```
+
+We do not have enough evidence to suggest that COVID cases and public health insurance are related. Our correlation value is `r cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")$estiamte` with a high $p$-value (`r cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
+
+
 ### Age
 
 We know people over 65 years of age are at higher risk of mortality from COVID. But we wanted to know if they are catching COVID at a higher rate. Is Louisville doing a good job of protecting their senior citizens? To answer this, we can look at the breakdown of ages in each of the ZIP codes and compare the proportion of senior citizens in each ZIP code to the case rate of COVID.
@@ -770,4 +782,12 @@ We see a moderate relationship between racial dispersion in ZIP codes and COVID 
 
 ## Conclusions
 
-Here we would put in our conclusions.
+The ZIP code 40202 is a statistical outlier for it's high case rate of COVID. This ZIP corresponds to downtown Louisville right on the Ohio River. Interestingly enough, it is not an extreme ZIP in the other categories we investigated except for Gini Index and use of public transportation. A deeper investigation with someone who knows the Louisville area better might be in order for this particular ZIP code.
+
+Of the correlations we found, they were of the expected direction (e.g., fewer U.S. citizens correspond to higher case rates). We found strong correlations between COVID and health insurance coverage (no distinction between public and private) as well as citizenship status. We also found moderate correlations with income, age, occupation (essential vs. non-essential), and race. 
+
+An interesting phenomenon arose when looking at the proportion of people with private health insurance. When combined with the COVID data, there were three distinct groups. These groups corresponded with geography where the lower rates of private health insurance being downtown, the medium rates surrounding those ZIP codes, and the highest rates on the outskirts of the city limits. 
+
+Although we investigated the Gini index, use of public transporation, and public health insurance, we found no detectable relationship with COVID.
+
+*Disclaimer* We looked at basic one-on-one correlations. There may be some more complex relationships that involve multiply demographics. Further analysis would be needed in order to determine if we have multiple factors playing a role together.
