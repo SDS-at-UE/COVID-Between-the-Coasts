@@ -73,39 +73,19 @@ indy_income_six_figure_corr <- left_join(indy_income_six_figure,
 cor.test(indy_income_six_figure$prop_100K, 
          indy_income_six_figure_corr$case_rate, use = "complete.obs")
 
-## 30k and under income
-indy_income_under_30K <- indy_income %>% 
-  group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("$25,000 to $29,999",
-                      "$20,000 to $24,999",
-                      "$15,000 to $19,999",
-                      "$10,000 to $14,999",
-                      "Less than $10,000")) %>% 
-  mutate(prop_30K = sum(prop)) %>% 
-  select(GEOID, prop_30K) %>% 
-  distinct(GEOID, prop_30K)
+# Scatterplot - one outlier (46204)
+ggplot(indy_income_six_figure_corr) +
+  geom_point(aes(prop_100K, case_rate))
 
-lvls2 <- indy_income_under_30K %>% 
-  arrange(prop_30K) %>% 
-  pull(GEOID)
+filter(indy_income_six_figure_corr, case_rate > .03)
 
-ggplot(indy_income) +
-  geom_col(aes(factor(GEOID, levels = lvls2), estimate, fill = label),
-           position = "fill") +
-  theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Income Distribution for Each Indy Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Income Level")
+indy_income_cor_46204 <- indy_income_six_figure_corr %>% 
+  filter(case_rate < .03)
 
-## Testing correlation
-indy_income_under_30K_cor <- left_join(indy_income_under_30K, 
-                                       indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
-cor.test(indy_income_under_30K_cor$prop_30K, 
-         indy_income_under_30K_cor$case_rate, use = "complete.obs")
+cor.test(indy_income_cor_46204$prop_100K, 
+         indy_income_cor_46204$case_rate, use = "complete.obs")
+# After you remove the outlier you get a strong negative correlation. 
+
 
 # Occupation
 indy_occ <- get_acs(geography = "zcta",
@@ -140,7 +120,9 @@ ggplot(indy_occ) +
        x = "Zip Code",
        y = "Proportion", 
        fill = "Occupation Category")
-## Test Correlation between percentage of population that have essential occupationsto 
+
+
+## Test Correlation between percentage of population that have essential occupations to 
 ## the case rate of COVID
 indy_occ_essential$GEOID <- as.numeric(indy_occ_essential$GEOID)
 indy_occ_cor <- left_join(indy_occ_essential, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
@@ -180,11 +162,29 @@ indy_occ_nonessential_cor <- left_join(indy_occ_nonessential, indiana_cases_by_z
 cor.test(indy_occ_nonessential_cor$prop_nonessential, 
          indy_occ_nonessential_cor$case_rate, use = "complete.obs")
 
+ggplot(indy_occ_nonessential_cor, aes(prop_nonessential, case_rate)) +
+  geom_point() +
+  labs(title = "Proportion of ZIP Code Deemed Non-Essential vs. Case Rate")
+
+indy_occ_nonessential_cor_46204 <- indy_occ_nonessential_cor %>% 
+  filter(case_rate < .03)
+cor.test(indy_occ_nonessential_cor_46204$prop_nonessential, indy_occ_nonessential_cor_46204$case_rate, 
+         use = "complete.obs")
+
 indy_occ_essential$GEOID <- as.numeric(indy_occ_essential$GEOID)
 indy_occ_essential_cor <- left_join(indy_occ_essential, indiana_cases_by_zip,
                                     by = c("GEOID"="ZIP_CD"))
 cor.test(indy_occ_essential_cor$prop_essential, 
          indy_occ_essential_cor$case_rate, use = "complete.obs")
+
+ggplot(indy_occ_cor, aes(prop_essential, case_rate)) +
+  geom_point() +
+  labs(title = "Proportion of ZIP Code Deemed Essential vs. Case Rate")
+
+indy_occ_cor_46204 <- indy_occ_cor %>% 
+  filter(case_rate < .03)
+cor.test(indy_occ_cor_46204$prop_essential, indy_occ_cor_46204$case_rate, 
+         use = "complete.obs")
 
 # Age
 ## Looked at people over the age of 65
@@ -229,6 +229,11 @@ indy_over_sixty5$GEOID <- as.numeric(indy_over_sixty5$GEOID)
 indy_sex_cor <- left_join(indy_over_sixty5, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 cor.test(indy_sex_cor$prop_65, indy_sex_cor$case_rate, use = "complete.obs")
 
+indy_sex_cor_46204 <- indy_sex_cor %>% 
+  filter(case_rate < .03)
+cor.test(indy_sex_cor_46204$prop_65, indy_sex_cor_46204$case_rate, 
+         use = "complete.obs")
+
 # Race
 indy_race <- get_acs(geography = "zcta",
                      year = 2018,
@@ -266,6 +271,13 @@ ggplot(indy_race) +
 indy_black$GEOID <- as.numeric(indy_black$GEOID)
 indy_race_cor <- left_join(indy_black, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 cor.test(indy_race_cor$prop_black, indy_race_cor$case_rate, use = "complete.obs")
+# Scatterplot
+ggplot(indy_race_cor) +
+  geom_point(aes(prop_black, case_rate))
+
+filter(indy_race_cor, case_rate > .03)
+indy_race_cor_46204 <- filter(indy_race_cor, case_rate < .03)
+cor.test(indy_race_cor_46204$prop_black, indy_race_cor_46204$case_rate, use = "complete.obs")
 
 # Citizenship 
 indy_citizen <- get_acs(geography = "zcta",
@@ -303,6 +315,15 @@ ggplot(indy_citizen) +
 indy_not_citizen$GEOID <- as.numeric(indy_not_citizen$GEOID)
 indy_citizen_cor <- left_join(indy_not_citizen, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 cor.test(indy_citizen_cor$prop_not_citizen, indy_citizen_cor$case_rate, use = "complete.obs")
+
+# Scatterplot
+ggplot(indy_citizen_cor) + 
+  geom_point(aes(prop_not_citizen,case_rate))
+
+filter(indy_citizen_cor, case_rate > .03)
+indy_citizen_cor_46204 <- filter(indy_citizen_cor, case_rate < .03)
+cor.test(indy_citizen_cor_46204$prop_not_citizen, indy_citizen_cor_46204$case_rate, 
+         use = "complete.obs")
 
 # Public transportation
 indy_trans <- get_acs(geography = "zcta",
@@ -345,6 +366,15 @@ indy_public_trans$GEOID <- as.numeric(indy_public_trans$GEOID)
 indy_trans_cor <- left_join(indy_public_trans, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 cor.test(indy_trans_cor$prop_public, indy_trans_cor$case_rate, use = "complete.obs")
 
+## Scatterplot 
+ggplot(indy_trans_cor) +
+  geom_point(aes(prop_public, case_rate))
+
+filter(indy_trans_cor, case_rate > .03)
+indy_trans_cor_46204 <- filter(indy_trans_cor, case_rate < .03)
+cor.test(indy_trans_cor_46204$prop_public, indy_gini_cor_46204$case_rate, use = "complete.obs")
+# Correlation goes way down 
+
 # Gini Index 
 indy_gini <- get_acs(geography = "zcta",
                       year = 2018,
@@ -367,7 +397,91 @@ indy_gini$GEOID <- as.numeric(indy_gini$GEOID)
 indy_gini_cor <- left_join(indy_gini, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 cor.test(indy_gini$estimate, indy_gini_cor$case_rate, use = "complete.obs")
 
+## Scatterplot 
+ggplot(indy_gini_cor) +
+  geom_point(aes(estimate, case_rate))
 
+filter(indy_gini_cor, case_rate > .03)
+indy_gini_cor_46204 <- filter(indy_gini_cor, case_rate < .03)
+cor.test(indy_gini_cor_46204$estimate, indy_gini_cor_46204$case_rate, use = "complete.obs")
+# Correlation goes way down
+
+# Private vs. Public HI
+
+indy_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_indy$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+indy_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_indy$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+indy_hi_private$label <- str_remove(indy_hi_private$label, "Estimate!!Total!!")
+indy_hi_public$label <- str_remove(indy_hi_public$label, "Estimate!!Total!!")
+
+indy_hi_private <- separate(indy_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+indy_hi_public <- separate(indy_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+indy_hi_private$Private_HI <- if_else(indy_hi_private$Private_HI == "No private health insurance", 
+                                      "No", "Yes")
+indy_hi_public$Public_HI <- if_else(indy_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+indy_hi_private$Sex <- as_factor(indy_hi_private$Sex)
+indy_hi_public$Sex <- as_factor(indy_hi_public$Sex)
+indy_hi_private$Age <- as_factor(indy_hi_private$Age)
+indy_hi_public$Age <- as_factor(indy_hi_public$Age)
+indy_hi_private$Private_HI <- as_factor(indy_hi_private$Private_HI)
+indy_hi_public$Public_HI <- as_factor(indy_hi_public$Public_HI) 
+
+## Look at Private HI Coverage
+
+indy_hi_private_2 <- indy_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+### Graph Private HI Coverage by proportion
+
+lvls_indy_hi_private <- indy_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(indy_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_indy_hi_private), count, fill = Private_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+### Scatterplot Private HI vs case rate
+indy_hi_private_2$GEOID <- as.numeric(indy_hi_private_2$GEOID)
+indy_hi_private_cor <- left_join(indy_hi_private_2, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD")) %>% 
+  filter(Private_HI == "Yes")
+
+indy_hi_private_cor %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  ggrepel::geom_label_repel(aes(label = GEOID)) +
+  labs(title = "Private HI vs Case Rate")
+## There is no groupings but there is the outlier
+
+indy_hi_private_cor_46204 <- indy_hi_private_cor %>% 
+  filter(case_rate < .03)
+cor.test(indy_hi_private_cor_46204$prop, indy_hi_private_cor_46204$case_rate, 
+         use = "complete.obs")
+# Pretty strong negative correlation
 
 
 

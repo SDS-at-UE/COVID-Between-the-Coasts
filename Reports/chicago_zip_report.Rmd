@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidycensus)
 library(tidyverse)
-library(sf)
 chicago_covid <- read_csv("chicago_zip_positive_cases.csv",
                           col_types = cols(Zip = col_character()))
 chicago_covid <- na.omit(chicago_covid)
@@ -31,7 +30,7 @@ COVID-19 case numbers were obtained from the Illinois Department of Public Healt
 (https://www.dph.illinois.gov/covid19/covid19-statistics)
 
 ## Summary
-Essential workers see the largest positive correlation of all variables analyzed in this report with a correlation of 0.63. The next strongest correlation is the negative correlation between nonessential workers and COVID-19 at a value of -0.54. Public transportation's correlation is -0.45 when comparing it to COVID-19. Families who make six figures were seen to have a correlation with COVID-19 of -0.43. Non-citizens and families who make under $30,000 a year both saw correlation at 0.33. Individuals above and below the poverty line had correation of -0.31 and -.31, respectively. Two variables of interest came back with no values of correlation. These two variables were individuals over the age of 60 and the African American race.
+Essential workers see the largest positive correlation of all variables analyzed in this report with a correlation of 0.63. The next strongest correlation is the negative correlation between nonessential workers and COVID-19 at a value of -0.54. Public transportation's correlation is -0.45 when comparing it to COVID-19. Health insurance has interesting results as well: individuals with private health insurance have a correlation of -0.44 when public health insurance sees a positive coefficient of 0.37 for its correlation. Families who make six figures were seen to have a correlation with COVID-19 of -0.43. Non-citizens and families who make under $30,000 a year both saw correlation at 0.33. Individuals above and below the poverty line had correation of -0.31 and -.31, respectively. Two variables of interest came back with no values of correlation. These two variables were individuals over the age of 60 and the African American race.
 
 ## Analysis
 
@@ -48,6 +47,7 @@ chicago_income$label <- as_factor(str_replace(chicago_income$label, ".*!!(.*)", 
 
 Analyzing 6 figure income
 ```{r}
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
 chicago_income_six_figure <- chicago_income %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
@@ -57,7 +57,7 @@ chicago_income_six_figure <- chicago_income %>%
                       "$125,000 to $149,999",
                       "$100,000 to $124,999")) %>% 
   mutate(prop_100K = sum(prop)) %>% 
-  select(GEOID, prop_100K) %>%
+  dplyr::select(GEOID, prop_100K) %>%
   distinct(GEOID, prop_100K)
 
 lvls <- chicago_income_six_figure %>% 
@@ -97,7 +97,7 @@ chicago_income_under_30K <- chicago_income %>%
                       "$10,000 to $14,999",
                       "Less than $10,000")) %>% 
   mutate(prop_30K = sum(prop)) %>% 
-  select(GEOID, prop_30K) %>% 
+  dplyr::select(GEOID, prop_30K) %>% 
   distinct(GEOID, prop_30K)
 
 lvls <- chicago_income_under_30K %>% 
@@ -147,7 +147,7 @@ chicago_below_pov_lvl <- chicago_pov %>%
          prop = estimate/n) %>% 
   filter(label %in% c("Income in the past 12 months below poverty level")) %>% 
   mutate(prop_below_pov = sum(prop)) %>% 
-  select(GEOID, prop_below_pov) %>% 
+  dplyr::select(GEOID, prop_below_pov) %>% 
   distinct(GEOID, prop_below_pov)
 
 lvls <- chicago_below_pov_lvl %>% 
@@ -181,7 +181,7 @@ chicago_above_pov_lvl <- chicago_pov %>%
          prop = estimate/n) %>% 
   filter(label %in% c("Income in the past 12 months at or above poverty level")) %>% 
   mutate(prop_above_pov = sum(prop)) %>% 
-  select(GEOID, prop_above_pov) %>% 
+  dplyr::select(GEOID, prop_above_pov) %>% 
   distinct(GEOID, prop_above_pov)
 
 lvls <- chicago_above_pov_lvl %>% 
@@ -232,7 +232,7 @@ chicago_occ_essential <- chicago_occ %>%
   filter(label %in% c("Natural resources, construction, and maintenance occupations",
                       "Production, transportation, and material moving occupations")) %>% 
   mutate(prop_essential = sum(prop)) %>% 
-  select(GEOID, prop_essential) %>% 
+  dplyr::select(GEOID, prop_essential) %>% 
   distinct(GEOID, prop_essential)
 
 lvls <- chicago_occ_essential %>% 
@@ -268,7 +268,7 @@ chicago_occ_nonessential <- chicago_occ %>%
                       "Sales and office occupations",
                       "Employee of private company workers")) %>% 
   mutate(prop_nonessential = sum(prop)) %>% 
-  select(GEOID, prop_nonessential) %>% 
+  dplyr::select(GEOID, prop_nonessential) %>% 
   distinct(GEOID, prop_nonessential)
 
 lvls <- chicago_occ_nonessential %>% 
@@ -324,7 +324,7 @@ chicago_over_sixty <- chicago_sex %>%
                       "80 to 84 years",
                       "85 years and over")) %>% 
   mutate(prop_60 = sum(prop)) %>% 
-  select(GEOID, prop_60) %>% 
+  dplyr::select(GEOID, prop_60) %>% 
   distinct(GEOID, prop_60)
 
 lvls <- chicago_over_sixty %>% 
@@ -373,7 +373,7 @@ chicago_black <- chicago_race %>%
          prop = estimate/n) %>% 
   filter(label %in% c("Black or African American alone")) %>% 
   mutate(prop_black = sum(prop)) %>% 
-  select(GEOID, prop_black) %>% 
+  dplyr::select(GEOID, prop_black) %>% 
   distinct(GEOID, prop_black)
 
 lvls <- chicago_black %>% 
@@ -423,7 +423,7 @@ chicago_not_citizen <- chicago_citizen %>%
          prop = estimate/n) %>% 
   filter(label %in% c("Not a U.S. citizen")) %>% 
   mutate(prop_not_citizen = sum(prop)) %>% 
-  select(GEOID, prop_not_citizen) %>% 
+  dplyr::select(GEOID, prop_not_citizen) %>% 
   distinct(GEOID, prop_not_citizen)
 
 lvls <- chicago_not_citizen %>% 
@@ -476,7 +476,7 @@ chicago_public_trans <- chicago_trans %>%
                       "Subway or elevated",
                       "Railroad")) %>% 
   mutate(prop_public = sum(prop)) %>% 
-  select(GEOID, prop_public) %>% 
+  dplyr::select(GEOID, prop_public) %>% 
   distinct(GEOID, prop_public)
 
 lvls <- chicago_public_trans %>% 
@@ -503,8 +503,99 @@ We have found a negative value of -0.45 for the correlation regarding public tra
 
 COVID data for zip code
 ```{r}
-chicago_income <- left_join(chicago_income, chicago_covid, by = c("GEOID" = "Zip"))
+chicago_income <- left_join(chicago_trans, chicago_covid, by = c("GEOID" = "Zip"))
 ```
 
+
+# Health Insurance
+```{r}
+chicago_ins <- get_acs(geography = "zcta",
+                          year = 2018,
+                          table = "B18135") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B18135_001"))
+chicago_ins <- left_join(chicago_ins, variables_2018[, 1:2], by = "variable")
+chicago_ins$label <- as_factor(str_replace(chicago_ins$label, ".*!!(.*)", "\\1"))
+
+ggplot(chicago_ins) +
+  geom_col(aes(GEOID, estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+```
+
+Analyzing Private Health Insurance Coverage Data
+```{r}
+chicago_private_ins <- chicago_ins %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("With private health insurance coverage")) %>% 
+  mutate(prop_priv_ins = sum(prop)) %>% 
+  dplyr::select(GEOID, prop_priv_ins) %>% 
+  distinct(GEOID, prop_priv_ins)
+
+lvls <- chicago_private_ins %>% 
+  arrange(prop_priv_ins) %>% 
+  pull(GEOID)
+
+ggplot(chicago_ins) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Health Insurance Coverage Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Health Insurance Coverage")
+```
+
+Test Correlation between percentage of population who have private health insurance coverage to the case rate of COVID
+```{r}
+chicago_ins_cor <- left_join(chicago_private_ins, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_ins_cor$prop_priv_ins, chicago_ins_cor$case_rate, use = "complete.obs")
+```
+There is a negative correlation calculated when looking at individuals with private health insurance and COVID. That correlation is -0.44.
+
+Analyzing Public Health Insurance Coverage Data
+```{r}
+chicago_public_ins <- chicago_ins %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("With public health coverage")) %>% 
+  mutate(prop_pub_ins = sum(prop)) %>% 
+  dplyr::select(GEOID, prop_pub_ins) %>% 
+  distinct(GEOID, prop_pub_ins)
+
+lvls <- chicago_public_ins %>% 
+  arrange(prop_pub_ins) %>% 
+  pull(GEOID)
+
+ggplot(chicago_ins) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))+
+labs(title = "Health Insurance Coverage Distribution for Each Chicago Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Health Insurance Coverage")
+```
+
+Test Correlation between percentage of population who have public health insurance coverage to the case rate of COVID
+```{r}
+chicago_ins_cor <- left_join(chicago_public_ins, chicago_covid, by = c("GEOID"="Zip"))
+cor.test(chicago_ins_cor$prop_pub_ins, chicago_ins_cor$case_rate, use = "complete.obs")
+```
+There is a positive correlation of 0.37 between those with public health insurance and COVID cases. 
+
+COVID data for zip code
+```{r}
+chicago_ins <- left_join(chicago_ins, chicago_covid, by = c("GEOID" = "Zip"))
+```
+
+
 # Conclusions
-We analyzed 7 categories and 10 variables throughout the zip codes in Chicago. We saw two variables stick out as they crossed over 0.5. Half of the variables were positively correlated when the other half were negatively correlated. Essential workers and non essential workers saw some higher correlations numbers attached to them. A couple variables that I thought would definitely have correlation in favor of COVID cases did not show any correlations including age and race. I think we could dig into these two variables more and see if we could find other ranges in those categories to show some correlation. For public transportation, I expected a high positive number, but the results showed a high negative number. Are there underlying reasons why people who use public transportation are getting less sick? Individuals who are not citizens are seeing higher rates of COVID-19. Are they able to get the help they need with new government restrictions in place? I'm sure we can dig and find some more insight on these factors to see as to why they have the correlation they do.
+We analyzed 8 categories and 12 variables throughout the zip codes in Chicago. We saw two variables stick out as they crossed over 0.5. Half of the variables were positively correlated when the other half were negatively correlated. Essential workers and non essential workers saw some higher correlations numbers attached to them. A couple variables that I thought would definitely have correlation in favor of COVID cases did not show any correlations including age and race. I think we could dig into these two variables more and see if we could find other ranges in those categories to show some correlation. For public transportation, I expected a high positive number, but the results showed a high negative number. Are there underlying reasons why people who use public transportation are getting less sick? Individuals who are not citizens are seeing higher rates of COVID-19. Are they able to get the help they need with new government restrictions in place? I'm sure we can dig and find some more insight on these factors to see as to why they have the correlation they do.
+

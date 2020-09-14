@@ -281,4 +281,27 @@ ggplot(chicago_trans) +
                                    hjust = 1))
 
 
+# Gini Index?????????/
+
+chicago_gini <- get_acs(geography = "zcta",
+                        table = "B19083") %>% 
+  filter(GEOID %in% zip_code_chicago$zip)
+chicago_gini <- left_join(chicago_gini, variables_2018[, 1:2], by = "variable")
+chicago_gini$label <- as_factor(str_replace(chicago_gini$label, ".*!!(.*)", "\\1"))
+
+chicago_gini <- left_join(chicago_gini, chicago_covid, by = c("GEOID" = "Zip"))
+
+ggplot(chicago_gini) +
+  geom_point(aes(x = estimate, y = case_rate)) +
+  labs(title = "Gini Index Distribution for Each Chicago Zip Code",
+       x = "Gini Index",
+       y = "Case Rate")
+
+#Test Correlation between Gini Index to the case rate of COVID
+cor.test(chicago_gini$estimate, chicago_gini$case_rate, use = "complete.obs")
+
+arrange(chicago_gini, desc(case_rate))
+
+
+
 
