@@ -519,7 +519,7 @@ louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
 
 cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")
 
-### We see a grouping here as well. Map the ZIPs that have proportion of essential workers
+### We see a grouping here as well if we include service occupations as essential. Map the ZIPs that have proportion of essential workers
 ### greater than 44%
 
 louis_occ_ess <- louis_occ_ess %>% 
@@ -592,7 +592,7 @@ ggplot(louis_trans) +
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
-## Graph a scatterplot between proportion who use public transporation
+## Graph a scatterplot between proportion who use public transportation
 ## and the case rate
 
 louis_trans_public %>%
@@ -707,8 +707,11 @@ ggplot(louis_race) +
 
 louis_race %>% 
   filter(label == "White alone") %>% 
-ggplot() + 
-  geom_point(aes(prop, case_rate))
+ggplot(aes(prop, case_rate)) + 
+  geom_point() +
+  ggrepel::geom_label_repel(data = filter(louis_race, prop < .25,
+                                          label == "White alone"), 
+                            aes(label = GEOID))
 
 ## Correlation test between proportion of white population in zip to case rate
 
