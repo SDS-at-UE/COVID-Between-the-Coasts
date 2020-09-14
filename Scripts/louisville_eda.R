@@ -276,7 +276,7 @@ lvls_age <- louis_sex_age %>%
   mutate(prop_over65 = sum(prop)) %>% 
   arrange(prop_over65) %>% 
   select(GEOID, prop_over65) %>% 
-  distinct(GEOID< prop_over65) %>% 
+  distinct(GEOID, prop_over65) %>% 
   pull(GEOID)
 
 ggplot(louis_sex_age) +
