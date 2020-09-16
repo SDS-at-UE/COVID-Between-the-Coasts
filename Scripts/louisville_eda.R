@@ -29,7 +29,7 @@ geometry_zip_louis <- filter(geometry_zip, GEOID %in% zip_code_louis$zip)
 louis_covid <- read_csv("Data/louisville_covid.csv",
                         col_types = cols(ZIP = col_character()))
 louis_covid <- louis_covid %>% 
-  mutate(case_rate = Cases/Population) %>% 
+  mutate(case_rate = Cases/Population*100000) %>% 
   rename(zip = ZIP,
          population = Population,
          cases = Cases)
@@ -187,9 +187,9 @@ ggplot(louis_gini_cor) +
 
 ### Remove outlier and retest correlation for gini to case rate
 
-filter(louis_gini_cor, case_rate > .03)
+filter(louis_gini_cor, case_rate > 3000)
 
-louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < .03)
+louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < 3000)
 
 cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")
 
@@ -253,7 +253,7 @@ filter(louis_HI_cor, HI_Coverage == "Yes") %>%
 
 louis_HI_cor_sans40202 <- louis_HI_cor %>% 
   filter(HI_Coverage == "Yes",
-         case_rate < .03)
+         case_rate < 3000)
 cor.test(louis_HI_cor_sans40202$prop, louis_HI_cor_sans40202$case_rate, use = "complete.obs")
 
 ## Look at Ages of the zip codes
@@ -294,7 +294,7 @@ ggplot(louis_age_cor) +
 
 #### Take out 40202 outlier
 
-louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
+louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < 3000)
 
 cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")
 
@@ -373,7 +373,7 @@ louis_hi_private_cor %>%
 #### Remove 40202 as outlier and conduct correlation test
 
 louis_hi_private_cor_sans40202 <- louis_hi_private_cor %>% 
-  filter(case_rate < .03)
+  filter(case_rate < 3000)
 cor.test(louis_hi_private_cor_sans40202$prop, louis_hi_private_cor_sans40202$case_rate, use = "complete.obs")
 
 ### In looking at the private HI vs. case rate scatterplot, there are some definitive
@@ -458,7 +458,7 @@ filter(louis_hi_public_cor, Public_HI == "Yes") %>%
 
 louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>% 
   filter(Public_HI == "Yes",
-         case_rate < .03)
+         case_rate < 3000)
 cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")
 
 
@@ -515,7 +515,7 @@ ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
 
 ### Remove outlier and retest correlation for occupation to case rate
 
-louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
+louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < 3000)
 
 cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")
 
@@ -611,7 +611,7 @@ filter(louis_trans_public, prop_public > .1) %>%
 
 ### Removal of outlier and test correlation for transportation to case rate
 
-louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < .03)
+louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < 3000)
 cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")
 
 
@@ -668,7 +668,7 @@ filter(louis_citizen, prop_us_citizen < .92) %>%
 ## Correlation test with COVID
 ### We take out 40202 as an outlier, and test the rest
 
-louis_citizen_sans40202 <- filter(louis_citizen, case_rate < .03)
+louis_citizen_sans40202 <- filter(louis_citizen, case_rate < 3000)
 cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")
 
 ##################################
