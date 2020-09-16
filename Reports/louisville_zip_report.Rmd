@@ -8,7 +8,7 @@ urlcolor: blue
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
-options(scipen = 999, digits = 4)
+options(scipen = 999, digits = 6)
 #See louisville_eda.R for code comments
 library(tidycensus)
 library(tidyverse)
@@ -27,7 +27,7 @@ geometry_zip_louis <- filter(geometry_zip, GEOID %in% zip_code_louis$zip)
 louis_covid <- read_csv("../Data/louisville_covid.csv",
                         col_types = cols(ZIP = col_character()))
 louis_covid <- louis_covid %>% 
-  mutate(case_rate = Cases/Population) %>% 
+  mutate(case_rate = Cases/Population*100000) %>% 
   rename(zip = ZIP,
          population = Population,
          cases = Cases)
@@ -129,13 +129,13 @@ ggplot(louis_income_cor, aes(prop_100K, case_rate)) +
        subtitle = "ZIP code 40202 is an outlier.",
        x = "Proportion of Population that Makes >$100,000",
        y = "Case Rate (per 100,000)") +
-  ggrepel::geom_label_repel(data = filter(louis_income_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(louis_income_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
 
 ```{r}
 louis_income_cor_sans40202 <- louis_income_cor %>% 
-  filter(case_rate < .03)
+  filter(case_rate < 3000)
 ```
 
 The 40202 ZIP code is a clear outlier. We remove this from the data to run a viable correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically significant ($p=$ `r cor.test(louis_income_cor_sans40202$prop_100K, louis_income_cor_sans40202$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(louis_income_cor_sans40202$prop_100K, louis_income_cor_sans40202$case_rate, use = "complete.obs")$estimate`. This verifies that there is indeed a moderately negative correlation with case rate and higher incomes.
@@ -188,9 +188,9 @@ ggplot(louis_gini_cor, aes(estimate, case_rate)) +
   labs(title = "No Discernible Correlation Between Gini Index and COVID",
        x = "Gini Index",
        y = "Case Rate (per 100,000)") +
-  ggrepel::geom_label_repel(data = filter(louis_gini_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(louis_gini_cor, case_rate > 3000),
                             aes(label = GEOID))
-louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < .03)
+louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < 3000)
 ```
 
 After removing 40202, we see that there is no real correlation between the Gini Index and the rate of infection for COVID. We get a correlation of `r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `
@@ -268,7 +268,7 @@ filter(louis_HI_cor, HI_Coverage == "Yes") %>%
 ```{r}
 louis_HI_cor_sans40202 <- louis_HI_cor %>% 
   filter(HI_Coverage == "Yes",
-         case_rate < .03)
+         case_rate < 3000)
 ```
 
 There appears to be a definitive correlation, once we remove 40202. We end up with a moderate to strong correlation value of `r cor.test(louis_HI_cor_sans40202$prop, louis_HI_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r signif(cor.test(louis_HI_cor_sans40202$prop, louis_HI_cor_sans40202$case_rate, use = "complete.obs")$p.value, digits = 2)`).
@@ -352,7 +352,7 @@ louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID
 louis_hi_private_cor %>%
   ggplot(aes(prop, case_rate)) +
   geom_point() +
-  ggrepel::geom_label_repel(data = filter(louis_hi_private_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(louis_hi_private_cor, case_rate > 3000),
                                           aes(label = GEOID)) +
   labs(title = "Possession of Private Health Insurance Seems \nto be Grouped by Another Factor",
        x = "Proportion of Population that has Private Health Insurance",
@@ -427,7 +427,7 @@ filter(louis_hi_public_cor, Public_HI == "Yes") %>%
   ggplot(aes(prop, case_rate)) +
   geom_point() +
   ggrepel::geom_label_repel(data = filter(louis_hi_public_cor, 
-                                          case_rate > .03,
+                                          case_rate > 3000,
                                           Public_HI == "Yes"),
                                           aes(label = GEOID)) +
   labs(title = "Public Health Insurance Seems to have No Relation to Case Rate",
@@ -464,7 +464,7 @@ louis_hi_public_cor %>%
 
 louis_hi_public_cor_sans40202 <- louis_hi_public_cor %>% 
   filter(Public_HI == "Yes",
-         case_rate < .03)
+         case_rate < 3000)
 ```
 
 We do not have enough evidence to suggest that COVID cases and public health insurance are related. Our correlation value is `r cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")$estiamte` with a high $p$-value (`r cor.test(louis_hi_public_cor_sans40202$prop, louis_hi_public_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
@@ -520,9 +520,9 @@ ggplot(louis_age_cor, aes(prop_over65, case_rate)) +
   labs(title = "Slight Correlation Between Proportion of Population Over 65 and COVID",
        x = "Proportion of Population Over Age 65",
        y = "Case Rate (per 100,000)") +
-  ggrepel::geom_label_repel(data = filter(louis_age_cor, case_rate > .03)[1,],
+  ggrepel::geom_label_repel(data = filter(louis_age_cor, case_rate > 3000)[1,],
                             aes(label = GEOID))
-louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < .03)
+louis_age_cor_sans40202 <- filter(louis_age_cor, case_rate < 3000)
 ```
 
 There appears to be a slight correlation. After removal of the 40202 outlier, we get a correlation value of `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_age_cor_sans40202$prop_over65, louis_age_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
@@ -581,7 +581,7 @@ ggplot(louis_occ_cor, aes(prop_ess, case_rate)) +
   labs(title = "Essential Worker Proportion Slightly Related to COVID Case Rate",
        x = "Proportion of Population Deemed to Work Essential Jobs",
        y = "Case Rate (per 100,000)")
-louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < .03)
+louis_occ_cor_sans40202 <- filter(louis_occ_cor, case_rate < 3000)
 ```
 
 We find a moderate correlation of `r cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_occ_cor_sans40202$prop_ess, louis_occ_cor_sans40202$case_rate, use = "complete.obs")$p.value`).
@@ -649,7 +649,7 @@ louis_trans_public %>%
        x = "Proportion of Population Who Use Public Transportation",
        y = "Case Rate (per 100,000)")
 
-louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < .03)
+louis_trans_public_sans40202 <- filter(louis_trans_public, case_rate < 3000)
 ```
 
 We notice a group of three ZIP codes with distinctly higher rates of public transportation use. These ZIP codes correspond to the downtown Louisville area. When we remove 40202 as an outlier and test for correlation, we find none (correlation value of `r cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")$estimate` with $p=$ `r cor.test(louis_trans_public_sans40202$prop_public, louis_trans_public_sans40202$case_rate, use = "complete.obs")$p.value`).
@@ -716,7 +716,7 @@ ggplot(louis_citizen, aes(prop_us_citizen, case_rate)) +
   labs(title = "U.S. Citizenship Related to COVID Case Rate",
        x = "Proportion of Population U.S. Citizen",
        y = "Case Rate (per 100,000)")
-louis_citizen_sans40202 <- filter(louis_citizen, case_rate < .03)
+louis_citizen_sans40202 <- filter(louis_citizen, case_rate < 3000)
 ```
 
 There are three ZIP codes that have a distinctively different proportion of their population which are U.S. citizens. These ZIP codes are connected geographically, but not in a seemingly meaningful way. This group, however, fits in with the trend line of the relationship by proportion of U.S. citizens and COVID cases. We get a moderate to strong correlation of `r cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_citizen_sans40202$prop_us_citizen, louis_citizen_sans40202$case_rate, use = "complete.obs")$p.value`)
@@ -768,7 +768,7 @@ louis_race %>%
   filter(label == "White alone") %>% 
 ggplot(aes(prop, case_rate)) + 
   geom_point() +
-  ggrepel::geom_label_repel(data = filter(louis_race, prop < .25 | case_rate > .03,
+  ggrepel::geom_label_repel(data = filter(louis_race, prop < .25 | case_rate > 3000,
                                           label == "White alone"), 
                             aes(label = GEOID)) +
   labs(title = "Racial Makeup of ZIP is Related to COVID Case Rate",
