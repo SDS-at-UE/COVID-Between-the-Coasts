@@ -1,7 +1,7 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
 author: "Chicago Zip Code Analysis"
-date: "9/15/2020"
+date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 ---
 
@@ -10,6 +10,10 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width 
 options(scipen = 999, digits = 4)
 library(tidycensus)
 library(tidyverse)
+library(leaflet)
+library(sf)
+library(tigris)
+options(tigris_use_cache = TRUE)
 chicago_covid <- read_csv("../Data/chicago_zip_positive_cases.csv",
                           col_types = cols(Zip = col_character()))
 chicago_covid <- na.omit(chicago_covid)
@@ -19,6 +23,8 @@ chicago_covid <- chicago_covid %>%
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
                                         state == "IL")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_chicago <- filter(geometry_zip, GEOID %in% zip_code_chicago$zip)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
 ```
@@ -38,6 +44,36 @@ We see in almost every instance where ZIP code 60604 is an outlier with a case r
 
 
 ## Analysis
+
+### COVID
+
+We take a look at the case rate (per 100,000 population) of COVID in the ZIP codes of Chicago, IL. 
+
+```{r}
+chicago_covid_geo <- left_join(chicago_covid, geometry_zip_chicago, by = c("Zip" = "GEOID"))
+chicago_covid_geo <- st_as_sf(chicago_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = chicago_covid_geo$case_rate)
+chicago_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", chicago_covid_geo$Zip,
+                            "</strong><br /> Case Rate ", signif(chicago_covid_geo$case_rate, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100,000)",
+            opacity = 1)
+```
+
+The rate of COVID cases seems pretty well spread out. There is one hotspot location in the 60604 ZIP code, but outside of that ZIP, there is a better distribution than we've seen in other cities.
 
 ### Family Income in the Past 12 Months
 ```{r}

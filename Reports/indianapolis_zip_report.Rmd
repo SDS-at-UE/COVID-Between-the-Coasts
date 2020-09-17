@@ -23,6 +23,9 @@ options(tigris_use_cache = TRUE)
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_indy <- zip_code %>% filter(primary_city == "Indianapolis",
                                      state == "IN")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_indy <- filter(geometry_zip, GEOID %in% zip_code_indy$zip)
+geometry_zip_indy$GEOID <- as.numeric(geometry_zip_indy$GEOID)
 # Indy COVID data
 indiana_cases_by_zip <- read_excel("../Data/indiana_cases_by_zip.xlsx")
 indiana_cases_by_zip <- indiana_cases_by_zip %>% filter(ZIP_CD %in% zip_code_indy$zip)
@@ -48,13 +51,42 @@ Throughout the document, we report the p-value for several statistical tests. Th
 
 First, we find that with income, there is a correlation between having a poorer income and a higher number of cases. Additionally, we find that when looking at race, ZIP codes that are majority African American have just a slightly higher case rate than ZIP codes that consist of majority White. Additionally, a correlation test concluded that ZIP codes with a higher proportion of African Americans have a higher case rate, this correlation was 0.52.
 
-We find that there is not a correlation between having a higher age and case rate, in fact in this case, there was a correlation between the ZIP codes with a lower proportion of people aged 75 and up and a higher case rate. When looking at the proportions of citizens vs non-citizens in Indianapolis ZIP codes we found a fairly high correlation of the proportion of non-citizens and case rate: 0.62. 
+We find that there is not a correlation between having a higher aged population and case rate. When looking at the proportions of citizens vs non-citizens in Indianapolis ZIP codes we found a fairly high correlation of the proportion of non-citizens and case rate: 0.62. Essential vs non-essential workers and public transportation do not impact the case rate. 
 
-Essential vs non-essential workers and public transportation do not impact the case rate. Next, we looked into the Gini Index and found very little evidence to suggest that the Gini Index affects the COVID case rate. Lastly, we looked at public vs private health insurance coverage and found moderate evidence to suggest that the ZIP codes that contain a lower proportion of people that have private health insurance coverage have a higher COVID case rate.  
+Next, we looked into the Gini Index and found very little evidence to suggest that the Gini Index affects the COVID case rate. Lastly, we looked at public vs private health insurance coverage and found moderate evidence to suggest that the ZIP codes that contain a lower proportion of people that have private health insurance coverage have a higher COVID case rate. We did not find a correlation with the proportion of people who have public insurance.
 
 ## Analysis
 
+### COVID
+
+We can look at the distribution of the case rate for COVID in Indianapolis. We see that ZIP 46204 is far and away much higher than the other ZIP codes. We will have to exclude it from much of our analysis below. We also see that this ZIP is the most extreme ZIP code in the demographics of income and public transportation. It is still one of the most extreme ZIP codes for Gini index and public health insurance. It runs in the middle of the pack for the other demographics. 
+
+```{r}
+indy_covid_geo <- left_join(indiana_cases_by_zip, geometry_zip_indy, by = c("ZIP_CD" = "GEOID"))
+indy_covid_geo <- st_as_sf(indy_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = indy_covid_geo$case_rate)
+indy_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", indy_covid_geo$ZIP_CD,
+                            "</strong><br /> Case Rate ", signif(indy_covid_geo$case_rate, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100,000)",
+            opacity = 1)
+```
+
 ### Income
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 indy_income <- get_acs(geography = "zcta",
                         table = "B19101",
@@ -101,26 +133,6 @@ ggplot(indy_income) +
        fill = "Income Level")
 ```
 
-We can compare ZIP codes with the case rate (per 100000) of COVID in the same ZIP codes.
-
-```{r,echo=FALSE, warning=FALSE, message=FALSE}
-pal <- colorNumeric(palette = "viridis", domain = indy_income$case_rate)
-indy_income %>% 
-  st_transform(crs = "+init=epsg:4326") %>% 
-  leaflet(width = "100%") %>% 
-  addProviderTiles(provider = "CartoDB.Positron") %>% 
-  addPolygons(popup = str_c("<strong>", indy_income$GEOID,
-                            "</strong><br /> Case Rate ", signif(indy_income$case_rate, digits = 4)),
-              stroke = FALSE,
-              smoothFactor = 0,
-              fillOpacity = 0.7,
-              color = ~ pal(case_rate)) %>% 
-  addLegend("bottomright",
-            pal = pal,
-            values = ~ case_rate,
-            title = "Case Rate (per 100000)",
-            opacity = 1)
-```
 
 ```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_income_six_figure$GEOID <- as.numeric(indy_income_six_figure$GEOID)
@@ -407,8 +419,8 @@ ggplot(indy_trans_cor, aes(prop_public, case_rate)) +
   geom_point() + 
   labs(title = "Transportation Proportion for Each Indianapolis ZIP Code",
        subtitle = "ZIP code 46204 is an outlier.",
-       x = "Proportion",
-       y = "Case Rate") +
+       x = "Proportion of Population that Takes Public Transporation",
+       y = "Case Rate (per 100,000)") +
   ggrepel::geom_label_repel(data = filter(indy_trans_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
@@ -429,7 +441,8 @@ indy_gini <- left_join(indy_gini, variables_2018[, 1:2], by = "variable")
 indy_gini$label <- as_factor(str_replace(indy_gini$label, ".*!!(.*)", "\\1"))
 
 ggplot(indy_gini) +
-  geom_col(mapping = aes(x = factor(GEOID), y = estimate)) +
+  geom_point(mapping = aes(x =GEOID, y = estimate)) +
+  ylim(0, 1) +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
   labs(title = "Gini Index Value for Each Indianapolis ZIP Code",

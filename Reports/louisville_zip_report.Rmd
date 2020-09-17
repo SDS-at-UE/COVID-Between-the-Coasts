@@ -1,6 +1,6 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
-author: "Louisville Zip Code Analysis"
+author: "Louisville ZIP Code Analysis"
 date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 urlcolor: blue
@@ -13,7 +13,6 @@ options(scipen = 999, digits = 6)
 library(tidycensus)
 library(tidyverse)
 library(leaflet)
-library(stringr)
 library(sf)
 library(tigris)
 options(tigris_use_cache = TRUE)
@@ -44,6 +43,34 @@ Throughout the document, we report the $p$-value for several statistical tests. 
 Of particular note is ZIP code 40202. This ZIP has an unusually high case rate of COVID, although the other demographic characteristics of this ZIP code are not extreme. The exception to that is the Gini index, where ZIP 40202 has a large inequality situation, and use of public transportation, where a higher percentage of residents use public transportation.
 
 ## Analysis
+
+### COVID
+
+We first look at the COVID cases by ZIP codes. We can see that ZIP 40202 has a much higher rate than the other ZIP codes. We end up having to run our analysis without this ZIP code. However, it is far beyond the extreme in the Gini Index and public transportation compared to other ZIPs. With income, private health insurance, and public health insurance it is one of the more extremely ZIP codes, but with the other demographics, it is right in the middle of the distribution. The scatterplots help to illustrate this fact. 
+
+```{r}
+louis_covid_geo <- left_join(louis_covid, geometry_zip_louis, by = c("zip" = "GEOID"))
+louis_covid_geo <- st_as_sf(louis_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = louis_covid_geo$case_rate)
+louis_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", louis_covid_geo$zip,
+                            "</strong><br /> Case Rate ", signif(louis_covid_geo$case_rate, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100000)",
+            opacity = 1)
+```
 
 ### Income
 
@@ -80,7 +107,7 @@ louis_income <- left_join(louis_income, louis_covid, by = c("GEOID" = "zip"))
 ```
 
 
-We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the zip codes on the $x$-axis in the following graph. 
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph. 
 
 ```{r}
 ggplot(louis_income) +
@@ -95,32 +122,13 @@ ggplot(louis_income) +
   
 ```
 
-Zip code 40231 has no data, which is true throughout the analysis. We can compare the remaining zip codes with the case rate (per 100000) of COVID in the same zip codes. 
-
-```{r}
-pal <- colorNumeric(palette = "viridis", domain = louis_income$case_rate)
-louis_income %>% 
-  st_transform(crs = "+init=epsg:4326") %>% 
-  leaflet(width = "100%") %>% 
-  addProviderTiles(provider = "CartoDB.Positron") %>% 
-  addPolygons(popup = str_c("<strong>", louis_income$GEOID,
-                            "</strong><br /> Case Rate ", signif(louis_income$case_rate, digits = 4)),
-              weight = 4,
-              smoothFactor = 0,
-              fillOpacity = 0.7,
-              color = ~ pal(case_rate)) %>% 
-  addLegend("bottomright",
-            pal = pal,
-            values = ~ case_rate,
-            title = "Case Rate (per 100000)",
-            opacity = 1)
-```
+ZIP code 40231 has no data, which is true throughout the analysis.
 
 ```{r}
 louis_income_cor <- left_join(louis_income_six_figure, louis_covid, by = c("GEOID"="zip"))
 ```
 
-The next graph shows that it appears to have some correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. 
+The next graph shows that it appears to have some correlation, i.e., the poorer the ZIP code the more likely to have a higher rate of infection. 
 
 ```{r}
 ggplot(louis_income_cor, aes(prop_100K, case_rate)) +
@@ -193,8 +201,7 @@ ggplot(louis_gini_cor, aes(estimate, case_rate)) +
 louis_gini_cor_sans40202 <- filter(louis_gini_cor, case_rate < 3000)
 ```
 
-After removing 40202, we see that there is no real correlation between the Gini Index and the rate of infection for COVID. We get a correlation of `r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `
-`r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$p.value`), and thus indistinguishable from 0. 
+After removing 40202, we see that there is no real correlation between the Gini Index and the rate of infection for COVID. We get a correlation of `r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(louis_gini_cor_sans40202$estimate, louis_gini_cor_sans40202$case_rate, use = "complete.obs")$p.value`), and thus indistinguishable from 0. 
 
 ### Health Insurance Coverage
 
@@ -261,7 +268,7 @@ filter(louis_HI_cor, HI_Coverage == "Yes") %>%
   labs(title = "Slight Correlation Between Health Insurance Coverage and COVID",
        x = "Proportion of Population that has Health Insurance",
        y = "Case Rate (per 100,000)") +
-  ggrepel::geom_label_repel(data = filter(louis_HI_cor, case_rate > .03, HI_Coverage == "Yes"),
+  ggrepel::geom_label_repel(data = filter(louis_HI_cor, case_rate > 3000, HI_Coverage == "Yes"),
                             aes(label = GEOID))
 ```
 
@@ -343,7 +350,7 @@ ggplot(louis_hi_private_2) +
        fill = "Private Health \nInsurance Coverage?")
 ```
 
-As we see, there is a wide range of those populations that have private health insurance, ranging from almost 90% of the population in 40245 to only 31.4% of the residents in 40210 having private health insurance. But how does this relate to COVID cases.
+As we see, there is a wide range of those populations that have private health insurance, ranging from almost 90% of the population in 40245 to only 31.4% of the residents in 40210 having private health insurance. But how does this relate to COVID cases?
 
 ```{r}
 louis_hi_private_cor <- left_join(louis_hi_private_2, louis_covid, by = c("GEOID"="zip")) %>% 
