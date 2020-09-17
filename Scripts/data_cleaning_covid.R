@@ -1,7 +1,5 @@
 # Data Cleaning of COVID Files
 
-library(tidyverse)
-
 ## Run/store all functions from functions.R script
 source("Scripts/functions.R")
 
