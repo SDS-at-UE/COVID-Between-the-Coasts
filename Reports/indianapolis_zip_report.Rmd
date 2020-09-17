@@ -1,13 +1,14 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
-author: "Indianapolis Zip Code Analysis"
+author: "Indianapolis ZIP Code Analysis"
 date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9)
+options(scipen = 999, digits = 4)
 
 library(tidycensus)
 library(tidyverse)
@@ -29,7 +30,7 @@ indiana_cases_by_zip$PATIENT_COUNT <- as.numeric(indiana_cases_by_zip$PATIENT_CO
 indiana_cases_by_zip$POPULATION <- as.numeric(indiana_cases_by_zip$POPULATION)
 indiana_cases_by_zip$ZIP_CD <- as.numeric(indiana_cases_by_zip$ZIP_CD)
 indiana_cases_by_zip <- indiana_cases_by_zip %>% 
-  mutate(case_rate = PATIENT_COUNT/POPULATION) 
+  mutate(case_rate = PATIENT_COUNT/POPULATION*100000) 
 
 # Variables from the ACS survey
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
@@ -39,11 +40,17 @@ variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
 
 ## Background
 
-The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Indianapolis Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Indiana State Department of Health. ([https://hub.mph.in.gov/dataset/covid-19-cases-by-zip])
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Indianapolis. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Indiana State Department of Health. ([https://hub.mph.in.gov/dataset/covid-19-cases-by-zip])
 
 Throughout the document, we report the p-value for several statistical tests. This does nothing more than provide a measure on the amount of evidence we have to suggest statistical significance. The closer the p-value is to 0 the stronger the evidence that our measure (correlation most of the time) is different than 0.
 
-**Conclusions:** During the process of exploratory data analysis between demographic data and COVID-19 data in each zip code in Indianapolis, we find some significant things. When we first started our analysis we noticed that there was an obvious outlier. That outlier had the zip code of 46204 and since there was a significant difference when we would run our analysis without it, we removed it for the correlation tests. We give results with it included though also so you can see how just one outlier can highly impact your results. First, we find that with income, there is a correlation between having a poorer income and a higher case. Additionally, we find that when looking at race, zip codes that are majority African American have just a slightly higher case rate than zip codes that consist of majority White. Additionally, a correlation test concluded that zip codes with a higher proportion of African Americans have a higher case rate, this correlation was 0.52. We find that there is not a correlation between having a higher age and case rate, in fact in this case, there was a correlation between the zip codes with a lower proportion of people aged 75 and up and a higher case rate. When looking at the proportions of citizens vs non-citizens in Indianapolis zip codes we found a fairly high correlation of the proportion of non-citizens and case rate, this correlation was 0.62. Essential vs non-essential workers and public transportion do not impact the case rate. Next, we looked into the Gini Index and found very little evidence to suggest that the Gini Index affects the COVID case rate. Lastly, we looked at public vs private health insurance coverage and found moderate evidence to suggest that the zip codes that contain a lower proportion of people that have private health insurance coverage have a higher COVID case rate.  
+**Conclusions:** During the process of exploratory data analysis between demographic data and COVID-19 data in each ZIP code in Indianapolis, we see some significant findings. When we first started our analysis we noticed that there was an obvious outlier. That outlier had the ZIP code of 46204 and since there was a significant difference when we would run our analysis without it, we removed it for the correlation tests. We give results with it included, though, to see how just one outlier can highly impact your results. 
+
+First, we find that with income, there is a correlation between having a poorer income and a higher number of cases. Additionally, we find that when looking at race, ZIP codes that are majority African American have just a slightly higher case rate than ZIP codes that consist of majority White. Additionally, a correlation test concluded that ZIP codes with a higher proportion of African Americans have a higher case rate, this correlation was 0.52.
+
+We find that there is not a correlation between having a higher age and case rate, in fact in this case, there was a correlation between the ZIP codes with a lower proportion of people aged 75 and up and a higher case rate. When looking at the proportions of citizens vs non-citizens in Indianapolis ZIP codes we found a fairly high correlation of the proportion of non-citizens and case rate: 0.62. 
+
+Essential vs non-essential workers and public transportation do not impact the case rate. Next, we looked into the Gini Index and found very little evidence to suggest that the Gini Index affects the COVID case rate. Lastly, we looked at public vs private health insurance coverage and found moderate evidence to suggest that the ZIP codes that contain a lower proportion of people that have private health insurance coverage have a higher COVID case rate.  
 
 ## Analysis
 
@@ -79,21 +86,23 @@ indy_income$GEOID <- as.numeric(indy_income$GEOID)
 indy_income <- left_join(indy_income, indiana_cases_by_zip, by = c("GEOID" = "ZIP_CD"))
 ```
 
-We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the zip codes on the $x$-axis in the following graph. 
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph. 
 
-```{r, echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(indy_income) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
+                                   hjust = 1),
+        legend.position = "bottom") +
   labs(title = "Income Distribution for Each Indianapolis ZIP Code",
        x = "ZIP Code",
        y = "Proportion of Population", 
        fill = "Income Level")
 ```
 
-We can compare zip codes with the case rate (per 100000) of COVID in the same zip codes.
+We can compare ZIP codes with the case rate (per 100000) of COVID in the same ZIP codes.
+
 ```{r,echo=FALSE, warning=FALSE, message=FALSE}
 pal <- colorNumeric(palette = "viridis", domain = indy_income$case_rate)
 indy_income %>% 
@@ -101,7 +110,7 @@ indy_income %>%
   leaflet(width = "100%") %>% 
   addProviderTiles(provider = "CartoDB.Positron") %>% 
   addPolygons(popup = str_c("<strong>", indy_income$GEOID,
-                            "</strong><br /> Case Rate ", indy_income$case_rate),
+                            "</strong><br /> Case Rate ", signif(indy_income$case_rate, digits = 4)),
               stroke = FALSE,
               smoothFactor = 0,
               fillOpacity = 0.7,
@@ -119,12 +128,15 @@ indy_income_cor <- left_join(indy_income_six_figure,
                              indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 ```
 
-First, we notice that there is one zip code that does not have any COVID-19 data. This zip code was suppressed. When we looked into that zip code we found that it is a popular zip code with a population of around 14,000. However, some zip codes in the COVID-19 data were suppressed, which means that it is not being reported. Having the information for that zip code could potential slightly change the results of our analysis. 
-There does not seem to be any sort of correlation, i.e., the poorer the zip code the more likely to have a higher rate of infection. However, we can verify that there is no correlation by running a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically non-significant ($p=$ `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$estimate`. This verifies that there is not a negative correlation between case rates and higher incomes. 
+First, we notice that there is one ZIP code that does not have any COVID-19 data. This ZIP code was suppressed. When we looked into that ZIP code we found that it is a popular ZIP code with a population of around 14,000. However, some ZIP codes in the COVID-19 data were omitted as they were not being reported. Having the information for that ZIP code could potential slightly change the results of our analysis. 
 
-Additionally, from the graph above you can see that one zip code has a much higher case rate than any of the other zip codes. That zip code happens to be 46204 and it is right in the middle of Indianapolis. This zip code has a case rate of 5.9% while the average case rate for Indianapolis zip codes is 1.85%. So 46204 has over double the average case rate for zip codes in Indianapolis. This zip code only has a population of 5,125 people which is the second to last least populous zip code. 
-While not a lot of people live there, since it is right in the middle of Indianapolis there are many bars, restaurants, stores, etc., making that zip code very crowded and easy to contract the virus. Which is a possible reason why the case rate of that zip code is so high. 
-```{r, echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+There does not seem to be any sort of correlation, i.e., the poorer the ZIP code the more likely to have a higher rate of infection. However, we can verify that there is no correlation by running a correlation test between the case rate and the proportion of the population that makes over \$100,000. We get a statistically non-significant ($p=$ `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$p.value`) correlation value of `r cor.test(indy_income_cor$prop_100K, indy_income_cor$case_rate, use = "complete.obs")$estimate`. This verifies that there is not a negative correlation between case rates and higher incomes. 
+
+Additionally, from the graph above you can see that one ZIP code has a much higher case rate than any of the other ZIP codes. That ZIP code happens to be 46204, and it is right in the middle of Indianapolis. This ZIP code has a case rate of 5.9% while the average case rate for Indianapolis ZIP codes is 1.85%. So 46204 has over triple the average case rate for ZIP codes in Indianapolis. This ZIP code only has a population of 5,125 people which is the second to last least populous ZIP code.
+
+While not a lot of people live there, since it is right in the middle of Indianapolis there are many bars, restaurants, stores, etc., making that ZIP code very crowded and easy to contract the virus. Which is a possible reason why the case rate of that ZIP code is so high. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 indy_income_six_figure$GEOID <- as.numeric(indy_income_six_figure$GEOID)
 indy_income_six_figure_corr <- left_join(indy_income_six_figure, 
                                          indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
@@ -132,19 +144,21 @@ indy_income_six_figure_corr <- left_join(indy_income_six_figure,
 #        indy_income_six_figure_corr$case_rate, use = "complete.obs")
 ggplot(indy_income_six_figure_corr, aes(prop_100K, case_rate)) +
   geom_point() + 
-  labs(title = "Income Distribution of Each Indianapolis Zip Code",
+  labs(title = "Income Distribution of Each Indianapolis ZIP Code",
        subtitle = "ZIP code 46204 is an outlier.",
        x = "Proportion of Population that Makes >$100,000",
        y = "Case Rate (per 100,000)") +
-    ggrepel::geom_label_repel(data = filter(indy_income_six_figure_corr, case_rate > .03),
+    ggrepel::geom_label_repel(data = filter(indy_income_six_figure_corr, case_rate > 3000),
                             aes(label = GEOID))
 ```
-After further examining that zip code. We determined it as an outlier and ran our correlation test again with the outlier (zip code 46204) taken out to see if it would affect our analysis. After running it again we get a much stronger negative correlation of -0.30 with a significant p-value. This indicates that zip codes with a lower income does correlate with having a higher case rate. This means that we should always run our tests with that outlier removed as the outlier does highly impact the results. 
 
-## Race 
+After further examining that ZIP code. We determined it as an outlier and ran our correlation test again with the outlier (ZIP code 46204) taken out to see if it would affect our analysis. After running it again we get a much stronger negative correlation of -0.30 with a significant p-value. This indicates that ZIP codes with a lower income does correlate with having a higher case rate. 
+
+### Race 
 
 When looking at the distribution of race across Indianapolis. It can be seen that the greater majority of Indianapolis is white. 
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_race <- get_acs(geography = "zcta",
                         year = 2018,
                         table = "B02001") %>% 
@@ -167,37 +181,41 @@ lvls6 <- indy_black %>%
   pull(GEOID)
 
 ggplot(indy_race) +
-  geom_col(aes(factor(GEOID, levels = lvls6), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls6), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Race Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Race Distribution for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Race")
 
 indy_black$GEOID <- as.numeric(indy_black$GEOID)
 ```
 
-It can be seen that the next highest race in Indianapolis is African American. We can get the average case rate for zip codes that are majority of both races to see how they compare to each other. The average case rate for zip codes that consist of greater than 50% white people is 1.79% while the average case rate for zip codes that consists of greater than 50% African American people is 1.83%. They African American case rate is just a little bit higher than the white case rate. The overall average case rate among all zip codes is 1.85% so those averages are a little bit lower than the overall average. When testing for correlation between the African American proportion and case rate we find a positive correlation of 0.22. This indicates that the more African American population there is in a zip code, the higher the case rate is likely to be. 
-However, when we view the scatter plot of the proportion of African Americans and case rate we again see our outlier.
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+It can be seen that the next highest race in Indianapolis is African American. We can get the average case rate for ZIP codes that are majority of both races to see how they compare to each other. The average case rate for ZIP codes that consist of greater than 50% white people is 1.79% while the average case rate for ZIP codes that consists of greater than 50% African American people is 1.83%. The African American case rate is virtually the same as the white case rate. The overall average case rate among all ZIP codes is 1.85% so those averages are a little bit lower than the overall average. 
+
+When testing for correlation between the African American proportion and case rate we find a positive, but weak, correlation of 0.22. This indicates that the more African American population there is in a ZIP code, the higher the case rate is likely to be. But this relationship is not a strong one. However, when we view the scatter plot of the proportion of African Americans and case rate we again see our outlier.
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_black$GEOID <- as.numeric(indy_black$GEOID)
 indy_race_cor <- left_join(indy_black, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 #cor.test(indy_race_cor$prop_black, indy_race_cor$case_rate, use = "complete.obs")
 ggplot(indy_race_cor, aes(prop_black, case_rate)) +
   geom_point() + 
-  labs(title = "African American Proportion for Each Zip Code in Indianapolis",
+  labs(title = "African American Proportion for Each ZIP Code in Indianapolis",
        x = "African American Proportion",
        y = "Case Rate") +
-  ggrepel::geom_label_repel(data = filter(indy_race_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(indy_race_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
 
-Thus, we ran our analysis again and found an even stronger correlation of 0.52 with a much more significant p-value. This means that there is fairly strong evidence to support that zip codes with a higher proportion of African American people have a higher case rate. 
+Thus, we ran our analysis again and found an even stronger correlation of 0.52 with a much more significant p-value. This means that there is fairly strong evidence to support the claim that ZIP codes with a higher proportion of African American people have a higher case rate. 
 
-## Age
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+### Age
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_sex <- get_acs(geography = "zcta",
                        year = 2018,
                        table = "B01001") %>% 
@@ -229,18 +247,21 @@ ggplot(indy_sex) +
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))+
-  labs(title = "Age Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
+  labs(title = "Age Distribution for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Age")
 ```
 
-When looking at age demographics we focused on age 60 and up due to the fact that COVID was known to be more deadly to people with more comorbidities and the older population has more comorbidities than the younger population. When testing for any correlation between the population of the age of 65 and the case rate of COVID, we get a negative correlation of -0.35. This means that the zip codes that contain a higher proportion of people over the age of 60 have a lower case rate.  
-When we ran our correlation test without our outlier we still got a negative correlation, however, it was closer to 0 indicating that the proportion of people that aged 65 and older does not impact the case rate. 
+When looking at age demographics we focused on age 65 and up due to the fact that COVID was known to be more deadly to people with more comorbidities and the older population has more comorbidities than the younger population. When testing for any correlation between the population of the age of 65 and the case rate of COVID, we get a negative correlation of -0.35. This means that the ZIP codes that contain a higher proportion of people over the age of 65 have a lower case rate.  
 
-## Citizenship vs. Non-citizenship 
-We can look at the proportion of citizens and non citizens for each zip code in Indianapolis. 
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+When we ran our correlation test without our outlier we still got a negative correlation, however, it was closer to 0 indicating that the proportion of people that aged 65 and older does not relate to the case rate. 
+
+### Citizenship vs. Non-Citizenship 
+
+We can look at the proportion of citizens and non-citizens for each ZIP code in Indianapolis. 
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_citizen <- get_acs(geography = "zcta",
                            year = 2018,
                            table = "B05001") %>% 
@@ -263,35 +284,40 @@ lvls7 <- indy_not_citizen %>%
   pull(GEOID)
 
 ggplot(indy_citizen) +
-  geom_col(aes(factor(GEOID, levels = lvls7), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls7), estimate, fill = str_wrap(label,20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Citizen Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom")+
+  labs(title = "Citizen Distribution for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Citizenship Status")
 ```
 
-While there is not a whole lot of zip codes that contain a high amount of non-citizens, we still tested for correlation between the proportion of non-citizens and the case rate. The results yielded a positive correlation of 0.25. Meaning that the zip codes with a higher proportion of non-citizens were more likely to have a higher case rate.
-```{r, echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+While there is not a whole lot of ZIP codes that contain a high amount of non-citizens, we still tested for correlation between the proportion of non-citizens and the case rate. The results yielded a positive correlation of 0.25. Meaning that the ZIP codes with a higher proportion of non-citizens were only slightly more likely to have a higher case rate.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 indy_not_citizen$GEOID <- as.numeric(indy_not_citizen$GEOID)
 indy_citizen_cor <- left_join(indy_not_citizen, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 #cor.test(indy_citizen_cor$prop_not_citizen, indy_citizen_cor$case_rate, use = "complete.obs")
 ggplot(indy_citizen_cor, aes(prop_not_citizen,case_rate)) + 
   geom_point() + 
-  labs(title = "Non-Citizenship Proportion within Each Zip Code in Indianapolis",
+  labs(title = "Non-Citizenship Proportion within Each ZIP Code in Indianapolis",
        subtitle = "ZIP code 46204 is an outlier.",
        x = "Non-citizens Proportion",
        y = "Case Rate") +
-  ggrepel::geom_label_repel(data = filter(indy_citizen_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(indy_citizen_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
-After running the analysis without the 46204 zip code outlier, we find a much stronger correlation of 0.62 and we have a very significant p-value. This is very strong evidence to suggest that zip codes with a higher proportion of people that are not citizens have a higher case rate. 
 
-## Essential vs Non-essential workers
+After running the analysis without the 46204 ZIP code outlier, we find a much stronger correlation of 0.62 and we have a very significant p-value. This is very strong evidence to suggest that ZIP codes with a higher proportion of people that are not citizens have a higher case rate. 
+
+### Essential vs Non-essential workers
+
 We were able to view the proportion of essential workers: 
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_occ <- get_acs(geography = "zcta",
                     year = 2018,
                     table = "C24060") %>% 
@@ -315,51 +341,25 @@ lvls3 <- indy_occ_essential %>%
   pull(GEOID)
 
 ggplot(indy_occ) +
-  geom_col(aes(factor(GEOID, levels = lvls3), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls3), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Occupation Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Occupation Distribution for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Occupation Category")
 ```
 
-and non-essential workers:
 
-```{r,echo=FALSE,, fig.width=12, warning=FALSE, message=FALSE}
-indy_occ_nonessential <- indy_occ %>% 
-  group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("Management, business, science, and arts occupations",
-                      "Service occupations",
-                      "Sales and office occupations",
-                      "Employee of private company workers")) %>% 
-  mutate(prop_nonessential = sum(prop)) %>% 
-  select(GEOID, prop_nonessential) %>% 
-  distinct(GEOID, prop_nonessential)
+We tested for correlation between proportions of essential and case rate. The correlation test results were close to 0 with or without the outlier. Indicating that essential vs non-essential proportions do not impact the case rate. 
 
-lvls4 <- indy_occ_nonessential %>% 
-  arrange(prop_nonessential) %>% 
-  pull(GEOID)
+### Public Transportation
 
-ggplot(indy_occ) +
-  geom_col(aes(factor(GEOID, levels = lvls4), estimate, fill = label),
-           position = "fill") +
-  theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Occupation Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Occupation Category")
-```
+When looking into the distribution of public transportation we can see the proportions (we used "Public transportation (excluding taxicab)", "Bus or trolley bus", "Streetcar or trolley car (carro publico in Puerto Rico)", "Subway or elevated", and "Railroad" all as the an indicator of use of public transportation).
 
-We tested for correlation between both proportions of essential and non-essential workers and case rate. The correlation test results were close to 0 with or without the outlier. Indicating that essential vs non-essential proportions do not impact the case rate. 
-
-## Public Transportation
-When looking into the distribution of public transportation we can see the proportions (I used "Public transportation (excluding taxicab)", "Bus or trolley bus", "Streetcar or trolley car (carro publico in Puerto Rico)", "Subway or elevated", and "Railroad" all as the variable public transportation).
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_trans <- get_acs(geography = "zcta",
                          year = 2018,
                          table = "B08301") %>% 
@@ -386,36 +386,40 @@ lvls8 <- indy_public_trans %>%
   pull(GEOID)
 
 ggplot(indy_trans) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-  labs(title = "Transportation Distribution for Each Indianapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Transportation Distribution for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Means of Transportation")
 ```
 
-After running a correlation test we get a fairly high correlation value of 0.48. Meaning that as more people use public transportation the higher that zip codes case rate will be. However, after viewing the scatter plot, we can see that the outlier may be skewing these results since the outlier is on the far upper right. So we run them again with the outlier removed. 
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+After running a correlation test we get a moderate correlation value of 0.48. Meaning that as more people use public transportation we see a higher case rate. However, after viewing the scatter plot, we can see that the outlier may be skewing these results since the outlier is on the far upper right. So we run them again with the outlier removed. 
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_public_trans$GEOID <- as.numeric(indy_public_trans$GEOID)
 indy_trans_cor <- left_join(indy_public_trans, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 #cor.test(indy_trans_cor$prop_public, indy_trans_cor$case_rate, use = "complete.obs")
 ggplot(indy_trans_cor, aes(prop_public, case_rate)) +
   geom_point() + 
-  labs(title = "Transportation Proportion for Each Indianapolis Zip Code",
+  labs(title = "Transportation Proportion for Each Indianapolis ZIP Code",
        subtitle = "ZIP code 46204 is an outlier.",
        x = "Proportion",
        y = "Case Rate") +
-  ggrepel::geom_label_repel(data = filter(indy_trans_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(indy_trans_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
 
-The results of the correlation test with the outlier removed yield a much lower correlation of only 0.08 with a non-significant p-value. This is reasonable because Indianapolis does not have a huge public transportation system. 
+The results of the correlation test with the outlier removed yield a much lower correlation of only 0.08 with a non-significant p-value. Therefore, we find no real relationship between the use of public transportation and COVID cases. This is reasonable because Indianapolis does not have a huge public transportation system. 
 
-## Gini Index
-Next, we looked at the Gini Index. The Gini Index is a coefficient that represents the income inequality or wealth inequality. A perfect Gini Index coefficient would be 0. So, the higher, the worse. When looking at the Gini Index values for each zip code in Indianapolis we find that most of the zip codes have fairly high Gini Index coefficients. 
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+### Gini Index
+
+Next, we looked at the Gini Index. The Gini Index is a coefficient that represents the income inequality or wealth inequality. A perfect Gini Index coefficient would be 0. So, the higher the value, the worse the inequality. When looking at the Gini Index values for each ZIP code in Indianapolis we find that most of the ZIP codes have fairly high Gini Index coefficients. 
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_gini <- get_acs(geography = "zcta",
                       year = 2018,
                       table = "B19083") %>% 
@@ -428,31 +432,34 @@ ggplot(indy_gini) +
   geom_col(mapping = aes(x = factor(GEOID), y = estimate)) +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Gini Index Value for Each Indianapolis Zip Code",
-       x = "Zip Code",
+  labs(title = "Gini Index Value for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
        y = "Gini Index Value")
 ```
 
 The highest value is 0.6 and the lowest is only 0.3. When testing for correlation between the COVID case rate and the Gini Index, we got a positive correlation of 0.39. Meaning that the higher the Gini Index value the higher the case rate was likely to be. The correlation value is fairly high given our small range for the Gini Index coefficient. Once again, after viewing the scatter plot we see that the outlier may have an affect on the correlation.
-```{r,echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
 indy_gini$GEOID <- as.numeric(indy_gini$GEOID)
 indy_gini_cor <- left_join(indy_gini, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD"))
 #cor.test(indy_gini$estimate, indy_gini_cor$case_rate, use = "complete.obs")
 ggplot(indy_gini_cor, aes(estimate, case_rate)) +
   geom_point() + 
-  labs(title = "Gini Index for Each Indianapolis Zip Code",
+  labs(title = "Gini Index for Each Indianapolis ZIP Code",
        subtitle = "ZIP code 46204 is an outlier.",
        x = "Gini Index",
        y = "Case Rate") +
-  ggrepel::geom_label_repel(data = filter(indy_gini_cor, case_rate > .03),
+  ggrepel::geom_label_repel(data = filter(indy_gini_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
 
-As we thought, with this outlier removed the correlation goes down to 0.23. This is pretty close to zero so there is little evidence that the Gini Index actually does impact the case rate for Indianapolis zip codes. 
+As we thought, with this outlier removed the correlation goes down to 0.23. This is pretty close to zero so there is little evidence that the Gini Index actually does impact the case rate for Indianapolis ZIP codes. 
 
-## Private Vs. Public Health Insurance 
+### Private Vs. Public Health Insurance 
+
 Lastly, we took a look into private vs. public health insurance coverage. We thought that this could have an impact on the COVID case rate. We can see the proportion of private/public health insurance.
-```{r, echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 indy_hi_private <- get_acs(geography = "zcta",
                             table = "B27002") %>% 
   filter(GEOID %in% zip_code_indy$zip) %>% 
@@ -504,11 +511,17 @@ ggplot(indy_hi_private_2) +
   geom_col(aes(factor(GEOID, levels = lvls_indy_hi_private), count, fill = Private_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Private Health Insurance for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Private Health \nInsurance Coverage?")
 ```
 
 There seems to be a nice spread of proportions. Next, we look at a scatter plot to make sure our outlier is there and to see if there are any groupings. 
-```{r, echo=FALSE, fig.width=12, warning=FALSE, message=FALSE}
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 indy_hi_private_2$GEOID <- as.numeric(indy_hi_private_2$GEOID)
 indy_hi_private_cor <- left_join(indy_hi_private_2, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD")) %>%
@@ -516,17 +529,71 @@ indy_hi_private_cor <- left_join(indy_hi_private_2, indiana_cases_by_zip, by = c
 indy_hi_private_cor %>%
   ggplot(aes(prop, case_rate)) +
   geom_point() +
-  labs(title = "Private HI vs Case Rate",
-       subtitle = "ZIP code 46204 is an outlier.",
-       x = "Proportion",
-       y = "Case Rate") +
-  ggrepel::geom_label_repel(data = filter(indy_hi_private_cor, case_rate > .03),
+  labs(title = "Possession of Private Health Insurance Does Not Seem \nto be Highly Related with COVID",
+       x = "Proportion of Population that has Private Health Insurance",
+       y = "Case Rate (per 100,000)")+
+  ggrepel::geom_label_repel(data = filter(indy_hi_private_cor, case_rate > 3000),
                             aes(label = GEOID))
 ```
 
-We do not see any groupings and the outlier is still there. We took out the outlier and ran the analysis to find a negative correlation of -0.30 with a significant p-value. This indicates that the zip codes that contain a lower proportion of people with private health insurance coverage have a higher case rate. 
+We do not see any groupings and the outlier is still there. We took out the outlier and ran the analysis to find a negative correlation of -0.30 with a significant p-value. This indicates that the ZIP codes that contain a lower proportion of people with private health insurance coverage have a slightly higher case rate. 
 
-## Conclusion
-As you can see from exploring the zip code data for demographics and COVID-19 of the city of Indianapolis, we find a couple of interesting things. Lower income does seems to be related with a higher case rate in Indianapolis. Additionally, we can see differences in case rates with regards to racial demographics. The zip codes that are majority white have just a little bit lower average case rate than the zip codes that are majority African American. Both averages are actually lower than the overall average for zip codes in Indianapolis. It was also seen that the proportion of African Americans in Indianapolis zip codes impacts the COVID case rate. Lastly, when we looked into the age demographic, we focused on the population that was aged 65 or older. We found that there was actually a negative correlation between the older you are and your chances of contracting COVID-19. We also looked at some variables that you might not first think of when thinking about what impacts the COVID case rate. We looked at public transportation, essential vs non-essential workers, citizenship vs non-citizenship, Gini Index, and public vs private health insurance coverage. We found the highest correlation between proportion of non-citizens in Indianapolis and case rate with a positive correlation of 0.62. 
+#### Public Health Insurance
+
+We now look at public health insurance.
+
+```{r}
+indy_hi_public_2 <- indy_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+
+lvls_indy_hi_public <- indy_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(indy_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_indy_hi_public), count, fill = Public_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Public Health Insurance for Each Indianapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Public Health \nInsurance Coverage?")
+```
+
+We don't have as big of a range of ZIP codes using public health insurance, but the distinctions are big enough for analysis. Next, we look at a scatter plot to make sure our outlier is there and to see if there are any groupings. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+indy_hi_public_2$GEOID <- as.numeric(indy_hi_public_2$GEOID)
+indy_hi_public_cor <- left_join(indy_hi_public_2, indiana_cases_by_zip, by = c("GEOID"="ZIP_CD")) %>%
+  filter(Public_HI == "Yes")
+indy_hi_public_cor %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  labs(title = "Possession of Public Health Insurance Does Not Seem \nto be Highly Related with COVID",
+       x = "Proportion of Population that has Public Health Insurance",
+       y = "Case Rate (per 100,000)")+
+  ggrepel::geom_label_repel(data = filter(indy_hi_public_cor, case_rate > 3000),
+                            aes(label = GEOID))
+```
+
+```{r}
+indy_hi_public_cor_sans46204 <- filter(indy_hi_public_cor, GEOID != 46204)
+```
+
+We do have an outlier, so we must remove ZIP 46204. We have a correlation of `r cor.test(indy_hi_public_cor_sans46204$prop, indy_hi_public_cor_sans46204$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(indy_hi_public_cor_sans46204$prop, indy_hi_public_cor_sans46204$case_rate, use = "complete.obs")$p.value`). This is not distinguishable from 0, thus we cannot claim a relationship between public health insurance and COVID.
+
+### Conclusion
+
+As can be seen from exploring the ZIP code data for demographics and COVID-19 of the city of Indianapolis, we find a couple of interesting things. Lower income does seem to be related with a higher case rate in Indianapolis. Additionally, we can see differences in case rates with regards to racial demographics. The ZIP codes that are majority white have just a little bit lower average case rate than the ZIP codes that are majority African American. Both averages are actually lower than the overall average for ZIP codes in Indianapolis. It was also seen that the proportion of African Americans in Indianapolis ZIP codes impacts the COVID case rate. 
+
+Lastly, when we looked into the age demographic, we focused on the population that was aged 65 or older. We found that there was actually a negative correlation between the older you are and your chances of contracting COVID-19. We also looked at some variables that you might not first think of when thinking about what impacts the COVID case rate. We looked at public transportation, essential vs non-essential workers, citizenship vs non-citizenship, Gini Index, and public vs private health insurance coverage. We found the highest correlation between proportion of non-citizens in Indianapolis and case rate with a positive correlation of 0.62. 
 
 *Disclaimer* We looked at basic one-on-one correlations. There may be some more complex relationships that involve multiply demographics. Further analysis would be needed in order to determine if we have multiple factors playing a role together.
