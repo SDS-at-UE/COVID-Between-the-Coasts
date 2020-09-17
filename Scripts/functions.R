@@ -9,6 +9,7 @@ library(stringr)
 library(sf)
 library(tigris)
 
+
 # Hello Dr. Weber
 
 ### This loads the necessary variable-to-table data to connect table
