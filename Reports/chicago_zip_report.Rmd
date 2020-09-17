@@ -316,24 +316,22 @@ chicago_age$label <- as_factor(str_replace(chicago_age$label, ".*!!(.*)", "\\1")
 ```
 
 ```{r}
-chicago_over_sixty <- chicago_age %>% 
+chicago_over_65 <- chicago_age %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
-  filter(label %in% c("60 and 61 years",
-                      "62 to 64 years",
-                      "65 and 66 years",
+  filter(label %in% c("65 and 66 years",
                       "67 to 69 years",
                       "70 to 74 years",
                       "75 to 79 years",
                       "80 to 84 years",
                       "85 years and over")) %>% 
-  mutate(prop_60 = sum(prop)) %>% 
-  dplyr::select(GEOID, prop_60) %>% 
-  distinct(GEOID, prop_60)
+  mutate(prop_65 = sum(prop)) %>% 
+  dplyr::select(GEOID, prop_65) %>% 
+  distinct(GEOID, prop_65)
 
-lvls_over_60 <- chicago_over_sixty %>% 
-  arrange(prop_60) %>% 
+lvls_over_65 <- chicago_over_65 %>% 
+  arrange(prop_65) %>% 
   pull(GEOID)
 
 chicago_age <- left_join(chicago_age, chicago_covid, by = c("GEOID" = "Zip"))
@@ -341,7 +339,7 @@ chicago_age <- left_join(chicago_age, chicago_covid, by = c("GEOID" = "Zip"))
 
 ```{r}
 ggplot(chicago_age) +
-  geom_col(aes(factor(GEOID, levels = lvls_over_60), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_over_65), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
@@ -353,13 +351,13 @@ ggplot(chicago_age) +
 ```
 
 ```{r}
-chicago_age_cor <- left_join(chicago_over_sixty, chicago_covid, by = c("GEOID"="Zip"))
+chicago_age_cor <- left_join(chicago_over_65, chicago_covid, by = c("GEOID"="Zip"))
 
-ggplot(chicago_age_cor, aes(prop_60, case_rate)) +
+ggplot(chicago_age_cor, aes(prop_65, case_rate)) +
   geom_point() +
   labs(title = "No Correlation Between Infection and Age",
        subtitle = "ZIP code 60604 is an outlier.",
-       x = "Proportion of Population Over 60",
+       x = "Proportion of Population Over 65",
        y = "Case Rate (per 100,000)")+
  ggrepel::geom_label_repel(data = filter(chicago_age_cor, case_rate > 5000),
                             aes(label = GEOID))
@@ -370,7 +368,7 @@ chicago_age_cor_sans60604 <- chicago_age_cor %>%
   filter(case_rate < 5000)
 ```
 
-There is a low correlation of `r cor.test(chicago_age_cor_sans60604$prop_60, chicago_age_cor_sans60604$case_rate, use = "complete.obs")$estimate` between individuals over the age of 60 and COVID-19 case rates ($p=$`r cor.test(chicago_age_cor_sans60604$prop_60, chicago_age_cor_sans60604$case_rate, use = "complete.obs")$p.value`, which means our correlation is indistinguishable from 0).
+There is a very low correlation of `r cor.test(chicago_age_cor_sans60604$prop_65, chicago_age_cor_sans60604$case_rate, use = "complete.obs")$estimate` between individuals over the age of 65 and COVID-19 case rates ($p=$ `r cor.test(chicago_age_cor_sans60604$prop_65, chicago_age_cor_sans60604$case_rate, use = "complete.obs")$p.value`, which means our correlation is indistinguishable from 0).
 
 ### Race
 
@@ -428,7 +426,7 @@ ggplot(chicago_race_cor, aes(prop_black, case_rate)) +
                             aes(label = GEOID))
 ```
 
-There is a small correlation of `r cor.test(chicago_race_cor$prop_black, chicago_race_cor$case_rate, use = "complete.obs")$estimate` ($p=$`r cor.test(chicago_race_cor$prop_black, chicago_race_cor$case_rate, use = "complete.obs")$p.value`). This suggests that there is nothing significant between the African American or black race and the case rate of COVID-19.
+There is a small correlation of `r cor.test(chicago_race_cor$prop_black, chicago_race_cor$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(chicago_race_cor$prop_black, chicago_race_cor$case_rate, use = "complete.obs")$p.value`). This suggests that there is nothing significant between the African American or black race and the case rate of COVID-19.
 
 ### Nativity and Citizenship Status in the United States
 
