@@ -11,6 +11,8 @@ library(tigris)
 
 # University of Evansville Purple Aces
 
+# Hello Dr. Weber
+
 ### This loads the necessary variable-to-table data to connect table
 ### numbers in the Census dataset to their actual meanings. It should
 ### only need to run once on a computer.
