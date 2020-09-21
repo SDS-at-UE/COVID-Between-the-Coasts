@@ -5,7 +5,8 @@ date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl 
 output: html_document
 urlcolor: blue
 ---
-
+## Data Issues
+48209, 48212, 48216, 48217, 48226, 48233, 48242, 48243
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidycensus)
@@ -19,22 +20,20 @@ options(tigris_use_cache = TRUE)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
 zip_code <- read_csv("../Data/zip_county.csv")
-zip_code_minn <- zip_code %>% filter(primary_city == "Minneapolis",
-                                      state == "MN")
-minn_covid <- read_csv("../Data/minnesota_covid_data.csv",
-                        col_types = cols(ZIP = col_character())) %>%
-  filter(ZIP %in% zip_code_minn$zip)
-minn_covid$Cases <- if_else(minn_covid$Cases == "<=5", 5, as.numeric(minn_covid$Cases))
-minn_population <- get_acs(geography = "zcta",
+zip_code_det <- zip_code %>% filter(primary_city == "Detroit",
+                                      state == "MI")
+det_covid <- read_csv("../Data/Detroit Rates.csv",
+                      col_types = cols(ZIP_Code = col_character())) %>%
+  filter(ZIP_Code %in% zip_code_det$zip)
+det_population <- get_acs(geography = "zcta",
                            variable = "B01003_001") %>%
-  filter(GEOID %in% zip_code_minn$zip)
-minneapolis_covid <- left_join(minn_population, minn_covid, by = c("GEOID" = "ZIP"))
-minneapolis_covid <- minneapolis_covid %>% 
+  filter(GEOID %in% zip_code_det$zip)
+detroit_covid <- left_join(det_population, det_covid, by = c("GEOID" = "ZIP_Code"))
+detroit_covid <- detroit_covid %>% 
   rename(ZIP = GEOID,
-         Population = estimate) %>%
-  mutate(case_rate = Cases/Population)
-minneapolis_covid <- select(minneapolis_covid, ZIP, Population, Cases, case_rate) %>%
-  filter(ZIP != '55450')
+         Population = estimate)
+detroit_covid <- select(detroit_covid, ZIP, Population, Deaths_per_HundThou, Cases_per_HundThou) %>%
+  filter(ZIP != '48209' & ZIP != '48216' & ZIP != '48217' & ZIP != '48226' & ZIP != '48233' & ZIP != '48242' & ZIP != '48243')
 ```
 
 ## Background
@@ -48,20 +47,19 @@ The goal of this analysis is to find any connections, if they exist, between dem
 ## Occupations (Essential VS. Nonessential)
 
 ```{r}
-minn_occupation <- get_acs(geography = "zcta",
+det_occupation <- get_acs(geography = "zcta",
                            table = "C24060") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("C24060_001"),
-         GEOID != '55450')
+  filter(GEOID %in% zip_code_det$zip,
+         !variable %in% c("C24060_001"))
 
-minn_occupation <- left_join(minn_occupation, variables_2018[, 1:2], by = "variable")
+det_occupation <- left_join(det_occupation, variables_2018[, 1:2], by = "variable")
 
-minn_occupation$label <- as_factor(str_replace(minn_occupation$label, ".*!!(.*)", "\\1"))
+det_occupation$label <- as_factor(str_replace(det_occupation$label, ".*!!(.*)", "\\1"))
 ```
 
 Analyzing Essential Occupations
 ```{r}
-minn_occupation_essen <- minn_occupation %>% 
+det_occupation_essen <- det_occupation %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -71,18 +69,18 @@ minn_occupation_essen <- minn_occupation %>%
   select(GEOID, prop_essen) %>% 
   distinct(GEOID, prop_essen)
 
-lvls <- minn_occupation_essen %>% 
+lvls <- det_occupation_essen %>% 
   arrange(prop_essen) %>% 
   pull(GEOID)
 
-minn_occupation <- left_join(minn_occupation, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_occupation <- left_join(det_occupation, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_occupation) +
+ggplot(det_occupation) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Occupations for Each Minneapolis Zip Code",
+  labs(title = "Occupations for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Occupation")
@@ -90,17 +88,17 @@ ggplot(minn_occupation) +
 
 The scatterplot show the correlation between Essential jobs and COVID cases. 
 ```{r}
-minn_occupation_essen_cor <- left_join(minn_occupation_essen, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_occupation_essen_cor) +
-  geom_point(aes(x = prop_essen, y = case_rate)) +
+det_occupation_essen_cor <- left_join(det_occupation_essen, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_occupation_essen_cor) +
+  geom_point(aes(x = prop_essen, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Essential Jobs and COVID",
        x = "Proportion of Essential Workers",
-       y = "Case Rate (per 100,000)")
+       y = "Case Rate (per 100,000 people)")
 ```
 
 Test correlation between population with essential jobs to case rate of COVID. 
 ```{r}
-cor.test(minn_occupation_essen_cor$prop_essen, minn_occupation_essen_cor$case_rate, use = "complete.obs")
+cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per_HundThou, use = "complete.obs")
 ```
 The correlation between essential jobs and case rate is shown to be 0.409.  This positive correlation means the more essential jobs have a higher rate of contracting COVID. 
 
