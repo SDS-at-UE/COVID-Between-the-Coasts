@@ -100,11 +100,11 @@ Test correlation between population with essential jobs to case rate of COVID.
 ```{r}
 cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between essential jobs and case rate is shown to be 0.409.  This positive correlation means the more essential jobs have a higher rate of contracting COVID. 
+The correlation between essential jobs and case rate is shown to be -0.297.  This negative correlation means the more essential jobs have a lower rate of contracting COVID. 
 
 Analyzing Nonessential Occupations
 ```{r}
-minn_occupation_nonessen <- minn_occupation %>% 
+det_occupation_nonessen <- det_occupation %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -115,18 +115,18 @@ minn_occupation_nonessen <- minn_occupation %>%
   select(GEOID, prop_nonessen) %>% 
   distinct(GEOID, prop_nonessen)
 
-lvls <- minn_occupation_nonessen %>% 
+lvls <- det_occupation_nonessen %>% 
   arrange(prop_nonessen) %>% 
   pull(GEOID)
 
-minn_occupation <- left_join(minn_occupation, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_occupation <- left_join(det_occupation, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_occupation) +
+ggplot(det_occupation) +
   geom_col(aes(GEOID, estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Occupations for Each Minneapolis Zip Code",
+  labs(title = "Occupations for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Occupation")
@@ -134,9 +134,9 @@ ggplot(minn_occupation) +
 
 The scatterplot shows the correlation between Nonessential jobs and COVID cases for ZIP codes. 
 ```{r}
-minn_occupation_nonessen_cor <- left_join(minn_occupation_nonessen, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_occupation_nonessen_cor) +
-  geom_point(aes(x = prop_nonessen, y = case_rate)) +
+det_occupation_nonessen_cor <- left_join(det_occupation_nonessen, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_occupation_nonessen_cor) +
+  geom_point(aes(x = prop_nonessen, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Nonessential Jobs and COVID",
        x = "Proportion of Nonessential Workers",
        y = "Case Rate (per 100,000)")
@@ -144,9 +144,9 @@ ggplot(minn_occupation_nonessen_cor) +
 
 Test correlation between population with nonessential jobs to the case rate of COVID
 ```{r}
-cor.test(minn_occupation_nonessen_cor$prop_nonessen, minn_occupation_nonessen_cor$case_rate, use = "complete.obs")
+cor.test(det_occupation_nonessen_cor$prop_nonessen, det_occupation_nonessen_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between nonessential jobs and case rate is -0.409.  This means the people with nonessential jobs are less likely to get COVID. 
+The correlation between nonessential jobs and case rate is 0.297.  This means the people with nonessential jobs are more likely to get COVID. 
 
 ## Citizenship
 
