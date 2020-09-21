@@ -77,8 +77,16 @@ ggplot(col_income) +
                                    hjust = 1))
 
 # ANOVA TEST
+col_covid$ZIP <- as.character(col_covid$ZIP)
+col_income_six_figure <- left_join(col_income_six_figure, col_covid, by = c("GEOID" = "ZIP"))
 
-
+income_lm <- lm(average ~ prop_100K, data = col_income_six_figure)
+summary(income_lm)
+anova(income_lm)
+#When making a linear model of average cases per ZIP and the proportion of those who make 6 figures,
+#we see both the intercept and coefficent of the model are significant.
+#After performing the anova, the proportion of those who make 6 figures is also significant with a
+#p-value  of 0.005373
 
 #################################
 # Retrieve Gini Index
@@ -118,8 +126,12 @@ col_gini %>%
             opacity = 1)
 
 ## ANOVA TEST
+col_gini <- left_join(col_gini, col_covid, by = c("GEOID" = "ZIP"))
 
-
+gini_lm <- lm(average ~ estimate, data = col_gini)
+summary(gini_lm)
+anova(gini_lm)
+#Our linear model and anova test give no significance of values with p-value of 0.1586.
 
 #################################
 # Retrieve Sex, Age data
@@ -199,6 +211,13 @@ ggplot(col_sex_age) +
                                    hjust = 1))
 
 ## ANOVA Test 
+col_age <- left_join(col_age, col_covid, by = c("GEOID" = "ZIP"))
+
+age_lm <- lm(average ~ prop_over65, data = col_age)
+summary(age_lm)
+anova(age_lm)
+#A very small, significant p-value is associated with this analysis of individuals over 65 and average number of
+#COVID-19 cases per ZIP code
 
 ##################################
 # Private vs. Public HI
@@ -263,6 +282,14 @@ ggplot(col_hi_private_2) +
                                    hjust = 1))
 
 ## ANOVA TEST
+col_hi_private_2 <- col_hi_private_2 %>% filter(Private_HI == "Yes")
+col_hi_private_2 <- left_join(col_hi_private_2, col_covid, by = c("GEOID" = "ZIP"))
+
+hi_lm <- lm(average ~ prop, data = col_hi_private_2)
+summary(hi_lm)
+anova(hi_lm)
+#Our anova test suggests there is nothing significant between private health insurance
+#and COVID-19 cases. The p-value is 0.1913
 
 
 ################################
@@ -302,6 +329,14 @@ ggplot(col_occ) +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
 
+## ANOVA TEST
+col_occ_ess <- left_join(col_occ_ess, col_covid, by = c("GEOID" = "ZIP"))
+
+ess_lm <- lm(average ~ prop_ess, data = col_occ_ess)
+summary(ess_lm)
+anova(ess_lm)
+#No evidence is deteched from the anova test of significance. P-value is 0.3099
+
 #################################
 # Public Transportation
 #################################
@@ -338,6 +373,14 @@ ggplot(col_trans) +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
 
+## ANOVA TEST
+col_trans_public <- left_join(col_trans_public, col_covid, by = c("GEOID" = "ZIP"))
+
+trans_lm <- lm(average ~ prop_public, data = col_trans_public)
+summary(trans_lm)
+anova(trans_lm)
+#Our p-value of 0.00303 suggests public transportation and COVID-19 cases are significant to either other.
+
 ###################################
 # Citizenship
 ###################################
@@ -354,8 +397,6 @@ col_citizen <- col_citizen %>%
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n)
-
-louis_citizen <- left_join(louis_citizen, louis_covid, by = c("GEOID"="zip"))
 
 ## Create bar graph with breakdown of citizenship for each zip
 
@@ -377,7 +418,12 @@ ggplot(col_citizen) +
                                    hjust = 1))
 
 ## ANOVA TEST
+col_citizen_prop_us <- left_join(col_citizen_prop_us, col_covid, by = c("GEOID" = "ZIP"))
 
+citizen_lm <- lm(average ~ prop_us_citizen, data = col_citizen_prop_us)
+summary(citizen_lm)
+anova(citizen_lm)
+#With a p-value of 0.3049, we do not see a significance of citizenship and COVID-19 cases.
 
 ##################################
 # Race
@@ -410,3 +456,10 @@ ggplot(col_race) +
                                    hjust = 1))
 
 ## ANOVA TEST 
+col_race <- left_join(col_race, col_covid, by = c("GEOID" = "ZIP"))
+
+race_lm <- lm(average ~ prop, data = col_race)
+summary(race_lm)
+anova(race_lm)
+#We have a p-value of 1
+
