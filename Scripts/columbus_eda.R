@@ -78,15 +78,17 @@ ggplot(col_income) +
 
 # ANOVA TEST
 col_covid$ZIP <- as.character(col_covid$ZIP)
-col_income_six_figure <- left_join(col_income_six_figure, col_covid, by = c("GEOID" = "ZIP"))
+col_income_six_figure <- left_join(col_income_six_figure, col_covid, 
+                                   by = c("GEOID" = "ZIP"))
 
 income_lm <- lm(average ~ prop_100K, data = col_income_six_figure)
 summary(income_lm)
 anova(income_lm)
-#When making a linear model of average cases per ZIP and the proportion of those who make 6 figures,
-#we see both the intercept and coefficent of the model are significant.
-#After performing the anova, the proportion of those who make 6 figures is also significant with a
-#p-value  of 0.005373
+#When making a linear model of average cases per ZIP and the proportion of 
+#those who make 6 figures, we see both the intercept and coefficent of the model
+# are significant.
+#After performing the anova, the proportion of those who make 6 figures is also 
+# significant with a p-value  of 0.005373
 
 #################################
 # Retrieve Gini Index
