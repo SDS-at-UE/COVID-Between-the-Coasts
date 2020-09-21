@@ -63,3 +63,24 @@ col_covid_geo %>%
             opacity = 1)
 ```
 
+### Income
+
+### Gini Index
+
+### Health Insurance Coverage
+
+### Private Health Insurance vs. Public Health Insurance
+
+#### Private Health Insurance
+
+#### Public Health Insurance
+
+### Age
+
+### Occupation
+
+### Public Transportation
+
+### Citizenship
+
+### Race
