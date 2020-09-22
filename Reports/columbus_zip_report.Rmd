@@ -14,6 +14,7 @@ library(tidyverse)
 library(leaflet)
 library(sf)
 library(tigris)
+library(readxl)
 options(tigris_use_cache = TRUE)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
@@ -64,6 +65,50 @@ col_covid_geo %>%
 ```
 
 ### Income
+```{r}
+col_income <- get_acs(geography = "zcta",
+                        table = "B19101") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         !variable %in% c("B19101_001"))
+col_income <- left_join(col_income, variables_2018[, 1:2], by = "variable")
+col_income$label <- as_factor(str_replace(col_income$label, ".*!!(.*)", "\\1"))
+geometry_zip_col$GEOID <- as.character(geometry_zip_col$GEOID)
+col_income <- left_join(col_income, geometry_zip_col, by = "GEOID")
+col_income <- st_as_sf(col_income, sf_column_name = "geometry")
+```
+
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph. 
+
+```{r}
+col_income_six_figure <- col_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- col_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+ggplot(col_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Income Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Income Level")
+  
+```
+
+Next, we performed an ANOVA test. The ANOVA test tells us if there is a significant difference in income within the groups of the COVID averages. 
 
 ### Gini Index
 

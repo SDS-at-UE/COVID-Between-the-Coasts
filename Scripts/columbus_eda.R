@@ -218,8 +218,8 @@ col_age <- left_join(col_age, col_covid, by = c("GEOID" = "ZIP"))
 age_lm <- lm(average ~ prop_over65, data = col_age)
 summary(age_lm)
 anova(age_lm)
-#A very small, significant p-value is associated with this analysis of individuals over 65 and average number of
-#COVID-19 cases per ZIP code
+#A very small, significant p-value is associated with this analysis of individuals over 65 and 
+# average number of COVID-19 cases per ZIP code
 
 ##################################
 # Private vs. Public HI
@@ -381,7 +381,8 @@ col_trans_public <- left_join(col_trans_public, col_covid, by = c("GEOID" = "ZIP
 trans_lm <- lm(average ~ prop_public, data = col_trans_public)
 summary(trans_lm)
 anova(trans_lm)
-#Our p-value of 0.00303 suggests public transportation and COVID-19 cases are significant to either other.
+#Our p-value of 0.00303 suggests public transportation and COVID-19 cases are significant to 
+# either other.
 
 ###################################
 # Citizenship
