@@ -111,14 +111,225 @@ ggplot(col_income) +
 Next, we performed an ANOVA test. The ANOVA test tells us if there is a significant difference in income within the groups of the COVID averages. 
 
 ### Gini Index
+```{r}
+col_gini <- get_acs(geography = "zcta",
+                      table = "B19083")
 
-### Health Insurance Coverage
+geometry_zip_col$GEOID <- as.character(geometry_zip_col$GEOID)
+col_gini <- left_join(col_gini, geometry_zip_col, by = "GEOID")
 
-### Private Health Insurance vs. Public Health Insurance
+col_gini <- st_as_sf(col_gini, sf_column_name = "geometry")
+
+col_gini <- col_gini %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
+
+col_gini$label <- as_factor(str_replace(col_gini$label, ".*!!(.*)", "\\1"))
+```
+
+# Map Gini Index
+```{r}
+pal_gini <- colorNumeric(palette = "viridis", domain = col_gini$estimate)
+
+col_gini %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", col_gini$GEOID,
+                            "</strong><br /> Gini Index: ", col_gini$estimate),
+              weight = 2,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_gini(estimate)) %>% 
+  addLegend("bottomright",
+            pal = pal_gini,
+            values = ~ estimate,
+            title = "Gini Index",
+            opacity = 1)
+```
+
+## ANOVA TEST
+```{r}
+col_covid$ZIP <- as.character(col_covid$ZIP)
+col_gini <- left_join(col_gini, col_covid, by = c("GEOID" = "ZIP"))
+
+gini_lm <- lm(average ~ estimate, data = col_gini)
+summary(gini_lm)
+anova(gini_lm)
+```
+R^2 = 0.06735. This value indicates how much varability is explained by our model i.e. how much cases is explained by a gini index. This is a small value. Our linear model and anova test give no significance of values with p-value of 0.1586.
+
+
+### Health Insurance Coverage (by sex by age)
+```{r}
+col_sex_age <- get_acs(geography = "zcta",
+                         table = "B27001") %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
+
+col_sex_age <- col_sex_age %>% filter(str_count(label, "!!") >= 4)
+
+col_sex_age$label <- str_remove(col_sex_age$label, "Estimate!!Total!!")
+
+col_sex_age <- separate(col_sex_age,
+                          label,
+                          sep = "!!",
+                          into = c("Sex", "Age", "HI_Coverage"))
+
+col_sex_age$HI_Coverage <- if_else(
+  col_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
+
+col_sex_age$Sex <- as_factor(col_sex_age$Sex)
+col_sex_age$Age <- as_factor(col_sex_age$Age)
+col_sex_age$HI_Coverage <- as_factor(col_sex_age$HI_Coverage)  
+```
+
+# Look at Health Insurance Coverage
+```{r}
+col_HI <- col_sex_age %>% group_by(GEOID, HI_Coverage) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+```
+
+# Graph Health Insurance Coverage by proportion
+```{r}
+lvls_col_HI <- col_HI %>% 
+  filter(HI_Coverage == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(col_HI) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_HI), count, fill = HI_Coverage),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
+```
+
+
+
 
 #### Private Health Insurance
+```{r}
+col_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+col_hi_private$label <- str_remove(col_hi_private$label, "Estimate!!Total!!")
+
+col_hi_private <- separate(col_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+
+col_hi_private$Private_HI <- if_else(
+  col_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+
+col_hi_private$Sex <- as_factor(col_hi_private$Sex)
+col_hi_private$Age <- as_factor(col_hi_private$Age)
+col_hi_private$Private_HI <- as_factor(col_hi_private$Private_HI)
+```
+
+## Look at Private HI Coverage
+```{r}
+col_hi_private_2 <- col_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+```
+
+# Graph Private HI Coverage by proportion
+```{r}
+lvls_col_hi_private <- col_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(col_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_hi_private), count, fill = Private_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+```
+
+## ANOVA TEST
+```{r}
+col_hi_private_2 <- col_hi_private_2 %>% filter(Private_HI == "Yes")
+col_hi_private_2 <- left_join(col_hi_private_2, col_covid, by = c("GEOID" = "ZIP"))
+
+hi_lm <- lm(average ~ prop, data = col_hi_private_2)
+summary(hi_lm)
+anova(hi_lm)
+```
+We have a small R^2 value again of 0.05815. Our anova test suggests there is nothing significant between private health insurance and COVID-19 cases. The p-value is 0.1913
+
+
 
 #### Public Health Insurance
+```{r}
+col_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+col_hi_public$label <- str_remove(col_hi_public$label, "Estimate!!Total!!")
+
+col_hi_public <- separate(col_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+col_hi_public$Public_HI <- if_else(
+  col_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+
+col_hi_public$Sex <- as_factor(col_hi_public$Sex)
+col_hi_public$Age <- as_factor(col_hi_public$Age)
+col_hi_public$Public_HI <- as_factor(col_hi_public$Public_HI) 
+```
+
+## Look at Public HI Coverage
+```{r}
+col_hi_public_2 <- col_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
+  group_by(GEOID) %>% 
+  mutate(pop = sum(count),
+         prop = count/pop)
+```
+
+# Graph Public HI Coverage by proportion
+```{r}
+lvls_col_hi_public <- col_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(col_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_hi_public), count, fill = Public_HI),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+```
+
+## ANOVA TEST
+```{r}
+col_hi_public_2 <- col_hi_public_2 %>% filter(Public_HI == "Yes")
+col_hi_public_2 <- left_join(col_hi_public_2, col_covid, by = c("GEOID" = "ZIP"))
+
+hi_lm <- lm(average ~ prop, data = col_hi_public_2)
+summary(hi_lm)
+anova(hi_lm)
+```
+R^2 = 0.01857. P-value of 0.4648 - not significant
 
 ### Age
 

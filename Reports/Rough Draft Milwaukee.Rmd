@@ -17,6 +17,7 @@ library(readxl)
 library(ggrepel)
 library(gridExtra)
 library(ggplot2)
+library(dplyr)
 ```
 
 
@@ -25,8 +26,9 @@ library(ggplot2)
 
 ```{r, echo=FALSE}
 #data set for Milwaukee Metropolitan COVID data, use the ../ to back up a folder
+Milwaukee_Covid_Data <- read_excel("Data/Milwaukee Covid Data.xls")
 
-Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
+
 ```
 
 
@@ -47,7 +49,7 @@ SMOKE<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="
 
 OLDER_PPL<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")
 
-INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PctHI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")
+INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct19to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")
 ```
 
 
@@ -62,5 +64,59 @@ grid.arrange(CASES, DEATHS, WHITEPOP, MHI, OLDER_PPL, SMOKE, INSURANCE, top= "Mi
 
 
 
+GINI Index Data
+```{r, echo=FALSE}
+milwaukee_gini <- get_acs(geography = "county", table = "B19083", state= "WI")
+milwaukee_gini<- filter(milwaukee_gini, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+Milwaukee_Covid_Data <- merge(Milwaukee_Covid_Data, milwaukee_gini, by = "NAME")
+
+GINI <- ggplot(Milwaukee_Covid_Data, aes(x=estimate, y=CASES_PER_HUNDTHOU))+geom_point()+geom_label_repel(aes(label=NAME), size=2)+labs(x="Gini Index", y="Cases Per 100000 People")
+
+```
+
+Income Data
+```{r}
+milwaukee_income<- get_acs(geography="County", state="WI", table="B19101")
+income <- load_variables(2018, "acs5")
+income <- income[c(11995:12011),]
+income<-rename(income, c("variable"="name"))
+income <- merge(income, milwaukee_income, by="variable")
+income <- filter( income, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+
+```
+
+Transportation Data
+```{r}
+milwaukee_transport <- get_acs(geography="County", state="WI", table="B08301")
+transport <- load_variables(2018, "acs5")
+transport <- transport[c(5228:5248),]
+transport<-rename(transport, c("variable"="name"))
+transport <- merge(transport, milwaukee_transport, by="variable")
+transport <- filter( transport, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+
+```
+
+Occupation
+```{r}
+milwaukee_occupation <- get_acs(geography="County", state="WI", table="C24060")
+occupation <- load_variables(2018, "acs5")
+occupation <- occupation[c(26451:26486),]
+occupation<-rename(occupation, c("variable"="name"))
+occupation<- merge(occupation, milwaukee_occupation, by="variable")
+occupation <- filter( occupation, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+
+```
+Citizenship
+```{r}
+milwaukee_citizenship <- get_acs(geography="County", state="WI", table="B05001")
+citizenship <- load_variables(2018, "acs5")
+citizenship <- citizenship[c(946:957),]
+citizenship<-rename(citizenship, c("variable"="name"))
+citizenship<- merge(citizenship, milwaukee_citizenship, by="variable")
+citizenship <- filter( citizenship, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+
+noncitizen_proportion <- citizenship[c(1:4, 21:24),]
+
+```
 
 
