@@ -57,7 +57,7 @@ det_occupation <- left_join(det_occupation, variables_2018[, 1:2], by = "variabl
 det_occupation$label <- as_factor(str_replace(det_occupation$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing Essential Occupations
+Analyzing Essential Occupations in Detroit.
 ```{r}
 det_occupation_essen <- det_occupation %>% 
   group_by(GEOID) %>% 
@@ -86,12 +86,12 @@ ggplot(det_occupation) +
        fill = "Occupation")
 ```
 
-The scatterplot show the correlation between Essential jobs and COVID cases. 
+The scatterplot shows the correlation between essential jobs and COVID cases. 
 ```{r}
 det_occupation_essen_cor <- left_join(det_occupation_essen, detroit_covid, by = c("GEOID" = "ZIP"))
 ggplot(det_occupation_essen_cor) +
   geom_point(aes(x = prop_essen, y = Cases_per_HundThou)) +
-  labs(title = "Correlation Between Essential Jobs and COVID",
+  labs(title = "Correlation Between Essential Jobs and COVID Cases",
        x = "Proportion of Essential Workers",
        y = "Case Rate (per 100,000 people)")
 ```
@@ -102,7 +102,23 @@ cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per
 ```
 The correlation between essential jobs and case rate is shown to be -0.297.  This negative correlation means the more essential jobs have a lower rate of contracting COVID. 
 
-Analyzing Nonessential Occupations
+The scatterplot shows the correlation between essential jobs and COVID deaths.
+```{r}
+det_occupation_essen_cor_death <- left_join(det_occupation_essen, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_occupation_essen_cor_death) +
+  geom_point(aes(x = prop_essen, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Essential Jobs and COVID Deaths",
+       x = "Proportion of Essential Workers",
+       y = "Death Rate (per 100,000 people)")
+```
+
+Test correlation between population with essential jobs to death rate of COVID.
+```{r}
+cor.test(det_occupation_essen_cor_death$prop_essen, det_occupation_essen_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between death rate and COVID is -0.576.  The negative correlation shows the more essential workers are less likely to die when contracting COVID. 
+
+Analyzing Nonessential Occupations in Detroit.
 ```{r}
 det_occupation_nonessen <- det_occupation %>% 
   group_by(GEOID) %>% 
@@ -132,36 +148,51 @@ ggplot(det_occupation) +
        fill = "Occupation")
 ```
 
-The scatterplot shows the correlation between Nonessential jobs and COVID cases for ZIP codes. 
+The scatterplot shows the correlation between nonessential jobs and COVID cases for ZIP codes. 
 ```{r}
 det_occupation_nonessen_cor <- left_join(det_occupation_nonessen, detroit_covid, by = c("GEOID" = "ZIP"))
 ggplot(det_occupation_nonessen_cor) +
   geom_point(aes(x = prop_nonessen, y = Cases_per_HundThou)) +
-  labs(title = "Correlation Between Nonessential Jobs and COVID",
+  labs(title = "Correlation Between Nonessential Jobs and COVID Cases",
        x = "Proportion of Nonessential Workers",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between population with nonessential jobs to the case rate of COVID
+Test correlation between population with nonessential jobs to the case rate of COVID.
 ```{r}
 cor.test(det_occupation_nonessen_cor$prop_nonessen, det_occupation_nonessen_cor$Cases_per_HundThou, use = "complete.obs")
 ```
 The correlation between nonessential jobs and case rate is 0.297.  This means the people with nonessential jobs are more likely to get COVID. 
+The scatterplot shows the correlation between nonessential jobs and COVID deaths for ZIP codes.
+```{r}
+det_occupation_nonessen_cor_death <- left_join(det_occupation_nonessen, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_occupation_nonessen_cor_death) +
+  geom_point(aes(x = prop_nonessen, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Nonessential Jobs and COVID Deaths",
+       x = "Proportion of Nonessential Workers",
+       y = "Death Rate (per 100,000)")
+```
+
+Test correlation between population with nonessential jobs to the death rate of COVID.
+```{r}
+cor.test(det_occupation_nonessen_cor_death$prop_nonessen, det_occupation_nonessen_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between nonessential workers and death rate is 0.576.  This means nonessential workers who contract COVID are more likely to die from it. 
 
 ## Citizenship
 
 ```{r}
-minn_citi <- get_acs(geography = "zcta",
+det_citi <- get_acs(geography = "zcta",
                         table = "B05001") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
+  filter(GEOID %in% zip_code_det$zip,
          !variable %in% c("B05001_001"))
-minn_citi <- left_join(minn_citi, variables_2018[, 1:2], by = "variable")
-minn_citi$label <- as_factor(str_replace(minn_citi$label, ".*!!(.*)", "\\1"))
+det_citi <- left_join(det_citi, variables_2018[, 1:2], by = "variable")
+det_citi$label <- as_factor(str_replace(det_citi$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyze citizenship
+Analyzing citizenship in Detroit.
 ```{r}
-minn_citi_status <- minn_citi %>% 
+det_citi_status <- det_citi %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -170,53 +201,69 @@ minn_citi_status <- minn_citi %>%
   select(GEOID, prop_not_citizen) %>% 
   distinct(GEOID, prop_not_citizen)
 
-lvls <- minn_citi_status %>% 
+lvls <- det_citi_status %>% 
   arrange(prop_not_citizen) %>% 
   pull(GEOID)
 
-minn_citi <- left_join(minn_citi, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_citi <- left_join(det_citi, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_citi) +
+ggplot(det_citi) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Citizenship Status for Each Minneapolis Zip Code",
+  labs(title = "Citizenship Status for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Citizenship Status")
 ```
 
-The scatterplot shows the correlation between not being a U.S. citizen and COVID.
+The scatterplot shows the correlation between not being a U.S. citizen and COVID cases in Detroit.
 ```{r}
-minn_citi_cor <- left_join(minn_citi_status, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_citi_cor) +
-  geom_point(aes(x = prop_not_citizen, y = case_rate)) +
-  labs(title = "Correlation Between Not Being a U.S. Citizen and COVID",
+det_citi_cor <- left_join(det_citi_status, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_citi_cor) +
+  geom_point(aes(x = prop_not_citizen, y = Cases_per_HundThou)) +
+  labs(title = "Correlation Between Not Being a U.S. Citizen in Detroit and COVID Cases",
        x = "Proportion of Non U.S. Citizens",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between precentage of population that is not a U.S. citizen to case rate.
+Test correlation between percentage of population that is not a U.S. citizen in Detroit to case rate of COVID.
 ```{r}
-cor.test(minn_citi_cor$prop_not_citizen, minn_citi_cor$case_rate, use = "complete.obs")
+cor.test(det_citi_cor$prop_not_citizen, det_citi_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between being a non-citizen and case rate is 0.611.  This is a positive correlation which means a non-citizen is more likely to get COVID. 
+The correlation between being a non-citizen and case rate is 0.108. 
+
+The scatterplot shows the correlation between not being a U.S. citizen and COVID deaths in Detroit.
+```{r}
+det_citi_cor_death <- left_join(det_citi_status, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_citi_cor_death) +
+  geom_point(aes(x = prop_not_citizen, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Not Being a U.S. Citizen in Detroit and COVID Deaths",
+       x = "Proportion of Non U.S. Citizens",
+       y = "Death Rate (per 100,000)")
+```
+
+Test correlation between percentage of population that is not a U.S. citizen in Detroit to death rate of COVID.
+```{r}
+cor.test(det_citi_cor_death$prop_not_citizen, det_citi_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between being a non-citizen and death rate is -0.356. 
 
 ## Income 
 
 ```{r}
-minn_income <- get_acs(geography = "zcta",
+det_income <- get_acs(geography = "zcta",
                         table = "B19101") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
+  filter(GEOID %in% zip_code_det$zip,
          !variable %in% c("B19101_001"))
-minn_income <- left_join(minn_income, variables_2018[, 1:2], by = "variable")
-minn_income$label <- as_factor(str_replace(minn_income$label, ".*!!(.*)", "\\1"))
+det_income <- left_join(det_income, variables_2018[, 1:2], by = "variable")
+det_income$label <- as_factor(str_replace(det_income$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing 100K and over income
+Analyzing 100K and over income in Detroit.
 ```{r}
-minn_income__sixfig <- minn_income %>% 
+det_income__sixfig <- det_income %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -228,42 +275,58 @@ minn_income__sixfig <- minn_income %>%
   select(GEOID, prop_100K) %>% 
   distinct(GEOID, prop_100K)
 
-lvls <- minn_income__sixfig %>% 
+lvls <- det_income__sixfig %>% 
   arrange(prop_100K) %>% 
   pull(GEOID)
 
-minn_income <- left_join(minn_income, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_income <- left_join(det_income, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_income) +
+ggplot(det_income) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Income Status in past year per household for Each Minneapolis Zip Code",
+  labs(title = "Income Status in past year per household for Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Income Status")
 ```
 
-The scatterplot shows the correlation betweeen families making a six figure income or more and COVID. 
+The scatterplot shows the correlation betweeen families making a six figure income or more in Detroit and COVID cases. 
 ```{r}
-minn_income_sixfig_cor <- left_join(minn_income__sixfig, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_income_sixfig_cor) +
-  geom_point(aes(x = prop_100K, y = case_rate)) +
-  labs(title = "Correlation Between Families Making 100K or More and COVID",
+det_income_sixfig_cor <- left_join(det_income__sixfig, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_income_sixfig_cor) +
+  geom_point(aes(x = prop_100K, y = Cases_per_HundThou)) +
+  labs(title = "Correlation Between Families Making 100K or More in Detroit and COVID Cases",
        x = "Proportion of Families Making 100K or More",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percent of population making six figure incomes to case rate of COVID
+Test correlation between families making six figure incomes or more in Detroit to case rate of COVID. 
 ```{r}
-cor.test(minn_income_sixfig_cor$prop_100K, minn_income_sixfig_cor$case_rate, use = "complete.obs")
+cor.test(det_income_sixfig_cor$prop_100K, det_income_sixfig_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between a six figure income and case rate is a correlation of -0.761.  This is a big negative correlation which means people who are making a six figure income are less likely to get COVID. 
+The correlation between a six figure income or more in Detroit and case rate is a correlation of 0.082.   
 
-Analyzing 30K and under income
+The scatterplot shows the correlation between families making a six figure income or more in Detroit and COVID deaths. 
 ```{r}
-minn_income_30K_below <- minn_income %>% 
+det_income_sixfig_cor_death <- left_join(det_income__sixfig, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_income_sixfig_cor_death) +
+  geom_point(aes(x = prop_100K, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Families Making 100K or More in Detroit and COVID Deaths",
+       x = "Proportion of Families Making 100K or More",
+       y = "Death Rate (per 100,000)")
+```
+
+Test correlation between families making six figure incomes or more in Detroit to death rate of COVID. 
+```{r}
+cor.test(det_income_sixfig_cor_death$prop_100K, det_income_sixfig_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between a six figure income or more in Detroit and death rate is a correlation of 0.288.
+
+Analyzing 30K and under income in Detroit.
+```{r}
+det_income_30K_below <- det_income %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -276,53 +339,69 @@ minn_income_30K_below <- minn_income %>%
   select(GEOID, prop_30K) %>% 
   distinct(GEOID, prop_30K)
 
-lvls <- minn_income_30K_below %>% 
+lvls <- det_income_30K_below %>% 
   arrange(prop_30K) %>% 
   pull(GEOID)
 
-minn_income <- left_join(minn_income, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_income <- left_join(det_income, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_income) +
+ggplot(det_income) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))+
-labs(title = "Income Status in past year per household for Each Minneapolis Zip Code",
+labs(title = "Income Status in past year per household for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Income Status")
 ```
 
-The scatterplot shows the correlation between families making less than 30K and COVID. 
+The scatterplot shows the correlation between families making 30K or less in Detroit and COVID cases. 
 ```{r}
-minn_income_30K_below_cor <- left_join(minn_income_30K_below, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_income_30K_below_cor) +
-  geom_point(aes(x = prop_30K, y = case_rate)) +
-  labs(title = "Correlation Between Families Making 30K or Less and COVID",
+det_income_30K_below_cor <- left_join(det_income_30K_below, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_income_30K_below_cor) +
+  geom_point(aes(x = prop_30K, y = Cases_per_HundThou)) +
+  labs(title = "Correlation Between Families Making 30K or Less and COVID Cases",
        x = "Proportion of Families Making 30K or Less",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percent of population making 30K and under incomes to case rate of COVID
+Test correlation between families making 30K or less incomes to case rate of COVID.
 ```{r}
-cor.test(minn_income_30K_below_cor$prop_30K, minn_income_30K_below_cor$case_rate, use = "complete.obs")
+cor.test(det_income_30K_below_cor$prop_30K, det_income_30K_below_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between a smaller income and case rate is 0.702.  This is a big positive correlation.  This means poorer people who are making less money are way more likely to get COVID than people who are making a lot of money. 
+The correlation between families making 30K or less and case rate of COVID is -0.135.
+
+The scatterplot shows the correlation between families making 30K or less in Detroit and COVID deaths.
+```{r}
+det_income_30K_below_cor_death <- left_join(det_income_30K_below, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_income_30K_below_cor_death) +
+  geom_point(aes(x = prop_30K, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Families Making 30K or Less and COVID Deaths",
+       x = "Proportion of Families Making 30K or Less",
+       y = "Death Rate (per 100,000)")
+```
+
+Test correlation between families making 30K or less incomes to death rate of COVID.
+```{r}
+cor.test(det_income_30K_below_cor_death$prop_30K, det_income_30K_below_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between families making 30K or less and death rate of COVID is -0.169.
 
 ## Race
 
 ```{r}
-minn_race <- get_acs(geography = "zcta",
+det_race <- get_acs(geography = "zcta",
                         table = "B02001") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
+  filter(GEOID %in% zip_code_det$zip,
          !variable %in% c("B02001_001"))
-minn_race <- left_join(minn_race, variables_2018[, 1:2], by = "variable")
-minn_race$label <- as_factor(str_replace(minn_race$label, ".*!!(.*)", "\\1"))
+det_race <- left_join(det_race, variables_2018[, 1:2], by = "variable")
+det_race$label <- as_factor(str_replace(det_race$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing Afican Americans in Minneapolis
+Analyzing Afican Americans in Detroit. 
 ```{r}
-minn_AA <- minn_race %>% 
+det_AA <- det_race %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -331,39 +410,55 @@ minn_AA <- minn_race %>%
   select(GEOID, prop_AA) %>% 
   distinct(GEOID, prop_AA)
 
-lvls <- minn_AA %>% 
+lvls <- det_AA %>% 
   arrange(prop_AA) %>% 
   pull(GEOID)
 
-minn_race <- left_join(minn_race, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_race <- left_join(det_race, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_race) +
+ggplot(det_race) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Racial Status for Each Minneapolis Zip Code",
+  labs(title = "Racial Status for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Racial Status")
 
 ```
 
-The scatterplot shows the correlation between being an African American and COVID. 
+The scatterplot shows the correlation between being an African American in Detroit and COVID cases. 
 ```{r}
-minn_race_cor <- left_join(minn_AA, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_race_cor) +
-  geom_point(aes(x = prop_AA, y = case_rate)) +
-  labs(title = "Correlation Between Being an African American and COVID",
+det_race_cor <- left_join(det_AA, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_race_cor) +
+  geom_point(aes(x = prop_AA, y = Cases_per_HundThou)) +
+  labs(title = "Correlation Between Being an African American in Detroit and COVID Cases",
        x = "Proportion of African Americans",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population that is African American and case rate of COVID
+Test correlation between being an African American in Detroit and case rate of COVID.
 ```{r}
-cor.test(minn_race_cor$prop_AA, minn_race_cor$case_rate, use = "complete.obs")
+cor.test(det_race_cor$prop_AA, det_race_cor$Cases_per_HundThou, use = "complete.obs")
 ```
-The correlation between being an African American and case rate is 0.784.  This is a big positive correlation meaning African Americans are more likely to get COVID.  
+The correlation between being an African American in Detroit and case rate of COVID is -0.263.
+
+The scatterplot shows the correlation between being an African American in Detroit and COVID deaths.
+```{r}
+det_race_cor_death <- left_join(det_AA, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_race_cor_death) +
+  geom_point(aes(x = prop_AA, y = Deaths_per_HundThou)) +
+  labs(title = "Correlation Between Being an African American in Detroit and COVID Deaths",
+       x = "Proportion of African Americans",
+       y = "Death Rate (per 100,000)")
+```
+
+Test correlation between being an African American in Detroit and death rate of COVID.
+```{r}
+cor.test(det_race_cor_death$prop_AA, det_race_cor_death$Deaths_per_HundThou, use = "complete.obs")
+```
+The correlation between being an African American in Detroit and death rate of COVID is 0.223.
 
 ## Gini Index
 
