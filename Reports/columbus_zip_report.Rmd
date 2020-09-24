@@ -108,7 +108,11 @@ ggplot(col_income) +
   
 ```
 
-Next, we performed an ANOVA test. The ANOVA test tells us if there is a significant difference in income within the groups of the COVID averages. 
+We see a nice distribution of six-figure incomes across the ZIP codes, ranging from just over 1\% in ZIP 43217 all the way to over 70\% of ZIP code 43212 making over \$100,000. 
+
+Next, we performed an ANOVA test. The ANOVA test tells us if there is a significant difference in income within the groups of the COVID averages. When performing tha ANOVA test, we looked at the p-value and the R^2 value. The p-value tells us if there is a significant difference between the groups of ZIP codes and the R^2 value is related to the correlation. In simple terms the R^2 value is a rough measure of how much COVID can be explained by income.
+
+**The ANOVA test for proportion of people making over 100K resulted in a low p-value of 0.00764 and a fairly high R^2 value of 0.403. This indicates that there is some evidence to say that ZIP codes that are wealthier are correlated with having a higher COVID case rate. **
 
 ### Gini Index
 ```{r}
@@ -127,7 +131,7 @@ col_gini <- col_gini %>%
 col_gini$label <- as_factor(str_replace(col_gini$label, ".*!!(.*)", "\\1"))
 ```
 
-# Map Gini Index
+We can view a map of the Gini Index across Columbus ZIP codes: 
 ```{r}
 pal_gini <- colorNumeric(palette = "viridis", domain = col_gini$estimate)
 
@@ -148,71 +152,12 @@ col_gini %>%
             opacity = 1)
 ```
 
-## ANOVA TEST
-```{r}
-col_covid$ZIP <- as.character(col_covid$ZIP)
-col_gini <- left_join(col_gini, col_covid, by = c("GEOID" = "ZIP"))
+**We see that no real pattern emerges between the Gini Index and COVID. This is supported by our ANOVA test. The ANOVA test gave us a p-value that was 0.2679 and an R^2 value of 0.175. This means that the Gini Index is not correlated to the case rate of COVID.**
 
-gini_lm <- lm(average ~ estimate, data = col_gini)
-summary(gini_lm)
-anova(gini_lm)
-```
-R^2 = 0.06735. This value indicates how much varability is explained by our model i.e. how much cases is explained by a gini index. This is a small value. Our linear model and anova test give no significance of values with p-value of 0.1586.
+### Insurance Coverage 
 
+Since access to private health insurance is not universal, we looked at the relationship between having some type of private health insurance and COVID as well as similarly looking at public health insurance. It is possible to have both public and private insurance, so these metrics are not mutually exclusive.
 
-### Health Insurance Coverage (by sex by age)
-```{r}
-col_sex_age <- get_acs(geography = "zcta",
-                         table = "B27001") %>% 
-  filter(GEOID %in% zip_code_col$zip) %>% 
-  left_join(variables_2018[, 1:2], by = "variable")
-
-col_sex_age <- col_sex_age %>% filter(str_count(label, "!!") >= 4)
-
-col_sex_age$label <- str_remove(col_sex_age$label, "Estimate!!Total!!")
-
-col_sex_age <- separate(col_sex_age,
-                          label,
-                          sep = "!!",
-                          into = c("Sex", "Age", "HI_Coverage"))
-
-col_sex_age$HI_Coverage <- if_else(
-  col_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
-
-col_sex_age$Sex <- as_factor(col_sex_age$Sex)
-col_sex_age$Age <- as_factor(col_sex_age$Age)
-col_sex_age$HI_Coverage <- as_factor(col_sex_age$HI_Coverage)  
-```
-
-# Look at Health Insurance Coverage
-```{r}
-col_HI <- col_sex_age %>% group_by(GEOID, HI_Coverage) %>% 
-  summarize(count = sum(estimate)) %>% 
-  ungroup() %>% 
-  group_by(GEOID) %>% 
-  mutate(pop = sum(count),
-         prop = count/pop)
-```
-
-# Graph Health Insurance Coverage by proportion
-```{r}
-lvls_col_HI <- col_HI %>% 
-  filter(HI_Coverage == "Yes") %>% 
-  arrange(prop) %>% 
-  pull(GEOID)
-
-ggplot(col_HI) +
-  geom_col(aes(factor(GEOID, levels = lvls_col_HI), count, fill = HI_Coverage),
-           position = "fill") +
-  theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))
-
-```
-
-
-
-
-#### Private Health Insurance
 ```{r}
 col_hi_private <- get_acs(geography = "zcta",
                             table = "B27002") %>% 
@@ -220,22 +165,40 @@ col_hi_private <- get_acs(geography = "zcta",
   left_join(variables_2018[, 1:2], by = "variable") %>% 
   filter(str_count(label, "!!") >= 4)
 
+col_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
 col_hi_private$label <- str_remove(col_hi_private$label, "Estimate!!Total!!")
+col_hi_public$label <- str_remove(col_hi_public$label, "Estimate!!Total!!")
 
 col_hi_private <- separate(col_hi_private,
                              label,
                              sep = "!!",
                              into = c("Sex", "Age", "Private_HI"))
+col_hi_public <- separate(col_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
 
 col_hi_private$Private_HI <- if_else(
   col_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+col_hi_public$Public_HI <- if_else(
+  col_hi_public$Public_HI == "No public coverage", "No", "Yes")
 
 col_hi_private$Sex <- as_factor(col_hi_private$Sex)
+col_hi_public$Sex <- as_factor(col_hi_public$Sex)
 col_hi_private$Age <- as_factor(col_hi_private$Age)
+col_hi_public$Age <- as_factor(col_hi_public$Age)
 col_hi_private$Private_HI <- as_factor(col_hi_private$Private_HI)
+col_hi_public$Public_HI <- as_factor(col_hi_public$Public_HI) 
 ```
 
-## Look at Private HI Coverage
+#### Private Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have private health insurance.
 ```{r}
 col_hi_private_2 <- col_hi_private %>% group_by(GEOID, Private_HI) %>% 
   summarize(count = sum(estimate)) %>% 
@@ -243,10 +206,9 @@ col_hi_private_2 <- col_hi_private %>% group_by(GEOID, Private_HI) %>%
   group_by(GEOID) %>% 
   mutate(pop = sum(count),
          prop = count/pop)
-```
 
-# Graph Private HI Coverage by proportion
-```{r}
+### Graph Private HI Coverage by proportion
+
 lvls_col_hi_private <- col_hi_private_2 %>% 
   filter(Private_HI == "Yes") %>% 
   arrange(prop) %>% 
@@ -259,20 +221,15 @@ ggplot(col_hi_private_2) +
                                    hjust = 1))
 ```
 
-## ANOVA TEST
-```{r}
-col_hi_private_2 <- col_hi_private_2 %>% filter(Private_HI == "Yes")
-col_hi_private_2 <- left_join(col_hi_private_2, col_covid, by = c("GEOID" = "ZIP"))
+As we see, there is a wide range of those populations that have private health insurance, ranging from FILL IN\% of the population in ZIP to only FILLIN\% of the residents in ZIP having private health insurance. But how does this relate to COVID cases?
 
-hi_lm <- lm(average ~ prop, data = col_hi_private_2)
-summary(hi_lm)
-anova(hi_lm)
-```
-We have a small R^2 value again of 0.05815. Our anova test suggests there is nothing significant between private health insurance and COVID-19 cases. The p-value is 0.1913
+**After performing the ANOVA test, we see evidence to suggest that there is a correlation with private health insurance and the COVID case rate. From the ANOVA test we got a significant p-value of 0.0004773 and a high R^2 value of FILL IN! We have strong evidence that there is a close connection between the proportion of the population that has private health insurance and the case rate for COVID. In this case, as the proportion that have private health insurance increases, we see a decrease in the case rate.**
 
 
 
 #### Public Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have public health insurance.
 ```{r}
 col_hi_public <- get_acs(geography = "zcta",
                            table = "B27003") %>% 
@@ -294,20 +251,14 @@ col_hi_public$Public_HI <- if_else(
 col_hi_public$Sex <- as_factor(col_hi_public$Sex)
 col_hi_public$Age <- as_factor(col_hi_public$Age)
 col_hi_public$Public_HI <- as_factor(col_hi_public$Public_HI) 
-```
 
-## Look at Public HI Coverage
-```{r}
 col_hi_public_2 <- col_hi_public %>% group_by(GEOID, Public_HI) %>% 
   summarize(count = sum(estimate)) %>% 
   ungroup() %>% 
   group_by(GEOID) %>% 
   mutate(pop = sum(count),
          prop = count/pop)
-```
 
-# Graph Public HI Coverage by proportion
-```{r}
 lvls_col_hi_public <- col_hi_public_2 %>% 
   filter(Public_HI == "Yes") %>% 
   arrange(prop) %>% 
@@ -317,26 +268,12 @@ ggplot(col_hi_public_2) +
   geom_col(aes(factor(GEOID, levels = lvls_col_hi_public), count, fill = Public_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))
+                                   hjust = 1)) +
+    labs(title = "Public Health Insurance Seems to have a\nPositive Relation to COVID Case Rate",
+       x = "Proportion of Population that has Public Health Insurance",
+       y = "Case Rate (per 100,000)")
 ```
 
-## ANOVA TEST
-```{r}
-col_hi_public_2 <- col_hi_public_2 %>% filter(Public_HI == "Yes")
-col_hi_public_2 <- left_join(col_hi_public_2, col_covid, by = c("GEOID" = "ZIP"))
+We still have a descent distinction between ZIP codes as to the proportion of their populations that have public insurance (ranges from 0\% to almost FILL IN\%). We can look at how these proportions relate to COVID in the following plot.
 
-hi_lm <- lm(average ~ prop, data = col_hi_public_2)
-summary(hi_lm)
-anova(hi_lm)
-```
-R^2 = 0.01857. P-value of 0.4648 - not significant
 
-### Age
-
-### Occupation
-
-### Public Transportation
-
-### Citizenship
-
-### Race
