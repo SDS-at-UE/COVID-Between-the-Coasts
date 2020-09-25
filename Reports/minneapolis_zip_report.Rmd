@@ -1,16 +1,23 @@
 ---
 title: 'COVID-19:  A Midwestern Reporting Project of WNIN and the University of Evansville'
+<<<<<<< HEAD
 author: "Minneapolis Zip Code Analysis"
 date: Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman,
   and Darrin Weber, Ph.D.
 output:
   word_document: default
   html_document: default
+=======
+author: "Minneapolis ZIP Code Analysis"
+date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
+output: html_document
+>>>>>>> bd964c79af79830d79a007a969fdefe9aa468a76
 urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+options(scipen = 999, digits = 6)
 library(tidycensus)
 library(tidyverse)
 library(leaflet)
@@ -24,6 +31,8 @@ variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_minn <- zip_code %>% filter(primary_city == "Minneapolis",
                                       state == "MN")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_minn <- filter(geometry_zip, GEOID %in% zip_code_minn$zip)
 minn_covid <- read_csv("../Data/minnesota_covid_data.csv",
                         col_types = cols(ZIP = col_character())) %>%
   filter(ZIP %in% zip_code_minn$zip)
@@ -35,28 +44,58 @@ minneapolis_covid <- left_join(minn_population, minn_covid, by = c("GEOID" = "ZI
 minneapolis_covid <- minneapolis_covid %>% 
   rename(ZIP = GEOID,
          Population = estimate) %>%
-  mutate(case_rate = Cases/Population)
+  mutate(case_rate = Cases/Population*100000)
 minneapolis_covid <- select(minneapolis_covid, ZIP, Population, Cases, case_rate) %>%
   filter(ZIP != '55450')
 ```
 
 ## Background
 
-The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Minneapolis. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Minnesota Department of Health and minnesota_covid_data. (https://www.health.state.mn.us/diseases/coronavirus/situation.html#map1). 
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Minneapolis. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Minnesota Department of Health. (https://www.health.state.mn.us/diseases/coronavirus/situation.html#map1). 
 
-## Summary
+**Conclusions** To start, we filtered the ZIP code 55450 out of the dataset because it was an outlier in every variable we analyzed that affected every test we ran on the data. This ZIP corresponds to non-residential area immediately around the Minneapolis-Saint Paul International Airport. The largest positive correlation with COVID case rate is with the proportion of Blacks and African Americans in a ZIP code (correlation of 0.784).  This is followed by the proportion of families who make \$30,000 or less a year and those families on public assistance at a correlation of 0.702. We then have people who have public insurance with a correlation of 0.663.
 
-To start off we filtered the ZIP code 55450 out of the dataset because it was an outlier in every varible we analyzed that affected every test we ran on the data.  The largest positive correlation is African Americans with a correlation of 0.784.  This is followed by families who make 30K or less a year at a correlation of 0.702. We then have people who have public insurance with a correlation of 0.686, which is followed closely by people receiving public assistance at 0.684.  The other positive correlations we have are not being a U.S. citizen with a correlation of 0.611, public transportation with a correlation of 0.549, and lastly, essential workers with a correlation of 0.409.  The biggest negative correlation is private health insurance at -0.803. Then families who make 100K or more a year is at -0.761.  The other negative correlation we have is nonessential workers with a correlation of -0.409.  The last variable we have is gini index with a correlation of 0.059.  The p-value of this correlation is so close to 1 that we can't conclude there is any real difference.  
+The other positive correlations we have are with non-U.S. citizens with a correlation of 0.611, public transportation with a correlation of 0.570, and lastly, essential workers with a correlation of 0.409.  The biggest negative correlation is private health insurance at -0.816. Then families who make \$100,000 or more a year is at -0.761.The last variable we have is the Gini index with a correlation of 0.059.  The p-value of this correlation is so high that we can't conclude there is any real difference from zero.  
 
 ## Analysis
 
-## Occupations (Essential VS. Nonessential)
+### COVID
+
+We first look at the COVID cases by ZIP codes. We can see that ZIP 40202 has a much higher rate than the other ZIP codes. We end up having to run our analysis without this ZIP code. However, it is far beyond the extreme in the Gini Index and public transportation compared to other ZIPs. With income, private health insurance, and public health insurance it is one of the more extremely ZIP codes, but with the other demographics, it is right in the middle of the distribution. The scatterplots help to illustrate this fact. 
+
+```{r}
+minn_covid_geo <- left_join(minneapolis_covid, geometry_zip_minn, by = c("ZIP" = "GEOID"))
+minn_covid_geo <- st_as_sf(minn_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = minn_covid_geo$case_rate)
+minn_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", minn_covid_geo$ZIP,
+                            "</strong><br /> Case Rate ", signif(minn_covid_geo$case_rate, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100,000)",
+            opacity = 1)
+```
+
+We see that COVID case rate is spread throughout Minneapolis, however ZIPs 55404 and 55454 do stand out as having a high case rate. 
+
+### Occupations (Essential vs. Non-essential)
 
 ```{r}
 minn_occupation <- get_acs(geography = "zcta",
                            table = "C24060") %>% 
   filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("C24060_001"),
+         variable %in% str_c("C24060_00", 2:6),
          GEOID != '55450')
 
 minn_occupation <- left_join(minn_occupation, variables_2018[, 1:2], by = "variable")
@@ -64,109 +103,65 @@ minn_occupation <- left_join(minn_occupation, variables_2018[, 1:2], by = "varia
 minn_occupation$label <- as_factor(str_replace(minn_occupation$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing Essential Occupations
+Many "essential" workers tend to be towards the lower end of the income bracket. We look at whether there is a relationship between essential workers and contracting COVID.
+
+The Census Bureau breaks workers into five categories: Management, business, science and arts; service; sales and office; natural resources, construction, and maintenance; and production, transportation, and material moving. Although these categories are undoubtedly not clear distinctions between essential and non-essential, we feel a good classification is to put natural resources, construction, and maintenance and production, transportation, material moving as essential and the other three categories as non-essential. 
+
 ```{r}
 minn_occupation_essen <- minn_occupation %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
-  filter(label %in% c("Natural resources, construction, and maintenance occupations",
-                      "Production, transportation, and material moving occupations")) %>% 
+ filter(str_detect(label,
+                    "(Natural.*)|(Production.*)")) %>% 
   mutate(prop_essen = sum(prop)) %>% 
   select(GEOID, prop_essen) %>% 
   distinct(GEOID, prop_essen)
 
-lvls <- minn_occupation_essen %>% 
+lvls_minn_essen <- minn_occupation_essen %>% 
   arrange(prop_essen) %>% 
   pull(GEOID)
 
 minn_occupation <- left_join(minn_occupation, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
 ggplot(minn_occupation) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_essen), estimate, fill = str_wrap(label,20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Occupations for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Occupations for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
        fill = "Occupation")
 ```
 
-The scatterplot show the correlation between Essential jobs and COVID cases. 
+The proportion of the population that is considered "essential" is not particular high in any one ZIP code, ranging from 4\% to 27.5\% of the ZIP code's population. The scatterplot below shows the relationship between essential jobs and COVID cases. 
+
 ```{r}
 minn_occupation_essen_cor <- left_join(minn_occupation_essen, minneapolis_covid, by = c("GEOID" = "ZIP"))
 ggplot(minn_occupation_essen_cor) +
   geom_point(aes(x = prop_essen, y = case_rate)) +
-  labs(title = "Correlation Between Essential Jobs and COVID",
-       x = "Proportion of Essential Workers",
+  labs(title = "Moderate Relationship Between Essential Jobs and COVID",
+       x = "Proportion of Population Classified as Essential Workers",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between population with essential jobs to case rate of COVID. 
-```{r}
-cor.test(minn_occupation_essen_cor$prop_essen, minn_occupation_essen_cor$case_rate, use = "complete.obs")
-```
-The correlation between essential jobs and case rate is shown to be 0.409.  This positive correlation means the more essential jobs have a higher rate of contracting COVID. 
+We see a pretty good spread with no clear outliers. When we test our correlation, we get a value of `r cor.test(minn_occupation_essen_cor$prop_essen, minn_occupation_essen_cor$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(minn_occupation_essen_cor$prop_essen, minn_occupation_essen_cor$case_rate, use = "complete.obs")$p.value`). This tells us that there is a moderate correlation between the percentage of the population working "essential" jobs and the rate of COVID cases: as a ZIP code has more essential workers, it also has a higher COVID case rate.
 
-Analyzing Nonessential Occupations
-```{r}
-minn_occupation_nonessen <- minn_occupation %>% 
-  group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("Management, business, science, and arts occupations",
-                      "Service occupations",
-                      "Sales and office occupations")) %>% 
-  mutate(prop_nonessen = sum(prop)) %>% 
-  select(GEOID, prop_nonessen) %>% 
-  distinct(GEOID, prop_nonessen)
+### Citizenship
 
-lvls <- minn_occupation_nonessen %>% 
-  arrange(prop_nonessen) %>% 
-  pull(GEOID)
-
-minn_occupation <- left_join(minn_occupation, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
-ggplot(minn_occupation) +
-  geom_col(aes(GEOID, estimate, fill = label),
-           position = "fill") +
-  theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Occupations for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Occupation")
-```
-
-The scatterplot shows the correlation between Nonessential jobs and COVID cases for ZIP codes. 
-```{r}
-minn_occupation_nonessen_cor <- left_join(minn_occupation_nonessen, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_occupation_nonessen_cor) +
-  geom_point(aes(x = prop_nonessen, y = case_rate)) +
-  labs(title = "Correlation Between Nonessential Jobs and COVID",
-       x = "Proportion of Nonessential Workers",
-       y = "Case Rate (per 100,000)")
-```
-
-Test correlation between population with nonessential jobs to the case rate of COVID
-```{r}
-cor.test(minn_occupation_nonessen_cor$prop_nonessen, minn_occupation_nonessen_cor$case_rate, use = "complete.obs")
-```
-The correlation between nonessential jobs and case rate is -0.409.  This means the people with nonessential jobs are less likely to get COVID. 
-
-## Citizenship
+The Census Bureau provides a distinction between different types of U.S. citizenship (e.g., naturalization, born in U.S., born abroad, etc.). We focus on the simple distinction between being a U.S. citizen and not.
 
 ```{r}
 minn_citi <- get_acs(geography = "zcta",
                         table = "B05001") %>% 
   filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B05001_001"))
+         variable %in% str_c("B05001_00", 2:6))
 minn_citi <- left_join(minn_citi, variables_2018[, 1:2], by = "variable")
 minn_citi$label <- as_factor(str_replace(minn_citi$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyze citizenship
 ```{r}
 minn_citi_status <- minn_citi %>% 
   group_by(GEOID) %>% 
@@ -177,40 +172,39 @@ minn_citi_status <- minn_citi %>%
   select(GEOID, prop_not_citizen) %>% 
   distinct(GEOID, prop_not_citizen)
 
-lvls <- minn_citi_status %>% 
+lvls_minn_citi <- minn_citi_status %>% 
   arrange(prop_not_citizen) %>% 
   pull(GEOID)
 
 minn_citi <- left_join(minn_citi, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
 ggplot(minn_citi) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_citi), estimate, fill = str_wrap(label,20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Citizenship Status for Each Minneapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Citizenship Status for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
-       fill = "Citizenship Status")
+       fill = "Citizenship\nStatus")
 ```
+The range of citizenship is not too large, ranging from over 83\% to 100\%. The scatterplot below shows the relationship between the proportion of a ZIP code's population not being a U.S. citizen and the COVID case rate.
 
-The scatterplot shows the correlation between not being a U.S. citizen and COVID.
 ```{r}
 minn_citi_cor <- left_join(minn_citi_status, minneapolis_covid, by = c("GEOID" = "ZIP"))
 ggplot(minn_citi_cor) +
   geom_point(aes(x = prop_not_citizen, y = case_rate)) +
-  labs(title = "Correlation Between Not Being a U.S. Citizen and COVID",
-       x = "Proportion of Non U.S. Citizens",
+  labs(title = "Strong Correlation Between Non-U.S. Citizen and COVID",
+       x = "Proportion of Non-U.S. Citizens in a ZIP code",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between precentage of population that is not a U.S. citizen to case rate.
-```{r}
-cor.test(minn_citi_cor$prop_not_citizen, minn_citi_cor$case_rate, use = "complete.obs")
-```
-The correlation between being a non-citizen and case rate is 0.611.  This is a positive correlation which means a non-citizen is more likely to get COVID. 
+We don't see any outlying ZIP codes and get a correlation value of `r cor.test(minn_citi_cor$prop_not_citizen, minn_citi_cor$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(minn_citi_cor$prop_not_citizen, minn_citi_cor$case_rate, use = "complete.obs")$p.value`). This is a moderate-to-strong positive correlation, which means a ZIP code with a larger population of non-citizens is also showing a higher COVID case rate. 
 
-## Income 
+### Income 
+
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph. 
 
 ```{r}
 minn_income <- get_acs(geography = "zcta",
@@ -221,7 +215,6 @@ minn_income <- left_join(minn_income, variables_2018[, 1:2], by = "variable")
 minn_income$label <- as_factor(str_replace(minn_income$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing 100K and over income
 ```{r}
 minn_income__sixfig <- minn_income %>% 
   group_by(GEOID) %>% 
@@ -235,40 +228,39 @@ minn_income__sixfig <- minn_income %>%
   select(GEOID, prop_100K) %>% 
   distinct(GEOID, prop_100K)
 
-lvls <- minn_income__sixfig %>% 
+lvls_minn_sixfig <- minn_income__sixfig %>% 
   arrange(prop_100K) %>% 
   pull(GEOID)
 
 minn_income <- left_join(minn_income, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
 ggplot(minn_income) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_sixfig), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Income Status in past year per household for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Income Status")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Income Status in Past Year per Household for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Income\nStatus")
 ```
 
-The scatterplot shows the correlation betweeen families making a six figure income or more and COVID. 
+We see a nice distribution of six-figure incomes across the ZIP codes, ranging from just over 1\% in ZIP 55454 all the way to over 77\% of ZIP code 55424 making over \$100,000. 
+
 ```{r}
 minn_income_sixfig_cor <- left_join(minn_income__sixfig, minneapolis_covid, by = c("GEOID" = "ZIP"))
 ggplot(minn_income_sixfig_cor) +
   geom_point(aes(x = prop_100K, y = case_rate)) +
-  labs(title = "Correlation Between Families Making 100K or More and COVID",
-       x = "Proportion of Families Making 100K or More",
+  labs(title = "Families Making $100,000 or More is Highly Negatively Related to COVID",
+       x = "Proportion of Families Making Over $100,000",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percent of population making six figure incomes to case rate of COVID
-```{r}
-cor.test(minn_income_sixfig_cor$prop_100K, minn_income_sixfig_cor$case_rate, use = "complete.obs")
-```
-The correlation between a six figure income and case rate is a correlation of -0.761.  This is a big negative correlation which means people who are making a six figure income are less likely to get COVID. 
+The correlation between a six-figure income and case rate is `r cor.test(minn_income_sixfig_cor$prop_100K, minn_income_sixfig_cor$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_income_sixfig_cor$prop_100K, minn_income_sixfig_cor$case_rate, use = "complete.obs")$p.value`).  This is a strong negative correlation. ZIP codes that are wealthier are highly correlated with having a smaller COVID case rate. 
 
-Analyzing 30K and under income
+In the bar graph above showing the distribution of income levels for each ZIP code, we notice that the poorer incomes (making less than \$30,000) does not necessarily follow the same distribution as the six-figure incomes. In other words, just because a ZIP code has a small proportion of six-figure incomes does not mean it has a high proportion of sub-\$30,000 incomes. We see a few ZIP codes that deviate from this expected pattern. We look at examining the lower income brackets as a result.
+
 ```{r}
 minn_income_30K_below <- minn_income %>% 
   group_by(GEOID) %>% 
@@ -283,40 +275,40 @@ minn_income_30K_below <- minn_income %>%
   select(GEOID, prop_30K) %>% 
   distinct(GEOID, prop_30K)
 
-lvls <- minn_income_30K_below %>% 
+lvls_minn_30K <- minn_income_30K_below %>% 
   arrange(prop_30K) %>% 
   pull(GEOID)
 
 minn_income <- left_join(minn_income, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
 ggplot(minn_income) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_30K), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))+
-labs(title = "Income Status in past year per household for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Income Status")
+                                   hjust = 1),
+        legend.position = "bottom")+
+labs(title = "Income Status in Past Year per Household for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Income\nStatus")
 ```
 
-The scatterplot shows the correlation between families making less than 30K and COVID. 
+Once again, we see the fluctuation in the proportion of six-figure incomes, indicating that they don't follow the same distribution as the sub-\$30,000 incomes. We can look at the below scatterplot to investigate the relationship between sub-\$30,000 incomes and the COVID case rate.
+
 ```{r}
 minn_income_30K_below_cor <- left_join(minn_income_30K_below, minneapolis_covid, by = c("GEOID" = "ZIP"))
 ggplot(minn_income_30K_below_cor) +
   geom_point(aes(x = prop_30K, y = case_rate)) +
-  labs(title = "Correlation Between Families Making 30K or Less and COVID",
-       x = "Proportion of Families Making 30K or Less",
+  labs(title = "Strong Positive Correlation Between Families Making\n$30,000 or Less and COVID",
+       x = "Proportion of Families Making $30,000 or Less",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percent of population making 30K and under incomes to case rate of COVID
-```{r}
-cor.test(minn_income_30K_below_cor$prop_30K, minn_income_30K_below_cor$case_rate, use = "complete.obs")
-```
-The correlation between a smaller income and case rate is 0.702.  This is a big positive correlation.  This means poorer people who are making less money are way more likely to get COVID than people who are making a lot of money. 
+We see another strong correlation (`r cor.test(minn_income_30K_below_cor$prop_30K, minn_income_30K_below_cor$case_rate, use = "complete.obs")$estimate` with $p\approx$ `r cor.test(minn_income_30K_below_cor$prop_30K, minn_income_30K_below_cor$case_rate, use = "complete.obs")$p.value`) between income and COVID. This reinforces our earlier findings that people making less money are much more likely to also get COVID at higher rates than people in ZIP codes with higher income brackets. 
 
-## Race
+### Race
+
+We've heard reports about minorities being hit harder by COVID. We look to see if the data supports that in Minneapolis.
 
 ```{r}
 minn_race <- get_acs(geography = "zcta",
@@ -327,7 +319,6 @@ minn_race <- left_join(minn_race, variables_2018[, 1:2], by = "variable")
 minn_race$label <- as_factor(str_replace(minn_race$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing Afican Americans in Minneapolis
 ```{r}
 minn_AA <- minn_race %>% 
   group_by(GEOID) %>% 
@@ -338,41 +329,85 @@ minn_AA <- minn_race %>%
   select(GEOID, prop_AA) %>% 
   distinct(GEOID, prop_AA)
 
-lvls <- minn_AA %>% 
+lvls_minn_AA <- minn_AA %>% 
   arrange(prop_AA) %>% 
   pull(GEOID)
 
 minn_race <- left_join(minn_race, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
 ggplot(minn_race) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_AA), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Racial Status for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Racial Status")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Racial Status for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Racial\nStatus")
 
 ```
 
-The scatterplot shows the correlation between being an African American and COVID. 
+The proportions of "White alone" and "Black or African American alone" seem to be inversely related. This means looking at the "Black or African American alone" proportions within each ZIP code will yield a similar result as looking at "White alone." One difference here may be with the "Asian alone" population. We see it as high as over 25\% and it doesn't follow the same distribution across ZIP codes as the white or Black populations. 
+
+We first focus on the relationship between the proportion Blacks and African Americans and COVID. 
+
 ```{r}
 minn_race_cor <- left_join(minn_AA, minneapolis_covid, by = c("GEOID" = "ZIP"))
 ggplot(minn_race_cor) +
   geom_point(aes(x = prop_AA, y = case_rate)) +
-  labs(title = "Correlation Between Being an African American and COVID",
-       x = "Proportion of African Americans",
+  labs(title = "The Black Population is Highly Correlated with COVID",
+       x = "Proportion of Black and African Americans",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population that is African American and case rate of COVID
-```{r}
-cor.test(minn_race_cor$prop_AA, minn_race_cor$case_rate, use = "complete.obs")
-```
-The correlation between being an African American and case rate is 0.784.  This is a big positive correlation meaning African Americans are more likely to get COVID.  
+The correlation between the proportion of Black and African American within a ZIP code and case rate is `r cor.test(minn_race_cor$prop_AA, minn_race_cor$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_race_cor$prop_AA, minn_race_cor$case_rate, use = "complete.obs")$p.value`). This is a strong positive correlation meaning African American communities are seeing a higher case rate of COVID in Minneapolis, confirming the trend we're seeing at the national level. 
 
-## Gini Index
+We now look at the "Asian alone" population and perform a similar analysis.
+
+```{r}
+minn_asian <- minn_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Asian alone")) %>% 
+  mutate(prop_asian = sum(prop)) %>% 
+  select(GEOID, prop_asian) %>% 
+  distinct(GEOID, prop_asian)
+
+lvls_minn_asian <- minn_asian %>% 
+  arrange(prop_asian) %>% 
+  pull(GEOID)
+
+ggplot(minn_race) +
+  geom_col(aes(factor(GEOID, levels = lvls_minn_asian), estimate, fill = str_wrap(label, 20)),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Racial Status for Each Minneapolis ZIP Code Ordered By Proportion of Asian",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Racial Status")
+
+```
+
+This graphic shows us that we do indeed see a different distribution of the Asian population when compared to Black and white populations. 
+
+```{r}
+minn_race_cor_asian <- left_join(minn_asian, minneapolis_covid, by = c("GEOID" = "ZIP"))
+ggplot(minn_race_cor_asian) +
+  geom_point(aes(x = prop_asian, y = case_rate)) +
+  labs(title = "No Real Relationship Between Asian Populations and COVID",
+       x = "Proportion of Asian Population",
+       y = "Case Rate (per 100,000)")
+```
+
+The scatterplot indicates that there is not a real correlation between the proportion of the Asian population within ZIP codes to that of COVID. Our correlation value is indistinguishable from 0 ($r=$ `r cor.test(minn_race_cor_asian$prop_asian, minn_race_cor_asian$case_rate, use = "complete.obs")$estimate` with $p=$ `r cor.test(minn_race_cor_asian$prop_asian, minn_race_cor_asian$case_rate, use = "complete.obs")$p.value`).
+
+### Gini Index
+
+The Gini index is a measure of income inequality calculated by the Census Bureau using various different factors. The closer to 0 the Gini index, the more equally income is dispersed. A Gini index of 1 would indicate perfect inequality where a single group or individual collects all of the income. 
 
 ```{r}
 minn_gini <- get_acs(geography = "zcta",
@@ -382,241 +417,338 @@ minn_gini <- left_join(minn_gini, variables_2018[, 1:2], by = "variable")
 minn_gini$label <- as_factor(str_replace(minn_gini$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyze Gini Index for Minneapolis.  The scatterplot shows the correlation between Gini Index and COVID.
+The scatterplot shows the connection between Gini Index for Minneapolis ZIP codes and COVID.
+
 ```{r}
 minn_gini <- left_join(minn_gini, minneapolis_covid, by = c("GEOID" = "ZIP"))
 minn_gini <- filter(minn_gini, GEOID != '55450')
 
 ggplot(minn_gini) +
   geom_point(aes(x = estimate, y = case_rate)) +
-  labs(title = "Gini Index for Each Minneapolis Zip Code",
+  labs(title = "Gini Index Does Not Appear To Be Related to COVID",
        x = "Gini Index",
-       y = "Case Rate")
+       y = "Case Rate (per 100,000)")
 
 ```
 
-Test correlation between gini index and case rate of COVID
+We see that no real pattern emerges between the Gini Index and COVID. This is supported by our correlation calculation that is statistically indistinguishable from 0 (`r cor.test(minn_gini$estimate, minn_gini$case_rate, use = "complete.obs")$estimate` with $p=$ `r cor.test(minn_gini$estimate, minn_gini$case_rate, use = "complete.obs")$p.value`).
+
+
+### Insurance Coverage
+
+Since access to private health insurance is not universal, we looked at the relationship between having some type of private health insurance and COVID as well as similarly looking at public health insurance. It is possible to have both public and private insurance, so these metrics are not mutually exclusive.
+
 ```{r}
-cor.test(minn_gini$estimate, minn_gini$case_rate, use = "complete.obs")
+minn_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_minn$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+minn_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_minn$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+minn_hi_private$label <- str_remove(minn_hi_private$label, "Estimate!!Total!!")
+minn_hi_public$label <- str_remove(minn_hi_public$label, "Estimate!!Total!!")
+
+minn_hi_private <- separate(minn_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+minn_hi_public <- separate(minn_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+minn_hi_private$Private_HI <- if_else(minn_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+minn_hi_public$Public_HI <- if_else(minn_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+minn_hi_private$Sex <- as_factor(minn_hi_private$Sex)
+minn_hi_public$Sex <- as_factor(minn_hi_public$Sex)
+minn_hi_private$Age <- as_factor(minn_hi_private$Age)
+minn_hi_public$Age <- as_factor(minn_hi_public$Age)
+minn_hi_private$Private_HI <- as_factor(minn_hi_private$Private_HI)
+minn_hi_public$Public_HI <- as_factor(minn_hi_public$Public_HI) 
 ```
-The correlation between gini index and case rate is 0.059.  This is a low positive number with a p-value close to 1, so we can't conclude anything about gini index and COVID. 
 
-## Insurance Coverage
+#### Private Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have private health insurance.
 
 ```{r}
-minn_insurance <- get_acs(geography = "zcta",
-                           table = "B18135") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B18135_023"))
-minn_insurance <- left_join(minn_insurance, variables_2018[, 1:2], by = "variable")
-minn_insurance$label <- as_factor(str_replace(minn_insurance$label, ".*!!(.*)", "\\1"))
-```
-
-Analyze private health insurance coverage
-```{r}
-minn_insurance_private <- minn_insurance %>% 
+minn_hi_private_2 <- minn_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
   group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("With private health insurance coverage")) %>% 
-  mutate(prop_priv = sum(prop)) %>% 
-  select(GEOID, prop_priv) %>% 
-  distinct(GEOID, prop_priv)
+  mutate(pop = sum(count),
+         prop = count/pop)
 
-lvls <- minn_insurance_private %>% 
-  arrange(prop_priv) %>% 
+### Graph Private HI Coverage by proportion
+
+lvls_minn_hi_private <- minn_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
-ggplot(minn_insurance) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+ggplot(minn_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_minn_hi_private), count, fill = Private_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Insurance Coverage for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Insurance Coverage")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Private Health Insurance for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Private Health \nInsurance Coverage?")
 ```
 
-The scatterplot shows the correlation between private health insurance and COVID.
+As we see, there is a wide range of those populations that have private health insurance, ranging from 100\% of the population in 55450 to only 38.7\% of the residents in 55411 having private health insurance. But how does this relate to COVID cases?
+
 ```{r}
-minn_private_cor <- left_join(minn_insurance_private, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_private_cor) +
-  geom_point(aes(x = prop_priv, y = case_rate)) +
-  labs(title = "Correlation Between Private Health Insurance and COVID",
-       x = "Proportion of People with Private Health Insurance",
+minn_hi_private_cor <- left_join(minn_hi_private_2, minneapolis_covid, by = c("GEOID"="ZIP")) %>% 
+  filter(Private_HI == "Yes")
+
+minn_hi_private_cor %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  labs(title = "Possession of Private Health Insurance Seems\nto be Strongly Related to COVID Case Rate",
+       x = "Proportion of Population that has Private Health Insurance",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population with private health insurance and case rate of COVID
-```{r}
-cor.test(minn_private_cor$prop_priv, minn_private_cor$case_rate, use = "complete.obs")
-```
-The correlation between private health insurance and case rate is -0.803.  This is a big negative correlation. People with private health insurance have been contracting less cases of COVID. 
+There seems to be an incredibly strong correlation. A test gives us a correlation of `r cor.test(minn_hi_private_cor$prop, minn_hi_private_cor$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_hi_private_cor$prop, minn_hi_private_cor$case_rate, use = "complete.obs")$p.value`). We have strong evidence that there is a close connection between the proportion of the population that has private health insurance and the case rate for COVID. In this case, as the proportion that have private health insurance increases, we see a decrease in the case rate. 
 
-Analyze public health insurance coverage
+
+#### Public Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have public health insurance.
+
 ```{r}
-minn_insurance_public <- minn_insurance %>% 
+minn_hi_public_2 <- minn_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
   group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("With public health coverage")) %>% 
-  mutate(prop_public = sum(prop)) %>% 
-  select(GEOID, prop_public) %>% 
-  distinct(GEOID, prop_public)
+  mutate(pop = sum(count),
+         prop = count/pop)
+### Graph Public HI Coverage by proportion
 
-lvls <- minn_insurance_public %>% 
-  arrange(prop_public) %>% 
+lvls_minn_hi_public <- minn_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
-ggplot(minn_insurance) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+ggplot(minn_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_minn_hi_public), count, fill = Public_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Insurance Coverage for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Insurance Coverage")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Public Health Insurance for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Public Health \nInsurance Coverage?")
 ```
 
-The scatterplot shows the correlation between public health insurance and COVID. 
+We still have a descent distinction between ZIP codes as to the proportion of their populations that have public insurance (ranges from 0\% to almost 59\%). We can look at how these proportions relate to COVID in the following plot.
+
 ```{r}
-minn_public_cor <- left_join(minn_insurance_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_public_cor) +
-  geom_point(aes(x = prop_public, y = case_rate)) +
-  labs(title = "Correlation Between Public Health Insurance and COVID",
-       x = "Proportion of People with Public Health Insurance",
+minn_hi_public_cor <- left_join(minn_hi_public_2, minneapolis_covid, by = c("GEOID"="ZIP")) %>% 
+  filter(Public_HI == "Yes")
+
+minn_hi_public_cor %>%
+  ggplot(aes(prop, case_rate)) +
+  geom_point() +
+  labs(title = "Public Health Insurance Seems to have a\nPositive Relation to COVID Case Rate",
+       x = "Proportion of Population that has Public Health Insurance",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population with public health insurance and case rate of COVID
-```{r}
-cor.test(minn_public_cor$prop_public, minn_public_cor$case_rate, use = "complete.obs")
-```
-The correlation between public health insurance and case rate is 0.686.  This is a positive realtionship.  The people with public insurance have been contracting more cases of COVID. 
+Again, we seem to have a strong relationship between possession of public health insurance and the case rate for COVID. Our correlation is `r cor.test(minn_hi_public_cor$prop, minn_hi_public_cor$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_hi_public_cor$prop, minn_hi_public_cor$case_rate, use = "complete.obs")$p.value`). While this is a strong correlation, it is not as strong as with private health insurance. Nevertheless, as the proportion of the population within a ZIP code that has public health insurance increases, so does the case rate for COVID. 
 
-## Public Assistance Income
+### Public Assistance Income
 
 ```{r}
 minn_stamps <- get_acs(geography = "zcta",
                           table = "B19058") %>% 
   filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B19058_002"))
+         !variable %in% c("B19058_001"))
 minn_stamps <- left_join(minn_stamps, variables_2018[, 1:2], by = "variable")
 minn_stamps$label <- as_factor(str_replace(minn_stamps$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyzing families that accepted public assistance income in Minneapolis
+Another measure of income inequality might be the prevalence of public assistance income or food stamps within a ZIP code. We look at this demographic in connection to COVID.
+
 ```{r}
 minn_stamps_with <- minn_stamps %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
-  filter(label %in% c("Total")) %>% 
-  mutate(prop_stamps = sum(prop)) %>% 
-  select(GEOID, prop_stamps) %>% 
-  distinct(GEOID, prop_stamps)
+  filter(str_detect(label, "^With.*"))
 
-lvls <- minn_stamps_with %>% 
-  arrange(prop_stamps) %>% 
+lvls_minn_stamps <- minn_stamps_with %>% 
+  arrange(prop) %>% 
   pull(GEOID)
 
-minn_stamps <- left_join(minn_stamps, minneapolis_covid, by = c("GEOID" = "ZIP"))
+minn_stamps_cor <- left_join(minn_stamps, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_stamps) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+ggplot(minn_stamps_cor) +
+  geom_col(aes(factor(GEOID, levels = lvls_minn_stamps), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Public Assistance Distribution for Each Minneapolis Zip Code",
-       x = "Zip Code",
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Public Assistance Distribution for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
        y = "Proportion", 
        fill = "Public Assistance")
 
 ```
 
-The scatterplot shows the correlation between families receiving public assistance and COVID. 
+Our ZIP codes range from 0\% of the population on public assistance all the way to nearly 43\% of the ZIP code population on public assitance. 
+
 ```{r}
-minn_stamps_cor <- left_join(minn_stamps_with, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_stamps_cor) +
-  geom_point(aes(x = prop_stamps, y = case_rate)) +
-  labs(title = "Correlation Between Families Receiving Public Assistance and COVID",
+minn_stamps_cor_2 <- left_join(minn_stamps_with, minneapolis_covid, by = c("GEOID" = "ZIP"))
+ggplot(minn_stamps_cor_2) +
+  geom_point(aes(x = prop, y = case_rate)) +
+  labs(title = "Moderate Correlation Between Families Receiving Public Assistance and COVID",
        x = "Proportion of Families Receiving Public Assistance",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population that accepted public assistance and case rate of COVID
-```{r}
-cor.test(minn_stamps_cor$prop_stamps, minn_stamps_cor$case_rate, use = "complete.obs")
-```
-The correlation between public assistance and case rate is 0.684.  This is a positive relationship meaning families receiving public assistance and more likely to get COVID.  
+From here, we obtain a correlation value of `r cor.test(minn_stamps_cor_2$prop, minn_stamps_cor_2$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_stamps_cor_2$prop, minn_stamps_cor_2$case_rate, use = "complete.obs")$p.value`). This is a strong positive correlation indicating that when the proportion of the ZIP code population on public assistance goes up, the case rate also goes up.  
 
-## Transportation to Work
+### Transportation to Work
+
+The use of public transportation is more prevalent among lower incomes, while at the same time public transportation poses a higher risk of contracting COVID. We look to see if this idea plays out in the data for Minneapolis.
 
 ```{r}
 minn_transport <- get_acs(geography = "zcta",
                        table = "B08301") %>% 
   filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B08301_010"))
+         variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
 minn_transport <- left_join(minn_transport, variables_2018[, 1:2], by = "variable")
 minn_transport$label <- as_factor(str_replace(minn_transport$label, ".*!!(.*)", "\\1"))
+minn_transport <- minn_transport %>% 
+  mutate(use_public = if_else(str_detect(label, "^Pub.*")|str_detect(label, "Taxicab"), TRUE, FALSE))
+
+minn_transport <- left_join(minn_transport, minneapolis_covid, by = c("GEOID"="ZIP"))
 ```
 
-Analyzing public transporation
+
 ```{r}
 minn_transport_public <- minn_transport %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
-  filter(label %in% c("Public transportation (excluding taxicab)",
-                      "Bus or trolley bus",
-                      "Streetcar or trolley car (carro publico in Puerto Rico)",
-                      "Subway or elevated",
-                      "Railroad")) %>% 
-  mutate(prop_pub = sum(prop)) %>% 
-  select(GEOID, prop_pub) %>% 
-  distinct(GEOID, prop_pub)
+  filter(use_public == TRUE) %>% 
+  mutate(prop_pub = sum(prop))
 
-lvls <- minn_transport_public %>% 
+lvls_minn_trans <- minn_transport_public %>% 
   arrange(prop_pub) %>% 
+  distinct(GEOID) %>% 
   pull(GEOID)
 
-minn_transport <- left_join(minn_transport, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
 ggplot(minn_transport) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+  geom_col(aes(factor(GEOID, levels = lvls_minn_trans), estimate, fill = str_wrap(label, 20)),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Transportation Distribution for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Transportation")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Transportation Distribution for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Transportation \nType")
 ```
 
-The scatterplot shows the correlation between public transportation and COVID.
+The percentage of the population that uses public transportation is not too high, never reaching above 31\%. For our analysis, we grouped "Public transportation (excluding taxicab)" and "Taxicab" together to form our public use variable. Most Minneapolis residents provide their own motorized transportation, while in a few ZIP codes walking and working from home dominant the transportation field. It's relationship to COVID can be seen in the following graph. 
+
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_trans_cor) +
+ggplot(minn_transport_public) +
   geom_point(aes(x = prop_pub, y = case_rate)) +
-  labs(title = "Correlation Between Public Transportation and COVID",
+  labs(title = "Moderate Relationship Between Public Transportation and COVID",
        x = "Proportion of People Using Public Transportation",
        y = "Case Rate (per 100,000)")
 ```
 
-Test the correlation between the percentage of the population using public transportation and case rate of COVID
+We see a moderate relationship between the use of public transportation and COVID. Conducting our tests gives us a correlation of `r cor.test(minn_transport_public$prop_pub, minn_transport_public$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_transport_public$prop_pub, minn_transport_public$case_rate, use = "complete.obs")$p.value`). This is a moderate to strong correlation and indicates that as a ZIP code sees higher use of public transportation, it is also seeing a higher COVID rate. 
+
+### Age
+
+We know people over 65 years of age are at higher risk of mortality from COVID. But we wanted to know if they are catching COVID at a higher rate. Is Minneapolis doing a good job of protecting their senior citizens? To answer this, we can look at the breakdown of ages in each of the ZIP codes and compare the proportion of senior citizens in each ZIP code to the case rate of COVID.
+
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID"="ZIP"))
-cor.test(minn_trans_cor$prop_pub, minn_trans_cor$case_rate, use = "complete.obs")
+minn_sex_age <- get_acs(geography = "zcta",
+                         table = "B27001") %>% 
+  filter(GEOID %in% zip_code_minn$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable")
+
+minn_sex_age <- minn_sex_age %>% filter(str_count(label, "!!") >= 4)
+
+minn_sex_age$label <- str_remove(minn_sex_age$label, "Estimate!!Total!!")
+
+minn_sex_age <- separate(minn_sex_age,
+                          label,
+                          sep = "!!",
+                          into = c("Sex", "Age", "HI_Coverage"))
+
+minn_sex_age$Sex <- as_factor(minn_sex_age$Sex)
+minn_sex_age$Age <- as_factor(minn_sex_age$Age) 
+minn_age <- minn_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65)
 ```
-The correlation between public transportation and case rate is 0.549.  This is a positive relationship meaning people using public transportation are more likely to get COVID.  
+
+We start with our basic graphic displaying the distribution of ages throughout the ZIP codes.
+
+```{r}
+lvls_minn_age <- minn_sex_age %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(Age %in% c("65 to 74 years",
+                    "75 years and over")) %>% 
+  mutate(prop_over65 = sum(prop)) %>% 
+  arrange(prop_over65) %>% 
+  select(GEOID, prop_over65) %>% 
+  distinct(GEOID, prop_over65) %>% 
+  pull(GEOID)
+ggplot(minn_sex_age) +
+  geom_col(aes(factor(GEOID, levels = lvls_minn_age), estimate, fill = Age),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Age Distribution for Minneapolis ZIP Codes",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Age Ranges")
+```
+
+We focus on the relationship between COVID cases and the proportion of the population that is 65 years or older.
+
+```{r}
+minn_age_cor <- left_join(minn_age, minneapolis_covid, by = c("GEOID"="ZIP"))
+
+ggplot(minn_age_cor, aes(prop_over65, case_rate)) +
+  geom_point() +
+  labs(title = "Slight Correlation Between Proportion of Population Over 65 and COVID",
+       x = "Proportion of Population Over Age 65",
+       y = "Case Rate (per 100,000)")
+```
+
+There appears to be a slight correlation. We get a correlation value of `r cor.test(minn_age_cor$prop_over65, minn_age_cor$case_rate, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(minn_age_cor$prop_over65, minn_age_cor$case_rate, use = "complete.obs")$p.value`). ZIP codes with a higher proportion of people over the age of 65 are also seeing lower COVID case rates.
 
 
 ## Conclusions
 
-In Minneapolis we looked at 8 different categories and analyzed 11 variables within them by zip code.  We had to remove ZIP code 55450 because it was skewing the data.  It was an outlier is every variable we looked at that and when we looked into it we saw that it had a very small population with a lot of cases so that explains why it was changing all of our correlations by a lot.  We did choose the essential jobs in our report to be natural resources, construction, maintenance, production, transportation, and material moving occupations.  For our nonessential jobs we chose management, business, science, arts, service, sales and office occupations.  We had four variables stick out when analyzing this data.  Two of them were positive correlations, the highest being African Americans and familes that had an income of 30 thousand dollars a year or less.  The other two variables were negative correlations being people with private health insurance and families making 100 thousand dollars or more a year.  I was not surpised by the correlations of the income variables.  I was suprised that the correlation of African Americans and COVID was such a big positive correlation.  I was not by the families receiving public assistance beause I figured that would go hand in hand with families making 30 thousand or less a year. The essential and nonessential jobs were not surprising.  The gini index did not have a significant p-value so we could conclude that there was no real differnece there. 
+In Minneapolis we looked at 9 different categories and analyzed 12 variables within them by ZIP code.  We had to remove ZIP code 55450 because it was an outlier in every variable looked at, which affected the analysis of the other ZIP codes. 55450 has a very small population with a lot of cases so that explains why it was such a statistical outlier. 
+
+We had several variables with significant correlations. Private Health Insurance and income over \$100,000 saw a negative relationship with COVID case rate (as one variable goes up, the other variable goes down). These were strong relationships, too. We also saw that public assistance, public health insurance, non-citizenship, and Black and African American populations saw a positive relationship with COVID. As the proportion of the population using of fitting in these categories went up, the COVID case rate also went up. Finally, we saw some weak or nonexistent relationships with age and Gini index, and only moderate relationships with public transportation and occupation. 
