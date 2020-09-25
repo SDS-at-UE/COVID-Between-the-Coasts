@@ -18,6 +18,7 @@ library(ggrepel)
 library(gridExtra)
 library(ggplot2)
 library(dplyr)
+library(tidycensus)
 ```
 
 
@@ -26,7 +27,7 @@ library(dplyr)
 
 ```{r, echo=FALSE}
 #data set for Milwaukee Metropolitan COVID data, use the ../ to back up a folder
-Milwaukee_Covid_Data <- read_excel("Data/Milwaukee Covid Data.xls")
+Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
 
 
 ```
@@ -49,7 +50,7 @@ SMOKE<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="
 
 OLDER_PPL<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")
 
-INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct19to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")
+INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct18to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")
 ```
 
 
@@ -82,6 +83,39 @@ income <- income[c(11995:12011),]
 income<-rename(income, c("variable"="name"))
 income <- merge(income, milwaukee_income, by="variable")
 income <- filter( income, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+income$label <- as_factor(str_replace(income$label, ".*!!(.*)", "\\1"))
+income <- income[c(5:68),]
+```
+
+
+```{r}
+income_sixfig <- income %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(NAME, prop_100K) %>% 
+  distinct(NAME, prop_100K)
+
+lvls <-income_sixfig %>% 
+  arrange(prop_100K) %>% 
+  pull(NAME)
+
+ggplot(income) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Median Household Income for Each \nMilwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Income Status")
+
+
 
 ```
 
@@ -93,8 +127,41 @@ transport <- transport[c(5228:5248),]
 transport<-rename(transport, c("variable"="name"))
 transport <- merge(transport, milwaukee_transport, by="variable")
 transport <- filter( transport, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+transport$label <- as_factor(str_replace(transport$label, ".*!!(.*)", "\\1"))
+transport<- transport[c(5:84),]
+
 
 ```
+
+```{r}
+transport_mil <- transport %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Public transportation (excluding taxicab)",
+                      "Bus or trolley bus",
+                      "Streetcar or trolley car (carro publico in Puerto Rico)",
+                      "Subway or elevated",
+                      "Railroad")) %>% 
+  mutate(prop_pub = sum(prop)) %>% 
+  select(NAME, prop_pub) %>% 
+  distinct(NAME, prop_pub)
+
+lvls <- transport_mil %>% 
+  arrange(prop_pub) %>% 
+  pull(NAME)
+
+ggplot(transport_mil) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Transportation Distribution for Each \nMilwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Transportation")
+```
+
 
 Occupation
 ```{r}
@@ -104,8 +171,37 @@ occupation <- occupation[c(26451:26486),]
 occupation<-rename(occupation, c("variable"="name"))
 occupation<- merge(occupation, milwaukee_occupation, by="variable")
 occupation <- filter( occupation, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+occupation<- occupation[c(5:144),]
+occupation$label <- as_factor(str_replace(occupation$label, ".*!!(.*)", "\\1"))
 
 ```
+
+```{r}
+occupation_essen <- occupation %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Natural resources, construction, and maintenance occupations",
+                      "Production, transportation, and material moving occupations")) %>% 
+  mutate(prop_essen = sum(prop)) %>% 
+  select(NAME, prop_essen) %>% 
+  distinct(NAME, prop_essen)
+
+lvls <- occupation_essen %>% 
+  arrange(prop_essen) %>% 
+  pull(NAME)
+
+ggplot(occupation) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Occupations for Each Minneapolis Zip Code",
+       x = "Zip Code",
+       y = "Proportion", 
+       fill = "Occupation")
+```
+
 Citizenship
 ```{r}
 milwaukee_citizenship <- get_acs(geography="County", state="WI", table="B05001")
@@ -114,9 +210,46 @@ citizenship <- citizenship[c(946:957),]
 citizenship<-rename(citizenship, c("variable"="name"))
 citizenship<- merge(citizenship, milwaukee_citizenship, by="variable")
 citizenship <- filter( citizenship, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+citizenship$label <- as_factor(str_replace(citizenship$label, ".*!!(.*)", "\\1"))
+citizenship<-citizenship[c(5:24),]
 
-noncitizen_proportion <- citizenship[c(1:4, 21:24),]
 
+
+```
+
+```{r}
+citi_status <- citizenship %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Not a U.S. citizen")) %>% 
+  mutate(prop_not_citizen = sum(prop)) %>% 
+  select(NAME, prop_not_citizen) %>% 
+  distinct(NAME, prop_not_citizen)
+
+lvls <- citi_status %>% 
+  arrange(prop_not_citizen) %>% 
+  pull(NAME)
+
+
+
+ggplot(citizenship) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Citizenship Status for Each Milwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Citizenship Status")
+```
+
+```{r}
+ggplot(citi_status) +
+  geom_point(aes(x = prop_not_citizen, y = case_rate)) +
+  labs(title = "Correlation Between Not Being a U.S. Citizen and COVID",
+       x = "Proportion of Non U.S. Citizens",
+       y = "Case Rate (per 100,000)")
 ```
 
 
