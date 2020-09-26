@@ -14,6 +14,7 @@ library(tidyverse)
 library(leaflet)
 library(sf)
 library(tigris)
+library(readxl)
 options(tigris_use_cache = TRUE)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
@@ -64,6 +65,54 @@ col_covid_geo %>%
 ```
 
 ### Income
+```{r}
+col_income <- get_acs(geography = "zcta",
+                        table = "B19101") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         !variable %in% c("B19101_001"))
+col_income <- left_join(col_income, variables_2018[, 1:2], by = "variable")
+col_income$label <- as_factor(str_replace(col_income$label, ".*!!(.*)", "\\1"))
+geometry_zip_col$GEOID <- as.character(geometry_zip_col$GEOID)
+col_income <- left_join(col_income, geometry_zip_col, by = "GEOID")
+col_income <- st_as_sf(col_income, sf_column_name = "geometry")
+```
+
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph. 
+
+```{r}
+col_income_six_figure <- col_income %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(GEOID, prop_100K) %>% 
+  distinct(GEOID, prop_100K)
+
+lvls <- col_income_six_figure %>% 
+  arrange(prop_100K) %>% 
+  pull(GEOID)
+
+ggplot(col_income) +
+  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Income Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Income Level")
+  
+```
+
+We see a nice distribution of six-figure incomes across the ZIP codes, ranging from just over 1\% in ZIP 43217 all the way to over 70\% of ZIP code 43212 making over \$100,000. 
+
+Next, we performed an ANOVA test. The ANOVA test tells us if there is a significant difference in income within the groups of the COVID averages. When performing tha ANOVA test, we looked at the p-value and the R^2 value. The p-value tells us if there is a significant difference between the groups of ZIP codes and the R^2 value is related to the correlation. In simple terms the R^2 value is a rough measure of how much COVID can be explained by income.
+
+**The ANOVA test for proportion of people making over 100K resulted in a low p-value of 0.00764 and a fairly high R^2 value of 0.403. This indicates that there is some evidence to say that ZIP codes that are wealthier are correlated with having a higher COVID case rate. **
 
 ### Gini Index
 ```{r}
@@ -82,7 +131,7 @@ col_gini <- col_gini %>%
 col_gini$label <- as_factor(str_replace(col_gini$label, ".*!!(.*)", "\\1"))
 ```
 
-# Map Gini Index
+We can view a map of the Gini Index across Columbus ZIP codes: 
 ```{r}
 pal_gini <- colorNumeric(palette = "viridis", domain = col_gini$estimate)
 
@@ -103,71 +152,12 @@ col_gini %>%
             opacity = 1)
 ```
 
-## ANOVA TEST
-```{r}
-col_covid$ZIP <- as.character(col_covid$ZIP)
-col_gini <- left_join(col_gini, col_covid, by = c("GEOID" = "ZIP"))
+**We see that no real pattern emerges between the Gini Index and COVID. This is supported by our ANOVA test. The ANOVA test gave us a p-value that was 0.2679 and an R^2 value of 0.175. This means that the Gini Index is not correlated to the case rate of COVID.**
 
-gini_lm <- lm(average ~ estimate, data = col_gini)
-summary(gini_lm)
-anova(gini_lm)
-```
-R^2 = 0.06735. This value indicates how much varability is explained by our model i.e. how much cases is explained by a gini index. This is a small value. Our linear model and anova test give no significance of values with p-value of 0.1586.
+### Insurance Coverage 
 
+Since access to private health insurance is not universal, we looked at the relationship between having some type of private health insurance and COVID as well as similarly looking at public health insurance. It is possible to have both public and private insurance, so these metrics are not mutually exclusive.
 
-### Health Insurance Coverage (by sex by age)
-```{r}
-col_sex_age <- get_acs(geography = "zcta",
-                         table = "B27001") %>% 
-  filter(GEOID %in% zip_code_col$zip) %>% 
-  left_join(variables_2018[, 1:2], by = "variable")
-
-col_sex_age <- col_sex_age %>% filter(str_count(label, "!!") >= 4)
-
-col_sex_age$label <- str_remove(col_sex_age$label, "Estimate!!Total!!")
-
-col_sex_age <- separate(col_sex_age,
-                          label,
-                          sep = "!!",
-                          into = c("Sex", "Age", "HI_Coverage"))
-
-col_sex_age$HI_Coverage <- if_else(
-  col_sex_age$HI_Coverage == "No health insurance coverage", "No", "Yes")
-
-col_sex_age$Sex <- as_factor(col_sex_age$Sex)
-col_sex_age$Age <- as_factor(col_sex_age$Age)
-col_sex_age$HI_Coverage <- as_factor(col_sex_age$HI_Coverage)  
-```
-
-# Look at Health Insurance Coverage
-```{r}
-col_HI <- col_sex_age %>% group_by(GEOID, HI_Coverage) %>% 
-  summarize(count = sum(estimate)) %>% 
-  ungroup() %>% 
-  group_by(GEOID) %>% 
-  mutate(pop = sum(count),
-         prop = count/pop)
-```
-
-# Graph Health Insurance Coverage by proportion
-```{r}
-lvls_col_HI <- col_HI %>% 
-  filter(HI_Coverage == "Yes") %>% 
-  arrange(prop) %>% 
-  pull(GEOID)
-
-ggplot(col_HI) +
-  geom_col(aes(factor(GEOID, levels = lvls_col_HI), count, fill = HI_Coverage),
-           position = "fill") +
-  theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))
-
-```
-
-
-
-
-#### Private Health Insurance
 ```{r}
 col_hi_private <- get_acs(geography = "zcta",
                             table = "B27002") %>% 
@@ -175,22 +165,40 @@ col_hi_private <- get_acs(geography = "zcta",
   left_join(variables_2018[, 1:2], by = "variable") %>% 
   filter(str_count(label, "!!") >= 4)
 
+col_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_col$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
 col_hi_private$label <- str_remove(col_hi_private$label, "Estimate!!Total!!")
+col_hi_public$label <- str_remove(col_hi_public$label, "Estimate!!Total!!")
 
 col_hi_private <- separate(col_hi_private,
                              label,
                              sep = "!!",
                              into = c("Sex", "Age", "Private_HI"))
+col_hi_public <- separate(col_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
 
 col_hi_private$Private_HI <- if_else(
   col_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+col_hi_public$Public_HI <- if_else(
+  col_hi_public$Public_HI == "No public coverage", "No", "Yes")
 
 col_hi_private$Sex <- as_factor(col_hi_private$Sex)
+col_hi_public$Sex <- as_factor(col_hi_public$Sex)
 col_hi_private$Age <- as_factor(col_hi_private$Age)
+col_hi_public$Age <- as_factor(col_hi_public$Age)
 col_hi_private$Private_HI <- as_factor(col_hi_private$Private_HI)
+col_hi_public$Public_HI <- as_factor(col_hi_public$Public_HI) 
 ```
 
-## Look at Private HI Coverage
+#### Private Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have private health insurance.
 ```{r}
 col_hi_private_2 <- col_hi_private %>% group_by(GEOID, Private_HI) %>% 
   summarize(count = sum(estimate)) %>% 
@@ -198,10 +206,9 @@ col_hi_private_2 <- col_hi_private %>% group_by(GEOID, Private_HI) %>%
   group_by(GEOID) %>% 
   mutate(pop = sum(count),
          prop = count/pop)
-```
 
-# Graph Private HI Coverage by proportion
-```{r}
+### Graph Private HI Coverage by proportion
+
 lvls_col_hi_private <- col_hi_private_2 %>% 
   filter(Private_HI == "Yes") %>% 
   arrange(prop) %>% 
@@ -214,20 +221,15 @@ ggplot(col_hi_private_2) +
                                    hjust = 1))
 ```
 
-## ANOVA TEST
-```{r}
-col_hi_private_2 <- col_hi_private_2 %>% filter(Private_HI == "Yes")
-col_hi_private_2 <- left_join(col_hi_private_2, col_covid, by = c("GEOID" = "ZIP"))
+As we see, there is a wide range of those populations that have private health insurance, ranging from FILL IN\% of the population in ZIP to only FILLIN\% of the residents in ZIP having private health insurance. But how does this relate to COVID cases?
 
-hi_lm <- lm(average ~ prop, data = col_hi_private_2)
-summary(hi_lm)
-anova(hi_lm)
-```
-We have a small R^2 value again of 0.05815. Our anova test suggests there is nothing significant between private health insurance and COVID-19 cases. The p-value is 0.1913
+**After performing the ANOVA test, we see evidence to suggest that there is a correlation with private health insurance and the COVID case rate. From the ANOVA test we got a significant p-value of 0.0004773 and a high R^2 value of FILL IN! We have strong evidence that there is a close connection between the proportion of the population that has private health insurance and the case rate for COVID. In this case, as the proportion that have private health insurance increases, we see a decrease in the case rate.**
 
 
 
 #### Public Health Insurance
+
+We breakdown each ZIP code by the proportion of residents who have public health insurance.
 ```{r}
 col_hi_public <- get_acs(geography = "zcta",
                            table = "B27003") %>% 
@@ -249,20 +251,14 @@ col_hi_public$Public_HI <- if_else(
 col_hi_public$Sex <- as_factor(col_hi_public$Sex)
 col_hi_public$Age <- as_factor(col_hi_public$Age)
 col_hi_public$Public_HI <- as_factor(col_hi_public$Public_HI) 
-```
 
-## Look at Public HI Coverage
-```{r}
 col_hi_public_2 <- col_hi_public %>% group_by(GEOID, Public_HI) %>% 
   summarize(count = sum(estimate)) %>% 
   ungroup() %>% 
   group_by(GEOID) %>% 
   mutate(pop = sum(count),
          prop = count/pop)
-```
 
-# Graph Public HI Coverage by proportion
-```{r}
 lvls_col_hi_public <- col_hi_public_2 %>% 
   filter(Public_HI == "Yes") %>% 
   arrange(prop) %>% 
@@ -272,26 +268,280 @@ ggplot(col_hi_public_2) +
   geom_col(aes(factor(GEOID, levels = lvls_col_hi_public), count, fill = Public_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1))
+                                   hjust = 1)) +
+    labs(title = "Public Health Insurance Seems to have a\nPositive Relation to COVID Case Rate",
+       x = "Proportion of Population that has Public Health Insurance",
+       y = "Case Rate (per 100,000)")
 ```
 
-## ANOVA TEST
+We still have a descent distinction between ZIP codes as to the proportion of their populations that have public insurance (ranges from 0\% to almost FILL IN\%). We can look at how these proportions relate to COVID in the following plot.
+
+
+
+
+### Transportation to Work
+
+Public transportation is typically used by those with lower incomes. This means of transportation would seem to have a higher chance of contracting COVID. Is our hypothesis true?
+
 ```{r}
-col_hi_public_2 <- col_hi_public_2 %>% filter(Public_HI == "Yes")
-col_hi_public_2 <- left_join(col_hi_public_2, col_covid, by = c("GEOID" = "ZIP"))
+col_trans <- get_acs(geography = "zcta",
+                       table = "B08301") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
 
-hi_lm <- lm(average ~ prop, data = col_hi_public_2)
-summary(hi_lm)
-anova(hi_lm)
+col_trans <- left_join(col_trans, variables_2018[, 1:2], by = "variable")
+col_trans$label <- as_factor(str_replace(col_trans$label, ".*!!(.*)", "\\1"))
+
+col_trans <- col_trans %>% 
+  mutate(use_public = if_else(str_detect(label, "^Pub.*")|str_detect(label, "Taxicab"), 
+                              TRUE, FALSE))
 ```
-R^2 = 0.01857. P-value of 0.4648 - not significant
 
-### Age
+
+```{r}
+col_trans_public <- col_trans %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(use_public == TRUE) %>% 
+  mutate(prop_public = sum(prop)) 
+
+lvls_trans <- col_trans_public %>% 
+  arrange(prop_public) %>% 
+  distinct(GEOID) %>% 
+  pull(GEOID)
+
+ggplot(col_trans) +
+  geom_col(aes(factor(GEOID, levels = lvls_trans), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Transportation Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Transportation \nType")
+```
+
+The percentage of the population that uses public transportation is not too high, never reaching above 17\%. Most Columbus residents provide their own motorized transportation, while in a few ZIP codes walking and working from home is quite popular. It's relationship to COVID can be seen in the following graph. 
+
+```{r}
+col_covid$ZIP <- as.character(col_covid$ZIP)
+col_trans_public <- left_join(col_trans_public, col_covid, by = c("GEOID" = "ZIP"))
+
+trans_lm <- lm(prop_public ~ as.factor(average), data = col_trans_public)
+summary(trans_lm)
+anova(trans_lm)
+
+ggplot(col_trans_public) +
+  geom_point(aes(x = prop_public, y = average)) +
+  labs(title = "Moderate Relationship Between Public Transportation and COVID",
+       x = "Proportion of People Using Public Transportation",
+       y = "Case Range (per 100,000)")
+```
+
+We see a moderate relationship between the use of public transportation and COVID. Conducting our tests gives us a correlation of 0.4950, R^2 equaling 0.245, and a p-value of 0.002612. Within the average categories, we see that the ZIP codes with average cases of 2085 and 3500 are significant in context to public transportation. This is an overall moderate correlation and indicates that as a ZIP code sees higher use of public transportation, it is also seeing a higher COVID rate.
+
 
 ### Occupation
 
-### Public Transportation
+During the COVID-19 outbreak in the United States, we were divided into 2 groups based off our occupations: essential and nonessential. Those who were deemed "essential" continued to go to work in the midst of the pandemic. On the other side of the spectrum, those who are known as "nonessential" continued to work from home. We can see how this separation could easily have an influence of cases.
+
+The Census Bureau breaks workers into five categories: Management, business, science and arts; service; sales and office; natural resources, construction, and maintenance; and production, transportation, and material moving. Although these categories undoubtedly may not be clear distinctions between essential and non-essential, we feel a good classification is to put natural resources, construction, and maintenance and production, transportation, material moving as essential and the other three categories as non-essential.
+
+```{r}
+col_occ <- get_acs(geography = "zcta",
+                     table = "C24060") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         variable %in% str_c("C24060_00", 2:6))
+col_occ <- left_join(col_occ, variables_2018[, 1:2], by = "variable")
+col_occ$label <- as_factor(str_replace(col_occ$label, ".*!!(.*)", "\\1"))
+```
+
+
+```{r}
+col_occ_ess <- col_occ %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(str_detect(label,
+                    "(Natural.*)|(Production.*)")) %>% 
+  mutate(prop_ess = sum(prop)) %>% 
+  select(GEOID, prop_ess) %>% 
+  distinct(GEOID, prop_ess)
+
+lvls_col_ess <- col_occ_ess %>% 
+  arrange(prop_ess) %>% 
+  pull(GEOID)
+
+ggplot(col_occ) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_ess), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Occupation Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Occupation \nType")
+```
+Our essential occupations were said to be in two categories: Natural resources, construction, and maintenance; and production, transportation, and material moving. The percentage of the population that has these occupations is not the majority, never reaching above 40\%. Most Columbus residents worked from home with their nonessential jobs. The relationship between essential occupations and COVID is illustrated next.
+
+
+```{r}
+ggplot(col_occ_ess) +
+  geom_point(aes(x = prop_ess, y = average)) +
+  labs(title = "Moderate Relationship Between Essential Occupations and COVID",
+       x = "Proportion of People Who Have Essential Occupations",
+       y = "Case Rate (per 100,000)")
+```
+
+
+
+```{r}
+## ANOVA TEST
+col_occ_ess <- left_join(col_occ_ess, col_covid, by = c("GEOID" = "ZIP"))
+
+ess_lm <- lm(prop_ess ~ as.factor(average), data = col_occ_ess)
+summary(ess_lm)
+anova(ess_lm)
+```
+
+Our test gives outputs of 0.00974 for our p-value (significant), R^2 equal to 0.39, and correlation of 0.6245. We see that essential occupations tend to have more cases of COVID-19.
+
 
 ### Citizenship
 
+The Census Bureau provides a distinction between different types of U.S. citizenship (e.g., naturalization, born in U.S., born abroad, etc.). We focus on the simple distinction between being a U.S. citizen and not.
+
+```{r}
+col_citizen_clean <- get_acs(geography = "zcta",
+                               table = "B05001") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         variable %in% str_c("B05001_00", 2:6))
+
+col_citizen <- left_join(col_citizen_clean, variables_2018[, 1:2], by = "variable")
+col_citizen$label <- as_factor(str_replace(col_citizen$label, ".*!!(.*)", "\\1"))
+```
+
+```{r}
+col_citizen <- col_citizen %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+col_citizen_prop_us <- col_citizen %>% 
+  filter(str_detect(label,
+                    "^U.S.")) %>% 
+  mutate(prop_us_citizen = sum(prop)) %>% 
+  select(GEOID, prop_us_citizen) %>% 
+  distinct(GEOID, prop_us_citizen)
+
+lvls_col_citizen <- col_citizen_prop_us %>% 
+  arrange(prop_us_citizen) %>% 
+  pull(GEOID)
+
+ggplot(col_citizen) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_citizen), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+ legend.position = "bottom") +
+  labs(title = "Citizenship Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Citizenship \nType")
+```
+The percentage of the population that is U.S. citizens is not less 75\% with an exception of one zipcode where that rate falls slightly. Let's explore the relationship to COVID in the graph below.
+
+
+```{r}
+col_citizen_prop_us <- left_join(col_citizen_prop_us, col_covid, by = c("GEOID" = "ZIP"))
+
+ggplot(col_citizen_prop_us) +
+  geom_point(aes(x = prop_us_citizen, y = average)) +
+  labs(title = "Slight Relationship Between U.S. Citizens and COVID",
+       x = "Proportion of People Who Are U.S. Citizens",
+       y = "Case Rate (per 100,000)")
+```
+
+
+```{r}
+## ANOVA TEST
+citizen_lm <- lm(prop_us_citizen ~ as.factor(average), data = col_citizen_prop_us)
+summary(citizen_lm)
+anova(citizen_lm)
+```
+
+We have a slight positive correlation between U.S. citizens and COVID-19 cases. That correlation is 0.1997. With that being said, our p-value is insignificant at 0.894. There seems to be no real relation between these two factors.
+
+
 ### Race
+
+Does data valiadate the statements about minorites being impacted by COVID more?
+
+```{r}
+col_race_clean <- get_acs(geography = "zcta",
+                            table = "B02001") %>% 
+  filter(GEOID %in% zip_code_col$zip,
+         variable %in% str_c("B02001_00", 2:8))
+
+col_race <- left_join(col_race_clean, variables_2018[, 1:2], by = "variable")
+col_race$label <- as_factor(str_replace(col_race$label, ".*!!(.*)", "\\1"))
+```
+
+
+```{r}
+col_race <- col_race %>% 
+  group_by(GEOID) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n)
+
+lvls_col_race <- col_race %>% 
+  filter(str_detect(label, "White alone")) %>% 
+  arrange(prop) %>% 
+  pull(GEOID)
+
+ggplot(col_race) +
+  geom_col(aes(factor(GEOID, levels = lvls_col_race), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Race Distribution for Each Columbus ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Race \nType")
+```
+Analyzing our race graph, we see black or African American individuals to make up a large proportion of the about 1/3 of the ZIP codes. In the other parts of Columbus's ZIP codes, white individuals make up most of the population. Once we pair COVID data with race, we may see interesting results.
+
+```{r}
+col_race <- left_join(col_race, col_covid, by = c("GEOID" = "ZIP"))
+ggplot(col_race) +
+  geom_point(aes(x = prop, y = average)) +
+  labs(title = "The White Population to COVID",
+       x = "Proportion of White People",
+       y = "Case Rate (per 100,000)")
+```
+
+
+
+```{r}
+## ANOVA TEST 
+race_lm <- lm(prop ~ as.factor(average), data = col_race)
+summary(race_lm)
+anova(race_lm)
+```
+
+After performing statistical test, we see no evidence of a relationship between white individuals and COVID cases. Our p-value is not significant and our correlation is approximately zero.
+
+
+## Conclusions
+Many of the variables investigated had a noteable correlation. Essential occupations saw a moderate positive relationship to COVID cases, that is, the two variables increase together. Public transportation also reported a positive correlation with COVID data. Race and citizenship had no relationship and no significant impact when compared to COVID cases.
+
+
+
+
+
+
+
