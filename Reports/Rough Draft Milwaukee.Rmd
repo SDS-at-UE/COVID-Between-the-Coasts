@@ -1,8 +1,10 @@
 ---
 title: "Milwaukee Metropolitan COVID-19 Data"
 author: "Timmy Miller"
-date: "9/8/2020"
-output: word_document
+date: "9/27/2020"
+output:
+  html_document:
+    df_print: paged
 ---
 
 
@@ -19,6 +21,7 @@ library(gridExtra)
 library(ggplot2)
 library(dplyr)
 library(tidycensus)
+source("../Scripts/functions.R")
 ```
 
 
@@ -36,29 +39,23 @@ Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
 
 
 ```{r, echo=FALSE}
-#Script for five plots comparing Cases/100000 people, Deaths/100000 people, Median Household Income, % of the Population who smokes, and % of the population older than 65 in the four counties of Metroplitan Milwaukee
 
-CASES <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=CASES_PER_HUNDTHOU))+geom_col(fill="blue")+xlab("County")+ylab("Cases Per 100000 People")
+CASES <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=CASES_PER_HUNDTHOU))+geom_col(fill="blue")+xlab("County")+ylab("Cases Per 100000 People")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Case Rates")
 
-DEATHS <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=DEATHS_HUNDTHOU))+geom_col(fill="red")+xlab("County")+ylab("Deaths Per 100000 People")
+DEATHS <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=DEATHS_HUNDTHOU))+geom_col(fill="red")+xlab("County")+ylab("Deaths Per 100000 People")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Death Rates")
 
-WHITEPOP <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=WHITEPOP))+geom_col(fill="orange")+xlab("County")+ylab("% of Population that is White")
+WHITEPOP <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=WHITEPOP))+geom_col(fill="orange")+xlab("County")+ylab("% of Population that is White")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="White Population Proportion")
 
-MHI <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=MHI))+geom_col(fill="green")+xlab("County")+ylab("Median Household Income ($)")
+MHI <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=MHI))+geom_col(fill="green")+xlab("County")+ylab("Median Household Income ($)")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Median Household Income")
 
-SMOKE<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="black")+xlab("County")+ylab("% of Population that Smokes")
+SMOKE<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="black")+xlab("County")+ylab("% of Population that Smokes")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Smoking Proportion")
 
-OLDER_PPL<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")
+OLDER_PPL<-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Age Information")
 
-INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct18to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")
+INSURANCE <- ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct18to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Health Insurance Data")
 ```
 
 
-
-```{r, echo=FALSE, fig.width=12, fig.height=8}
-#now you can arrange these five charts in a combined graphic for publication
-grid.arrange(CASES, DEATHS, WHITEPOP, MHI, OLDER_PPL, SMOKE, INSURANCE, top= "Milwaukee Metroplitan Area County COVID-19 Demographic Information")
-```
 
 
 
@@ -71,12 +68,13 @@ milwaukee_gini <- get_acs(geography = "county", table = "B19083", state= "WI")
 milwaukee_gini<- filter(milwaukee_gini, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
 Milwaukee_Covid_Data <- merge(Milwaukee_Covid_Data, milwaukee_gini, by = "NAME")
 
-GINI <- ggplot(Milwaukee_Covid_Data, aes(x=estimate, y=CASES_PER_HUNDTHOU))+geom_point()+geom_label_repel(aes(label=NAME), size=2)+labs(x="Gini Index", y="Cases Per 100000 People")
+
+GINI<-ggplot(milwaukee_gini)+geom_col(aes(x=NAME, y=estimate))+labs(title="GINI Index Data for Milwaukee Metropolitan Counties", x="County", y="GINI Index")+theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
 Income Data
-```{r}
+```{r, echo=FALSE}
 milwaukee_income<- get_acs(geography="County", state="WI", table="B19101")
 income <- load_variables(2018, "acs5")
 income <- income[c(11995:12011),]
@@ -88,7 +86,7 @@ income <- income[c(5:68),]
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 income_sixfig <- income %>% 
   group_by(NAME) %>% 
   mutate(n = sum(estimate),
@@ -105,7 +103,7 @@ lvls <-income_sixfig %>%
   arrange(prop_100K) %>% 
   pull(NAME)
 
-ggplot(income) +
+INCOME<-ggplot(income) +
   geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
@@ -120,29 +118,28 @@ ggplot(income) +
 ```
 
 Transportation Data
-```{r}
-milwaukee_transport <- get_acs(geography="County", state="WI", table="B08301")
-transport <- load_variables(2018, "acs5")
-transport <- transport[c(5228:5248),]
-transport<-rename(transport, c("variable"="name"))
-transport <- merge(transport, milwaukee_transport, by="variable")
-transport <- filter( transport, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
-transport$label <- as_factor(str_replace(transport$label, ".*!!(.*)", "\\1"))
-transport<- transport[c(5:84),]
+```{r, echo=FALSE}
+wis_transport <- get_acs(geography="County", state="WI", table="B08301") %>%
+  filter(NAME%in%c("Milwaukee County, Wisconsin", "Ozaukee County, Wisconsin", "Waukesha County, Wisconsin", "Washington County, Wisconsin"), 
+        variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
+
+mil_transport <- left_join(wis_transport, variables_2018[,1:2], by="variable")
+mil_transport$label <- as_factor(str_replace(mil_transport$label, ".*!!(.*)", "\\1"))
+  
+  
+  
+
 
 
 ```
 
-```{r}
-transport_mil <- transport %>% 
+```{r, echo=FALSE}
+transport_mil <- mil_transport %>% 
   group_by(NAME) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
   filter(label %in% c("Public transportation (excluding taxicab)",
-                      "Bus or trolley bus",
-                      "Streetcar or trolley car (carro publico in Puerto Rico)",
-                      "Subway or elevated",
-                      "Railroad")) %>% 
+                      "Taxicab")) %>% 
   mutate(prop_pub = sum(prop)) %>% 
   select(NAME, prop_pub) %>% 
   distinct(NAME, prop_pub)
@@ -150,8 +147,9 @@ transport_mil <- transport %>%
 lvls <- transport_mil %>% 
   arrange(prop_pub) %>% 
   pull(NAME)
+#lvls needs to be a vector (1 dimension) not a data frame (2 dimensions)
 
-ggplot(transport_mil) +
+TRANSPORT<-ggplot(mil_transport) +
   geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
@@ -164,7 +162,7 @@ ggplot(transport_mil) +
 
 
 Occupation
-```{r}
+```{r, echo=FALSE}
 milwaukee_occupation <- get_acs(geography="County", state="WI", table="C24060")
 occupation <- load_variables(2018, "acs5")
 occupation <- occupation[c(26451:26486),]
@@ -176,8 +174,20 @@ occupation$label <- as_factor(str_replace(occupation$label, ".*!!(.*)", "\\1"))
 
 ```
 
-```{r}
-occupation_essen <- occupation %>% 
+
+```{r, echo=FALSE}
+wis_occupation <- get_acs(geography="County", state="WI", table="C24060") %>%
+  filter(NAME%in%c("Milwaukee County, Wisconsin", "Ozaukee County, Wisconsin", "Waukesha County, Wisconsin", "Washington County, Wisconsin"), 
+        variable %in% c("C24060_002","C24060_003", "C24060_004", "C24060_005","C24060_006"))
+
+mil_occupation <- left_join(wis_occupation, variables_2018[,1:2], by="variable")
+mil_occupation$label <- as_factor(str_replace(mil_occupation$label, ".*!!(.*)", "\\1"))
+```
+
+
+
+```{r, echo=FALSE}
+occupation <- mil_occupation %>% 
   group_by(NAME) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -187,23 +197,23 @@ occupation_essen <- occupation %>%
   select(NAME, prop_essen) %>% 
   distinct(NAME, prop_essen)
 
-lvls <- occupation_essen %>% 
+lvls <- occupation %>% 
   arrange(prop_essen) %>% 
   pull(NAME)
 
-ggplot(occupation) +
+OCCUPATION<-ggplot(mil_occupation) +
   geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Occupations for Each Minneapolis Zip Code",
-       x = "Zip Code",
+  labs(title = "Occupations for Each Milwaukee Metropolitan County",
+       x = "County",
        y = "Proportion", 
        fill = "Occupation")
 ```
 
 Citizenship
-```{r}
+```{r, echo=FALSE}
 milwaukee_citizenship <- get_acs(geography="County", state="WI", table="B05001")
 citizenship <- load_variables(2018, "acs5")
 citizenship <- citizenship[c(946:957),]
@@ -217,7 +227,7 @@ citizenship<-citizenship[c(5:24),]
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 citi_status <- citizenship %>% 
   group_by(NAME) %>% 
   mutate(n = sum(estimate),
@@ -244,12 +254,8 @@ ggplot(citizenship) +
        fill = "Citizenship Status")
 ```
 
-```{r}
-ggplot(citi_status) +
-  geom_point(aes(x = prop_not_citizen, y = case_rate)) +
-  labs(title = "Correlation Between Not Being a U.S. Citizen and COVID",
-       x = "Proportion of Non U.S. Citizens",
-       y = "Case Rate (per 100,000)")
+
+```{r, echo=FALSE, fig.width=18, fig.height=25}
+#now you can arrange these five charts in a combined graphic for publication
+grid.arrange(CASES, DEATHS, WHITEPOP, MHI, OLDER_PPL, SMOKE, INSURANCE, GINI, OCCUPATION, INCOME, TRANSPORT, top= "Milwaukee Metroplitan Area County COVID-19 Demographic Information", ncol=2)
 ```
-
-
