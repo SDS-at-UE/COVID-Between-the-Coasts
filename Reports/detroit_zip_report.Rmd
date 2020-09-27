@@ -465,7 +465,7 @@ det_gini$label <- as_factor(str_replace(det_gini$label, ".*!!(.*)", "\\1"))
 Analyze Gini Index for Detroit  The scatterplot shows the correlation between Gini Index and COVID.
 ```{r}
 det_gini <- left_join(det_gini, det_covid, by = c("GEOID" = "ZIP_Code"))
-det_gini <- filter(det_gini, GEOID != '55450')
+
 
 ggplot(det_gini) +
   geom_point(aes(x = estimate, y = Cases_per_HundThou)) +
@@ -477,7 +477,9 @@ ggplot(det_gini) +
 
 Test correlation between gini index and case rate of COVID
 ```{r}
-cor.test(det_gini$estimate, det_gini$case_rate, use = "complete.obs")
+gini_cor<-cor.test(det_gini$estimate, det_gini$Cases_per_HundThou, method="pearson")
+gini_cor$p.value
+gini_cor$estimate
 ```
 The correlation between gini index and case rate is 0.059.  This is a low positive number with a p-value close to 1, so we can't conclude anything about gini index and COVID. 
 
@@ -532,7 +534,10 @@ ggplot(det_private_cor) +
 
 Test correlation between percentage of population with private health insurance and case rate of COVID
 ```{r}
-cor.test(det_private_cor$prop_priv, det_private_cor$case_rate, use = "complete.obs")
+private_cor<-cor.test(det_private_cor$prop_priv, det_private_cor$Cases_per_HundThou, method="pearson")
+
+private_cor$p.value
+private_cor$estimate
 ```
 The correlation between private health insurance and case rate is -0.803.  This is a big negative correlation. People with private health insurance have been contracting less cases of COVID. 
 
@@ -576,7 +581,10 @@ ggplot(det_public_cor) +
 
 Test correlation between percentage of population with public health insurance and case rate of COVID
 ```{r}
-cor.test(det_public_cor$prop_public, det_public_cor$case_rate, use = "complete.obs")
+public_cor<-cor.test(det_public_cor$prop_public, det_public_cor$Cases_per_HundThou, method= "pearson")
+public_cor$p.value
+public_cor$estimate
+
 ```
 The correlation between public health insurance and case rate is 0.686.  This is a positive realtionship.  The people with public insurance have been contracting more cases of COVID. 
 
@@ -636,7 +644,9 @@ ggplot(det_trans_cor) +
 Test the correlation between the percentage of the population using public transportation and case rate of COVID
 ```{r}
 det_trans_cor <- left_join(det_transport_public, detroit_covid, by = c("GEOID"="ZIP"))
-cor.test(det_trans_cor$prop_pub, det_trans_cor$case_rate, use = "complete.obs")
+trans_cor<- cor.test(det_trans_cor$prop_pub, det_trans_cor$Cases_per_HundThou, method="pearson")
+trans_cor$p.value
+trans_cor$estimate
 ```
 The correlation between public transportation and case rate is 0.549.  This is a positive relationship meaning people using public transportation are more likely to get COVID.  
 
