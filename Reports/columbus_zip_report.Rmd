@@ -382,7 +382,6 @@ ggplot(col_hi_private_2) +
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
-
 ```
 
 As we see, there is a wide range of those populations that have private health insurance, ranging from 97\% of the population in 43210 to only 19\% of the residents in 43222 having private health insurance. But how does this relate to COVID cases?
