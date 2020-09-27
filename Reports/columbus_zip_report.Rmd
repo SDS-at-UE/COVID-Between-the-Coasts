@@ -31,7 +31,9 @@ The goal of this analysis is to find any connections, if they exist, between dem
 
 Throughout the document, we report the $p$-value for several statistical tests. This does nothing more than provide a measure on the amount of evidence we have to suggest statistical significance. The closer the $p$-value is to 0 the stronger the evidence that our measure (correlation most of the time) is different than 0. 
 
-**Conclusions:**
+**Conclusions:** First, we looked at the data that was available for COVID from the Columbus Public Health Department. The data was not in exact numbers, instead it was given in ranges. Which is why we had to perform an ANOVA test instead of a normal correlation test. There were no outliers as Columbus had a nice distribution of COVID within the ZIP codes.
+
+We found positive correlations for the income, essential occupations, public transportation, and public transit variables. Meaning those variables had evidence to suggest that they do impact the COVID case rate. The most significant variable that we had was public health insurance. This means that the ZIP codes with a higher proportion of people that had public health insurance indicated a higher COVID case rate. This had a very significant p-value of 0.0003.
 
 ## Analysis
 
@@ -385,7 +387,7 @@ ggplot(col_hi_private_2) +
 
 As we see, there is a wide range of those populations that have private health insurance, ranging from 97\% of the population in 43210 to only 19\% of the residents in 43222 having private health insurance. But how does this relate to COVID cases?
 
-After performing the ANOVA test, we see evidence to suggest that there is not a correlation with private health insurance and the COVID case rate. From the ANOVA test we got an insignificant p-value of 0.191 and a high R^2 value of 0.0582!In this case, as the proportion that have private health insurance increases, we see no change in the case rate.
+After performing the ANOVA test, we see evidence to suggest that there is not a correlation with private health insurance and the COVID case rate. From the ANOVA test we got an insignificant p-value of 0.191 and an R^2 value of 0.0582. In this case, as the proportion that have private health insurance increases, we see no change in the case rate.
 
 #### Public Health Insurance
 
@@ -493,7 +495,8 @@ trans_lm <- lm(prop_public ~ as.factor(average), data = col_trans_public)
 We see a moderate relationship between the use of public transportation and COVID. Conducting our tests gives us a correlation of 0.4950, R^2 equaling 0.245, and a p-value of 0.002612. Within the average categories, we see that the ZIP codes with average cases of 2085 and 3500 are significant in context to public transportation. This is an overall moderate correlation and indicates that as a ZIP code sees higher use of public transportation, it is also seeing a higher COVID rate.
 
 ## Conclusions
-Many of the variables investigated had a noteable correlation. Essential occupations saw a moderate positive relationship to COVID cases, that is, the two variables increase together. Public transportation also reported a positive correlation with COVID data. Race and citizenship had no relationship and no significant impact when compared to COVID cases.
+
+Many of the variables investigated had a noteable correlation. Essential occupations saw a moderate positive relationship to COVID cases, that is, the two variables increase together. Public transportation also reported a positive correlation with COVID data. The proportion of people who make over 100K additionally saw a positive correlation with COVID data. Race and citizenship had no relationship and no significant impact when compared to COVID cases.
 
 
 
