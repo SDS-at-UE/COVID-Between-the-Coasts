@@ -1,6 +1,6 @@
 ---
 title: 'COVID-19:  A Midwestern Reporting Project of WNIN and the University of Evansville'
-author: "Minneapolis Zip Code Analysis"
+author: "Detroit Zip Code Analysis"
 date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 urlcolor: blue
@@ -455,11 +455,11 @@ The correlation between the proportion of Black and African American within a ZI
 ## Gini Index
 
 ```{r}
-minn_gini <- get_acs(geography = "zcta",
+det_gini <- get_acs(geography = "zcta",
                         table = "B19083") %>% 
-  filter(GEOID %in% zip_code_minn$zip)
-minn_gini <- left_join(minn_gini, variables_2018[, 1:2], by = "variable")
-minn_gini$label <- as_factor(str_replace(minn_gini$label, ".*!!(.*)", "\\1"))
+  filter(GEOID %in% zip_code_det$zip)
+det_gini <- left_join(det_gini, variables_2018[, 1:2], by = "variable")
+det_gini$label <- as_factor(str_replace(det_gini$label, ".*!!(.*)", "\\1"))
 ```
 
 Analyze Gini Index for Minneapolis.  The scatterplot shows the correlation between Gini Index and COVID.
