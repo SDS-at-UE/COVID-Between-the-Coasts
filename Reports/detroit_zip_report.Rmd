@@ -462,14 +462,14 @@ det_gini <- left_join(det_gini, variables_2018[, 1:2], by = "variable")
 det_gini$label <- as_factor(str_replace(det_gini$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyze Gini Index for Minneapolis.  The scatterplot shows the correlation between Gini Index and COVID.
+Analyze Gini Index for Detroit  The scatterplot shows the correlation between Gini Index and COVID.
 ```{r}
-minn_gini <- left_join(minn_gini, minneapolis_covid, by = c("GEOID" = "ZIP"))
-minn_gini <- filter(minn_gini, GEOID != '55450')
+det_gini <- left_join(det_gini, det_covid, by = c("GEOID" = "ZIP_Code"))
+det_gini <- filter(det_gini, GEOID != '55450')
 
-ggplot(minn_gini) +
-  geom_point(aes(x = estimate, y = case_rate)) +
-  labs(title = "Gini Index for Each Minneapolis Zip Code",
+ggplot(det_gini) +
+  geom_point(aes(x = estimate, y = Cases_per_HundThou)) +
+  labs(title = "Gini Index for Each Detroit Zip Code",
        x = "Gini Index",
        y = "Case Rate")
 
@@ -477,24 +477,24 @@ ggplot(minn_gini) +
 
 Test correlation between gini index and case rate of COVID
 ```{r}
-cor.test(minn_gini$estimate, minn_gini$case_rate, use = "complete.obs")
+cor.test(det_gini$estimate, det_gini$case_rate, use = "complete.obs")
 ```
 The correlation between gini index and case rate is 0.059.  This is a low positive number with a p-value close to 1, so we can't conclude anything about gini index and COVID. 
 
 ## Insurance Coverage(Public VS. Private)
 
 ```{r}
-minn_insurance <- get_acs(geography = "zcta",
+det_insurance <- get_acs(geography = "zcta",
                            table = "B18135") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
+  filter(GEOID %in% zip_code_det$zip,
          !variable %in% c("B18135_023"))
-minn_insurance <- left_join(minn_insurance, variables_2018[, 1:2], by = "variable")
-minn_insurance$label <- as_factor(str_replace(minn_insurance$label, ".*!!(.*)", "\\1"))
+det_insurance <- left_join(det_insurance, variables_2018[, 1:2], by = "variable")
+det_insurance$label <- as_factor(str_replace(det_insurance$label, ".*!!(.*)", "\\1"))
 ```
 
 Analyze private health insurance coverage
 ```{r}
-minn_insurance_private <- minn_insurance %>% 
+det_insurance_private <- det_insurance %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -503,13 +503,13 @@ minn_insurance_private <- minn_insurance %>%
   select(GEOID, prop_priv) %>% 
   distinct(GEOID, prop_priv)
 
-lvls <- minn_insurance_private %>% 
+lvls <- det_insurance_private %>% 
   arrange(prop_priv) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_insurance <- left_join(det_insurance, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_insurance) +
+ggplot(det_insurance) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
@@ -522,9 +522,9 @@ ggplot(minn_insurance) +
 
 The scatterplot shows the correlation between private health insurance and COVID.
 ```{r}
-minn_private_cor <- left_join(minn_insurance_private, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_private_cor) +
-  geom_point(aes(x = prop_priv, y = case_rate)) +
+det_private_cor <- left_join(det_insurance_private, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_private_cor) +
+  geom_point(aes(x = prop_priv, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Private Health Insurance and COVID",
        x = "Proportion of People with Private Health Insurance",
        y = "Case Rate (per 100,000)")
@@ -532,13 +532,13 @@ ggplot(minn_private_cor) +
 
 Test correlation between percentage of population with private health insurance and case rate of COVID
 ```{r}
-cor.test(minn_private_cor$prop_priv, minn_private_cor$case_rate, use = "complete.obs")
+cor.test(det_private_cor$prop_priv, det_private_cor$case_rate, use = "complete.obs")
 ```
 The correlation between private health insurance and case rate is -0.803.  This is a big negative correlation. People with private health insurance have been contracting less cases of COVID. 
 
 Analyze public health insurance coverage
 ```{r}
-minn_insurance_public <- minn_insurance %>% 
+det_insurance_public <- det_insurance %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -547,13 +547,13 @@ minn_insurance_public <- minn_insurance %>%
   select(GEOID, prop_public) %>% 
   distinct(GEOID, prop_public)
 
-lvls <- minn_insurance_public %>% 
+lvls <- det_insurance_public %>% 
   arrange(prop_public) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_insurance <- left_join(det_insurance, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_insurance) +
+ggplot(det_insurance) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
@@ -566,9 +566,9 @@ ggplot(minn_insurance) +
 
 The scatterplot shows the correlation between public health insurance and COVID. 
 ```{r}
-minn_public_cor <- left_join(minn_insurance_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_public_cor) +
-  geom_point(aes(x = prop_public, y = case_rate)) +
+det_public_cor <- left_join(det_insurance_public, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_public_cor) +
+  geom_point(aes(x = prop_public, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Public Health Insurance and COVID",
        x = "Proportion of People with Public Health Insurance",
        y = "Case Rate (per 100,000)")
@@ -576,24 +576,24 @@ ggplot(minn_public_cor) +
 
 Test correlation between percentage of population with public health insurance and case rate of COVID
 ```{r}
-cor.test(minn_public_cor$prop_public, minn_public_cor$case_rate, use = "complete.obs")
+cor.test(det_public_cor$prop_public, det_public_cor$case_rate, use = "complete.obs")
 ```
 The correlation between public health insurance and case rate is 0.686.  This is a positive realtionship.  The people with public insurance have been contracting more cases of COVID. 
 
 ## Transportation to Work
 
 ```{r}
-minn_transport <- get_acs(geography = "zcta",
+det_transport <- get_acs(geography = "zcta",
                        table = "B08301") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
+  filter(GEOID %in% zip_code_det$zip,
          !variable %in% c("B08301_010"))
-minn_transport <- left_join(minn_transport, variables_2018[, 1:2], by = "variable")
-minn_transport$label <- as_factor(str_replace(minn_transport$label, ".*!!(.*)", "\\1"))
+det_transport <- left_join(det_transport, variables_2018[, 1:2], by = "variable")
+det_transport$label <- as_factor(str_replace(det_transport$label, ".*!!(.*)", "\\1"))
 ```
 
 Analyzing public transporation
 ```{r}
-minn_transport_public <- minn_transport %>% 
+det_transport_public <- det_transport %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
@@ -606,18 +606,18 @@ minn_transport_public <- minn_transport %>%
   select(GEOID, prop_pub) %>% 
   distinct(GEOID, prop_pub)
 
-lvls <- minn_transport_public %>% 
+lvls <- det_transport_public %>% 
   arrange(prop_pub) %>% 
   pull(GEOID)
 
-minn_transport <- left_join(minn_transport, minneapolis_covid, by = c("GEOID" = "ZIP"))
+det_transport <- left_join(det_transport, detroit_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_transport) +
+ggplot(det_transport) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Transportation Distribution for Each Minneapolis Zip Code",
+  labs(title = "Transportation Distribution for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Transportation")
@@ -625,9 +625,9 @@ ggplot(minn_transport) +
 
 The scatterplot shows the correlation between public transportation and COVID.
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_trans_cor) +
-  geom_point(aes(x = prop_pub, y = case_rate)) +
+det_trans_cor <- left_join(det_transport_public, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_trans_cor) +
+  geom_point(aes(x = prop_pub, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Public Transportation and COVID",
        x = "Proportion of People Using Public Transportation",
        y = "Case Rate (per 100,000)")
@@ -635,8 +635,8 @@ ggplot(minn_trans_cor) +
 
 Test the correlation between the percentage of the population using public transportation and case rate of COVID
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID"="ZIP"))
-cor.test(minn_trans_cor$prop_pub, minn_trans_cor$case_rate, use = "complete.obs")
+det_trans_cor <- left_join(det_transport_public, detroit_covid, by = c("GEOID"="ZIP"))
+cor.test(det_trans_cor$prop_pub, det_trans_cor$case_rate, use = "complete.obs")
 ```
 The correlation between public transportation and case rate is 0.549.  This is a positive relationship meaning people using public transportation are more likely to get COVID.  
 
