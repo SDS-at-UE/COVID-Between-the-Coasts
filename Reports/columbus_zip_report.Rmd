@@ -104,7 +104,7 @@ ggplot(col_occ) +
        fill = "Occupation \nType")
 ```
 
-Our essential occupations were said to be in two categories: Natural resources, construction, and maintenance; and production, transportation, and material moving. The percentage of the population that has these occupations is not the majority, never reaching above 40\%. Most Columbus residents worked from home with their nonessential jobs. 
+Our essential occupations were said to be in two categories: Natural resources, construction, and maintenance; and production, transportation, and material moving. The percentage of the population that has these occupations is not the majority, never reaching above 40\%. Most Columbus residents worked from home with nonessential jobs. 
 
 ```{r}
 col_occ_ess$GEOID <- as.numeric(col_occ_ess$GEOID)
@@ -114,7 +114,7 @@ col_occ_ess <- left_join(col_occ_ess, col_covid, by = c("GEOID" = "ZIP"))
 ess_lm <- lm(prop_ess ~ as.factor(average), data = col_occ_ess)
 ```
 
-Our test gives outputs of 0.00974 for our p-value (significant), R^2 equal to 0.39, and correlation of 0.6245. This tells us that there is a moderate correlation between the percentage of the population working "essential" jobs and the rate of COVID cases: as a ZIP code has more essential workers, it also has a higher COVID case rate.
+Our test gives outputs of 0.00974 for our p-value (significant), R^2 equal to 0.39, and correlation of 0.6245. This tells us that there is a moderate correlation between the percentage of the population working "essential" jobs and the rate of COVID cases. As a ZIP code has more essential workers, it also has a higher COVID case rate.
 
 ### Citizenship
 
@@ -157,7 +157,7 @@ ggplot(col_citizen) +
        fill = "Citizenship \nType")
 ```
 
-The percentage of the population that is U.S. citizens is not less 75\% with an exception of one zipcode where that rate falls slightly. 
+The percentage of the population that is U.S. citizens is never less 75\% with an exception of one zipcode where that rate falls slightly. 
 
 ```{r}
 col_citizen_prop_us$GEOID <- as.numeric(col_citizen_prop_us$GEOID)
@@ -167,7 +167,7 @@ col_citizen_prop_us <- left_join(col_citizen_prop_us, col_covid, by = c("GEOID" 
 citizen_lm <- lm(prop_us_citizen ~ as.factor(average), data = col_citizen_prop_us)
 ```
 
-We have a slight positive correlation between U.S. citizens and COVID-19 cases. That correlation is 0.1997. With that being said, our p-value is insignificant at 0.894. There seems to be no real relation between these two factors meaning ZIP codes with a higher proportion of U.S citizens seem to not have a higher COVID rate.
+We have a slight positive correlation between U.S. citizens and COVID-19 cases. That correlation is 0.1997. With that being said, our p-value is insignificant at 0.894. There seems to be no real relation between these two factors.
 
 ### Income
 ```{r}
@@ -491,7 +491,7 @@ col_trans_public <- left_join(col_trans_public, col_covid, by = c("GEOID" = "ZIP
 trans_lm <- lm(prop_public ~ as.factor(average), data = col_trans_public)
 ```
 
-We see a moderate relationship between the use of public transportation and COVID. Conducting our tests gives us a correlation of 0.4950, R^2 equaling 0.245, and a p-value of 0.002612. Within the average categories, we see that the ZIP codes with average cases of 2085 and 3500 are significant in context to public transportation. This is an overall moderate correlation and indicates that as a ZIP code sees higher use of public transportation, it is also seeing a higher COVID rate.
+We see a moderate relationship between the use of public transportation and COVID. Conducting our tests gives us a correlation of 0.4950, R^2 equaling 0.245, and a p-value of 0.002612. This is an overall moderate correlation and indicates that as a ZIP code sees higher use of public transportation, it is also seeing a higher COVID rate.
 
 ## Conclusions
 
