@@ -9,9 +9,8 @@ library(stringr)
 library(sf)
 library(tigris)
 
-# University of Evansville Purple Aces
-
-# Hello Dr. Weber
+census_api_key("7cf0c318e343f70900ce428bc2646b7f776807e5",
+              install = TRUE)
 
 ### This loads the necessary variable-to-table data to connect table
 ### numbers in the Census dataset to their actual meanings. It should
