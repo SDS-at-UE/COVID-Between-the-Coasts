@@ -1,0 +1,74 @@
+---
+title: "chicago_updated_data"
+author: "Pearl Muensterman"
+date: "10/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9)
+options(scipen = 999, digits = 4)
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(sf)
+library(tigris)
+options(tigris_use_cache = TRUE)
+chicago_covid <- read_csv("../Data/chicago_updated_cases.csv",
+                          col_types = cols(Zip = col_character()))
+chicago_covid <- na.omit(chicago_covid)
+chicago_covid <- chicago_covid %>% 
+  mutate(case_rate = Cases/Population*100000) %>% 
+  mutate(pos_rate = Cases/Tested)
+zip_code <- read_csv("../Data/zip_county.csv")
+zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
+                                        state == "IL")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_chicago <- filter(geometry_zip, GEOID %in% zip_code_chicago$zip)
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+```
+
+## Background
+
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Chicago. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). 
+
+COVID-19 case numbers were obtained from the Illinois Department of Public Health
+(https://www.dph.illinois.gov/covid19/covid19-statistics)
+
+
+**Conclusions:** 
+After analyzing various factors, we have identified a strong relationship of COVID-19 case rates to essential occupations and nonessential occupations. Moderate relationships exist between half of the variables investigated including six-figure incomes, incomes of $30,000 and less, public transportation, public and private health insurance, and the Gini Index. Individuals reporting below the poverty line and those who are not citizens of the United States have a slight correlation. Lastly, we saw little to no relationship in people over 60 and black or African American individuals.
+
+We see in almost every instance where ZIP code 60604 is an outlier with a case rate of over 5000. There is a considerably smaller population within this ZIP code compared to its neighboring ZIP codes. With this being said, over 80% of ZIP 60604 has been tested for COVID-19 when this is not the case for most ZIP codes.
+
+
+## Analysis
+
+### COVID
+
+We take a look at the case rate (per 100,000 population) of COVID in the ZIP codes of Chicago, IL. 
+
+```{r}
+chicago_covid_geo <- left_join(chicago_covid, geometry_zip_chicago, by = c("Zip" = "GEOID"))
+chicago_covid_geo <- st_as_sf(chicago_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = chicago_covid_geo$case_rate)
+chicago_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", chicago_covid_geo$Zip,
+                            "</strong><br /> Case Rate ", signif(chicago_covid_geo$case_rate, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(case_rate)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ case_rate,
+            title = "Case Rate (per 100,000)",
+            opacity = 1)
+```
