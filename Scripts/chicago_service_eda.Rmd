@@ -1,0 +1,25 @@
+---
+title: "COVID Impact on Chicago Service Workers-EDA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("functions.R")
+```
+
+## Maya Frederick
+
+
+
+## Ethan Morlock
+
+
+
+## Pearl Muensterman
+
+
+
+## Timmy Miller
+
+
