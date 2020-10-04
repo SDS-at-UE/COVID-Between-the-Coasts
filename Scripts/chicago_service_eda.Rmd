@@ -6,6 +6,13 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("functions.R")
+library(tidycensus)
+library(tidyverse)
+zip_code <- read_csv("../Data/zip_county.csv")
+zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
+                                        state == "IL")
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
 ```
 
 ## Maya Frederick
@@ -13,7 +20,31 @@ source("functions.R")
 
 
 ## Ethan Morlock
+```{r}
+chicago_sex_by_age_his_lat <- get_acs(geography = "zcta",
+                                   year = 2018,
+                                   table = "B01001I") %>% 
+                              filter(GEOID %in% zip_code_chicago$zip,
+                                     variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
+chicago_sex_by_age_his_lat <- left_join(chicago_sex_by_age_his_lat, variables_2018[, 1:2], by = "variable")
+chicago_sex_by_age_his_lat$label <- as_factor(str_replace(chicago_sex_by_age_his_lat$label, ".*!!(.*)", "\\1"))
 
+chicago_HI <- get_acs(geography = "zcta",
+                   year = 2018,
+                   table = "B27001") %>% 
+              filter(GEOID %in% zip_code_chicago$zip,
+                     variable %in% c("B27001_001"))
+chicago_HI <- left_join(chicago_HI, variables_2018[, 1:2], by = "variable")
+chicago_HI$label <- as_factor(str_replace(chicago_HI$label, ".*!!(.*)", "\\1"))
+
+chicago_race <- get_acs(geography = "zcta",
+                     year = 2018,
+                     table = "B02001") %>% 
+                filter(GEOID %in% zip_code_chicago$zip,
+                       variable %in% c("B02001"))
+chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
+chicago_race$label <- as_factor(str_replace(chicago_race$label, ".*!!(.*)", "\\1"))
+```
 
 
 ## Pearl Muensterman
