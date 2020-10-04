@@ -51,6 +51,31 @@ chicago_race$label <- as_factor(str_replace(chicago_race$label, ".*!!(.*)", "\\1
 
 
 ## Pearl Muensterman
+```{r}
+#Occupation by Class Worker
+chicago_occ_by_class <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "C24060") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         variable %in% c("C24060_007", "C24060_009", "C24060_011",
+                                         "C24060_012", "C24060_031","C24060_033",
+                                         "C24060_035", "C24060_036"))
+chicago_occ_by_class <- left_join(chicago_occ_by_class, variables_2018[, 1:2], by = "variable")
+chicago_occ_by_class$label <- as_factor(str_replace(chicago_occ_by_class$label, ".*!!(.*)", "\\1"))
+```
+Employee of private company workers: total (C24060_007); service occupation (C24060_009); natural resources, construction, and maintenance occupations (C24060_011); and production, transportation, and material moving occupations (C24060_012). 
+Self-employed in own not incorporated business workers and unpaid family workers: total (C24060_031); service occupation (C24060_033); natural resources, construction, and maintenance occupations (C24060_035); and production, transportation, and material moving occupations (C24060_036).
+
+```{r}
+#Sex by Age Total
+chicago_sex_by_age <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B01001") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         variable %in% c("B01001_001"))
+chicago_sex_by_age <- left_join(chicago_sex_by_age, variables_2018[, 1:2], by = "variable")
+chicago_sex_by_age$label <- as_factor(str_replace(chicago_sex_by_age$label, ".*!!(.*)", "\\1"))
+```
 
 
 
