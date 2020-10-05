@@ -336,7 +336,7 @@ chicago_occ_cor_sans60604 <- chicago_occ_cor %>%
   filter(case_rate < 5000)
 ```
 
-We see our strongest correlation so far comparing essential workers to the number of COVID cases with a correlation value of `r cor.test(chicago_occ_cor_sans60604$prop_essential, chicago_occ_cor_sans60604$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(chicago_occ_cor_sans60604$prop_essential, chicago_occ_cor_sans60604$case_rate, use = "complete.obs")$p.value`! This means that as the number of essential workers increases, we find a higher the number of COVID cases and vice versa.
+We see our strongest correlation so far comparing essential workers to the number of COVID cases with a correlation value of `r cor.test(chicago_occ_cor_sans60604$prop_essential, chicago_occ_cor_sans60604$case_rate, use = "complete.obs")$estimate` ($p=$ `r cor.test(chicago_occ_cor_sans60604$prop_essential, chicago_occ_cor_sans60604$case_rate, use = "complete.obs")$p.value`) This means that as the number of essential workers increases, we find a higher the number of COVID cases and vice versa.
 
 
 ### Age

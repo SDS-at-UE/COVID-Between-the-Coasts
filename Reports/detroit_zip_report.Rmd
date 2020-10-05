@@ -1,12 +1,11 @@
 ---
 title: 'COVID-19:  A Midwestern Reporting Project of WNIN and the University of Evansville'
-author: "Minneapolis Zip Code Analysis"
+author: "Detroit Zip Code Analysis"
 date: "Analysis performed by Maya Frederick, Timmy Miller, Ethan Morlock, Pearl Muensterman, and Darrin Weber, Ph.D."
 output: html_document
 urlcolor: blue
 ---
-## Data Issues
-48209, 48212, 48216, 48217, 48226, 48233, 48242, 48243
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidycensus)
@@ -22,6 +21,8 @@ variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_det <- zip_code %>% filter(primary_city == "Detroit",
                                       state == "MI")
+geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
+geometry_zip_det <- filter(geometry_zip, GEOID %in% zip_code_det$zip)
 det_covid <- read_csv("../Data/Detroit Rates.csv",
                       col_types = cols(ZIP_Code = col_character())) %>%
   filter(ZIP_Code %in% zip_code_det$zip)
@@ -38,11 +39,40 @@ detroit_covid <- select(detroit_covid, ZIP, Population, Deaths_per_HundThou, Cas
 
 ## Background
 
-The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Detroit. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Detroit Department of Health. (https://codtableau.detroitmi.gov/t/DHD/views/CityofDetroit-PublicCOVIDDashboard/ZIPCodeCaseRatesDashboard?%3AisGuestRedirectFromVizportal=y&%3Aembed=y). 
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Detroit. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Detroit Department of Health.  This data was pulled on September 17, 2020 from these resources.  (https://codtableau.detroitmi.gov/t/DHD/views/CityofDetroit-PublicCOVIDDashboard/ZIPCodeCaseRatesDashboard?%3AisGuestRedirectFromVizportal=y&%3Aembed=y). 
 
 ## Summary
 
+To start we filtered out the zip codes 48209, 48212, 48216, 48217, 48226, 48233, 48242, 48243.  We filtered these out because some of them had no data included with case or death rate, which is likely due to an extremely small population or a non-population zip code.  None of our demographics showed significant p-values when testing for correlations between the demographics and case rate.  This seems odd; however, populations across Detroit are all relatively equally impacted by COVID-19.  We also looked at the correaltion between death rate and the demographics: occupations, citizenship, income, and race.  The only death rates with a significant p-values were the death rates for essential and nonessential workers. The correlation between essential workers and death rate was -0.576 and the correlation between nonessential workers and death rate was 0.576.  
+
 ## Analysis
+
+## COVID
+
+```{r}
+det_covid_geo <- left_join(detroit_covid, geometry_zip_det, by = c("ZIP" = "GEOID"))
+det_covid_geo <- st_as_sf(det_covid_geo, sf_column_name = "geometry")
+```
+
+```{r}
+pal <- colorNumeric(palette = "viridis", domain = det_covid_geo$Cases_per_HundThou)
+det_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", det_covid_geo$ZIP,
+                            "</strong><br /> Case Rate ", signif(det_covid_geo$Cases_per_HundThou, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal(Cases_per_HundThou)) %>% 
+  addLegend("bottomright",
+            pal = pal,
+            values = ~ Cases_per_HundThou,
+            title = "Case Rate (per 100,000)",
+            opacity = 1)
+```
+We see that COVID case rate is spread throughout Detroit, however ZIPs 48211, 48235, and 48207 do stand out as having a high case rate.
 
 ## Occupations (Essential VS. Nonessential)
 
@@ -56,6 +86,10 @@ det_occupation <- left_join(det_occupation, variables_2018[, 1:2], by = "variabl
 
 det_occupation$label <- as_factor(str_replace(det_occupation$label, ".*!!(.*)", "\\1"))
 ```
+
+Many "essential" workers tend to be towards the lower end of the income bracket. We look at whether there is a relationship between essential workers and contracting COVID.
+
+The Census Bureau breaks workers into five categories: Management, business, science and arts; service; sales and office; natural resources, construction, and maintenance; and production, transportation, and material moving. Although these categories are undoubtedly not clear distinctions between essential and non-essential, we feel a good classification is to put natural resources, construction, and maintenance and production, transportation, material moving as essential and the other three categories as non-essential. 
 
 Analyzing Essential Occupations in Detroit.
 ```{r}
@@ -96,11 +130,8 @@ ggplot(det_occupation_essen_cor) +
        y = "Case Rate (per 100,000 people)")
 ```
 
-Test correlation between population with essential jobs to case rate of COVID. 
-```{r}
-cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between essential jobs and case rate is shown to be -0.297.  This negative correlation means the more essential jobs have a lower rate of contracting COVID. 
+When we test our correlation to cases, we get a value of `r cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_occupation_essen_cor$prop_essen, det_occupation_essen_cor$Cases_per_HundThou, use = "complete.obs")$p.value`). This tells us that there is a slightly negative correlation between the percentage of the population working "essential" jobs and the rate of COVID cases: as a ZIP code has more essential workers, it also has a lower COVID case rate.  However, the p-value is insignificant so we cannot make this assumption. 
+
 
 The scatterplot shows the correlation between essential jobs and COVID deaths.
 ```{r}
@@ -112,11 +143,7 @@ ggplot(det_occupation_essen_cor_death) +
        y = "Death Rate (per 100,000 people)")
 ```
 
-Test correlation between population with essential jobs to death rate of COVID.
-```{r}
-cor.test(det_occupation_essen_cor_death$prop_essen, det_occupation_essen_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between death rate and COVID is -0.576.  The negative correlation shows the more essential workers are less likely to die when contracting COVID. 
+When we test our correlation, we get a value of `r cor.test(det_occupation_essen_cor_death$prop_essen, det_occupation_essen_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_occupation_essen_cor_death$prop_essen, det_occupation_essen_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`). This tells us that there is a moderate correlation between the percentage of the population working "essential" jobs and the rate of COVID deaths: as a ZIP code has more essential workers, it also has a lower COVID death rate.
 
 Analyzing Nonessential Occupations in Detroit.
 ```{r}
@@ -158,11 +185,8 @@ ggplot(det_occupation_nonessen_cor) +
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between population with nonessential jobs to the case rate of COVID.
-```{r}
-cor.test(det_occupation_nonessen_cor$prop_nonessen, det_occupation_nonessen_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between nonessential jobs and case rate is 0.297.  This means the people with nonessential jobs are more likely to get COVID. 
+When we test our correlation, we get a value of `r cor.test(det_occupation_nonessen_cor$prop_nonessen, det_occupation_nonessen_cor$Cases_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_occupation_nonessen_cor$prop_nonessen, det_occupation_nonessen_cor$Cases_per_HundThou, use = "complete.obs")$p.value`). This tells us that there is a slight correlation between the percentage of the population working "nonessential" jobs and the rate of COVID cases: as a ZIP code has more nonessential workers, it also has a higher COVID case rate.  However, the p-value is insignificant so we cannot make this assumption.
+
 The scatterplot shows the correlation between nonessential jobs and COVID deaths for ZIP codes.
 ```{r}
 det_occupation_nonessen_cor_death <- left_join(det_occupation_nonessen, detroit_covid, by = c("GEOID" = "ZIP"))
@@ -173,13 +197,11 @@ ggplot(det_occupation_nonessen_cor_death) +
        y = "Death Rate (per 100,000)")
 ```
 
-Test correlation between population with nonessential jobs to the death rate of COVID.
-```{r}
-cor.test(det_occupation_nonessen_cor_death$prop_nonessen, det_occupation_nonessen_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between nonessential workers and death rate is 0.576.  This means nonessential workers who contract COVID are more likely to die from it. 
+When we test our correlation, we get a value of `r cor.test(det_occupation_nonessen_cor_death$prop_nonessen, det_occupation_nonessen_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_occupation_nonessen_cor_death$prop_nonessen, det_occupation_nonessen_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`). This tells us that there is a moderate correlation between the percentage of the population working "nonessential" jobs and the rate of COVID deaths: as a ZIP code has more nonessential workers, it also has a higher COVID death rate.
 
 ## Citizenship
+
+The Census Bureau provides a distinction between different types of U.S. citizenship (e.g., naturalization, born in U.S., born abroad, etc.). We focus on the simple distinction between being a U.S. citizen and not.
 
 ```{r}
 det_citi <- get_acs(geography = "zcta",
@@ -228,11 +250,7 @@ ggplot(det_citi_cor) +
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population that is not a U.S. citizen in Detroit to case rate of COVID.
-```{r}
-cor.test(det_citi_cor$prop_not_citizen, det_citi_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between being a non-citizen and case rate is 0.108. 
+When we test our correlation, we get a value of `r cor.test(det_citi_cor$prop_not_citizen, det_citi_cor$Cases_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_citi_cor$prop_not_citizen, det_citi_cor$Cases_per_HundThou, use = "complete.obs")$p.value`). This is a slightly positive correlation, which means a ZIP code with a larger population of non-citizens is also showing a higher COVID case rate. However, our p-value is not significant so we really can't say this is for sure the case. 
 
 The scatterplot shows the correlation between not being a U.S. citizen and COVID deaths in Detroit.
 ```{r}
@@ -244,14 +262,11 @@ ggplot(det_citi_cor_death) +
        y = "Death Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population that is not a U.S. citizen in Detroit to death rate of COVID.
-```{r}
-cor.test(det_citi_cor_death$prop_not_citizen, det_citi_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between being a non-citizen and death rate is -0.356. 
+When we test our correlation, we get a value of `r cor.test(det_citi_cor_death$prop_not_citizen, det_citi_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` ($p=$ `r cor.test(det_citi_cor_death$prop_not_citizen, det_citi_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`). This is a slight-to-moderate negative correlation, which means a ZIP code with a larger population of non-citizens is also showing a lower COVID death rate.  However, the p-value is insignificant so we cannot make this assumption.
 
 ## Income 
 
+We look at the income data in increments designated by the Census Bureau. We calculated the proportion of people making over \$100,000 to order the ZIP codes on the $x$-axis in the following graph.
 ```{r}
 det_income <- get_acs(geography = "zcta",
                         table = "B19101") %>% 
@@ -302,11 +317,7 @@ ggplot(det_income_sixfig_cor) +
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between families making six figure incomes or more in Detroit to case rate of COVID. 
-```{r}
-cor.test(det_income_sixfig_cor$prop_100K, det_income_sixfig_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between a six figure income or more in Detroit and case rate is a correlation of 0.082.   
+The correlation between a six-figure income and case rate is `r cor.test(det_income_sixfig_cor$prop_100K, det_income_sixfig_cor$Cases_per_HundThou, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(det_income_sixfig_cor$prop_100K, det_income_sixfig_cor$Cases_per_HundThou, use = "complete.obs")$p.value`).  This is a very slight positive correlation. ZIP codes that are wealthier are slightly correlated with having a higher COVID case rate.  However, our p-value is not significant so we cannot really make this assumption.  
 
 The scatterplot shows the correlation between families making a six figure income or more in Detroit and COVID deaths. 
 ```{r}
@@ -318,11 +329,7 @@ ggplot(det_income_sixfig_cor_death) +
        y = "Death Rate (per 100,000)")
 ```
 
-Test correlation between families making six figure incomes or more in Detroit to death rate of COVID. 
-```{r}
-cor.test(det_income_sixfig_cor_death$prop_100K, det_income_sixfig_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between a six figure income or more in Detroit and death rate is a correlation of 0.288.
+The correlation between a six-figure income and death rate is `r cor.test(det_income_sixfig_cor_death$prop_100K, det_income_sixfig_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(det_income_sixfig_cor_death$prop_100K, det_income_sixfig_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`).  This is a slightly positive correlation. ZIP codes that are wealthier are correlated with having a higher COVID death rate.  However, the p-value is insignificant so we cannot make this assumption. 
 
 Analyzing 30K and under income in Detroit.
 ```{r}
@@ -366,11 +373,7 @@ ggplot(det_income_30K_below_cor) +
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between families making 30K or less incomes to case rate of COVID.
-```{r}
-cor.test(det_income_30K_below_cor$prop_30K, det_income_30K_below_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between families making 30K or less and case rate of COVID is -0.135.
+When we test our correlation, we get a value of (`r cor.test(det_income_30K_below_cor$prop_30K, det_income_30K_below_cor$Cases_per_HundThou, use = "complete.obs")$estimate` with $p\approx$ `r cor.test(det_income_30K_below_cor$prop_30K, det_income_30K_below_cor$Cases_per_HundThou, use = "complete.obs")$p.value`) between income and COVID.  This is a slightly negative correlation.  This means that families making 30K or less are less likely to get COVID.  However, the p-value is insignificant so we cannot make this assumption. 
 
 The scatterplot shows the correlation between families making 30K or less in Detroit and COVID deaths.
 ```{r}
@@ -382,13 +385,11 @@ ggplot(det_income_30K_below_cor_death) +
        y = "Death Rate (per 100,000)")
 ```
 
-Test correlation between families making 30K or less incomes to death rate of COVID.
-```{r}
-cor.test(det_income_30K_below_cor_death$prop_30K, det_income_30K_below_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between families making 30K or less and death rate of COVID is -0.169.
+When we test our correlation, we get a value of (`r cor.test(det_income_30K_below_cor_death$prop_30K, det_income_30K_below_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` with $p\approx$ `r cor.test(det_income_30K_below_cor_death$prop_30K, det_income_30K_below_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`) between income and COVID. This is a slightly negative correlation.  This means that families who are making 30K or less are less likely to die from COVID.  However, the p-value is insignificant so we cannot make this assumption. 
 
 ## Race
+
+We've heard reports about minorities being hit harder by COVID. We look to see if the data supports that in Detroit.
 
 ```{r}
 det_race <- get_acs(geography = "zcta",
@@ -438,11 +439,7 @@ ggplot(det_race_cor) +
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between being an African American in Detroit and case rate of COVID.
-```{r}
-cor.test(det_race_cor$prop_AA, det_race_cor$Cases_per_HundThou, use = "complete.obs")
-```
-The correlation between being an African American in Detroit and case rate of COVID is -0.263.
+The correlation between the proportion of Black and African American within a ZIP code and case rate is `r cor.test(det_race_cor$prop_AA, det_race_cor$Cases_per_HundThou, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(det_race_cor$prop_AA, det_race_cor$Cases_per_HundThou, use = "complete.obs")$p.value`). This is a slightly negative correlation meaning African American communities are seeing a lower case rate of COVID in Detroit.  However, the p-value is insignificant so we cannot make this assumption.
 
 The scatterplot shows the correlation between being an African American in Detroit and COVID deaths.
 ```{r}
@@ -454,178 +451,204 @@ ggplot(det_race_cor_death) +
        y = "Death Rate (per 100,000)")
 ```
 
-Test correlation between being an African American in Detroit and death rate of COVID.
-```{r}
-cor.test(det_race_cor_death$prop_AA, det_race_cor_death$Deaths_per_HundThou, use = "complete.obs")
-```
-The correlation between being an African American in Detroit and death rate of COVID is 0.223.
+The correlation between the proportion of Black and African American within a ZIP code and death rate is `r cor.test(det_race_cor_death$prop_AA, det_race_cor_death$Deaths_per_HundThou, use = "complete.obs")$estimate` ($p\approx$ `r cor.test(det_race_cor_death$prop_AA, det_race_cor_death$Deaths_per_HundThou, use = "complete.obs")$p.value`). This is a slight positive correlation meaning African American communities are seeing a higher death rate of COVID in Detroit.  However, the p-value is insignificant so we cannot make this assumption.
 
 ## Gini Index
 
 ```{r}
-minn_gini <- get_acs(geography = "zcta",
+det_gini <- get_acs(geography = "zcta",
                         table = "B19083") %>% 
-  filter(GEOID %in% zip_code_minn$zip)
-minn_gini <- left_join(minn_gini, variables_2018[, 1:2], by = "variable")
-minn_gini$label <- as_factor(str_replace(minn_gini$label, ".*!!(.*)", "\\1"))
+  filter(GEOID %in% zip_code_det$zip)
+det_gini <- left_join(det_gini, variables_2018[, 1:2], by = "variable")
+det_gini$label <- as_factor(str_replace(det_gini$label, ".*!!(.*)", "\\1"))
 ```
 
-Analyze Gini Index for Minneapolis.  The scatterplot shows the correlation between Gini Index and COVID.
+Analyze Gini Index for Detroit  The scatterplot shows the correlation between Gini Index and COVID.
 ```{r}
-minn_gini <- left_join(minn_gini, minneapolis_covid, by = c("GEOID" = "ZIP"))
-minn_gini <- filter(minn_gini, GEOID != '55450')
+det_gini <- left_join(det_gini, det_covid, by = c("GEOID" = "ZIP_Code"))
 
-ggplot(minn_gini) +
-  geom_point(aes(x = estimate, y = case_rate)) +
-  labs(title = "Gini Index for Each Minneapolis Zip Code",
+
+ggplot(det_gini) +
+  geom_point(aes(x = estimate, y = Cases_per_HundThou)) +
+  labs(title = "GINI Index for Each Detroit Zip Code",
        x = "Gini Index",
        y = "Case Rate")
 
 ```
 
-Test correlation between gini index and case rate of COVID
+Test correlation between GINI index and case rate of COVID
 ```{r}
-cor.test(minn_gini$estimate, minn_gini$case_rate, use = "complete.obs")
+gini_cor<-cor.test(det_gini$estimate, det_gini$Cases_per_HundThou, method="pearson")
+gini_cor$p.value
+gini_cor$estimate
 ```
-The correlation between gini index and case rate is 0.059.  This is a low positive number with a p-value close to 1, so we can't conclude anything about gini index and COVID. 
+The correlation between GINI index and case rate is -0.204, and the p value is .375, so we cannot conclude any significant relationship between these variables. 
 
 ## Insurance Coverage(Public VS. Private)
-
 ```{r}
-minn_insurance <- get_acs(geography = "zcta",
-                           table = "B18135") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B18135_023"))
-minn_insurance <- left_join(minn_insurance, variables_2018[, 1:2], by = "variable")
-minn_insurance$label <- as_factor(str_replace(minn_insurance$label, ".*!!(.*)", "\\1"))
+det_hi_private <- get_acs(geography = "zcta",
+                            table = "B27002") %>% 
+  filter(GEOID %in% zip_code_det$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+det_hi_public <- get_acs(geography = "zcta",
+                           table = "B27003") %>% 
+  filter(GEOID %in% zip_code_det$zip) %>% 
+  left_join(variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
+det_hi_private$label <- str_remove(det_hi_private$label, "Estimate!!Total!!")
+det_hi_public$label <- str_remove(det_hi_public$label, "Estimate!!Total!!")
+
+det_hi_private <- separate(det_hi_private,
+                             label,
+                             sep = "!!",
+                             into = c("Sex", "Age", "Private_HI"))
+det_hi_public <- separate(det_hi_public,
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Public_HI"))
+
+det_hi_private$Private_HI <- if_else(det_hi_private$Private_HI == "No private health insurance", "No", "Yes")
+det_hi_public$Public_HI <- if_else(det_hi_public$Public_HI == "No public coverage", "No", "Yes")
+
+det_hi_private$Sex <- as_factor(det_hi_private$Sex)
+det_hi_public$Sex <- as_factor(det_hi_public$Sex)
+det_hi_private$Age <- as_factor(det_hi_private$Age)
+det_hi_public$Age <- as_factor(det_hi_public$Age)
+det_hi_private$Private_HI <- as_factor(det_hi_private$Private_HI)
+det_hi_public$Public_HI <- as_factor(det_hi_public$Public_HI) 
 ```
 
-Analyze private health insurance coverage
 ```{r}
-minn_insurance_private <- minn_insurance %>% 
+det_hi_private_2 <- det_hi_private %>% group_by(GEOID, Private_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
   group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("With private health insurance coverage")) %>% 
-  mutate(prop_priv = sum(prop)) %>% 
-  select(GEOID, prop_priv) %>% 
-  distinct(GEOID, prop_priv)
+  mutate(pop = sum(count),
+         prop = count/pop)
 
-lvls <- minn_insurance_private %>% 
-  arrange(prop_priv) %>% 
+### Graph Private HI Coverage by proportion
+
+lvls_det_hi_private <- det_hi_private_2 %>% 
+  filter(Private_HI == "Yes") %>% 
+  arrange(prop) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
-ggplot(minn_insurance) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+ggplot(det_hi_private_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_det_hi_private), count, fill = Private_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Insurance Coverage for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Insurance Coverage")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Private Health Insurance for Each Minneapolis ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Private Health \nInsurance Coverage?")
 ```
 
-The scatterplot shows the correlation between private health insurance and COVID.
 ```{r}
-minn_private_cor <- left_join(minn_insurance_private, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_private_cor) +
-  geom_point(aes(x = prop_priv, y = case_rate)) +
-  labs(title = "Correlation Between Private Health Insurance and COVID",
-       x = "Proportion of People with Private Health Insurance",
+det_hi_private_cor <- left_join(det_hi_private_2, detroit_covid, by = c("GEOID"="ZIP")) %>% 
+  filter(Private_HI == "Yes")
+
+det_hi_private_cor %>%
+  ggplot(aes(prop, Cases_per_HundThou)) +
+  geom_point() +
+  labs(title = "Possession of Private Health Insurance Seems\nto be Strongly Related to COVID Case Rate",
+       x = "Proportion of Population that has Private Health Insurance",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population with private health insurance and case rate of COVID
 ```{r}
-cor.test(minn_private_cor$prop_priv, minn_private_cor$case_rate, use = "complete.obs")
+private_cor<-cor.test(det_hi_private_cor$prop, det_hi_private_cor$Cases_per_HundThou, method="pearson")
+
+private_cor$p.value
+private_cor$estimate
 ```
-The correlation between private health insurance and case rate is -0.803.  This is a big negative correlation. People with private health insurance have been contracting less cases of COVID. 
+The correlation is .269 and the p-value is .238, so we cannot conclude any significant relationship between private health insurance coverage and case rate.
 
-Analyze public health insurance coverage
 ```{r}
-minn_insurance_public <- minn_insurance %>% 
+det_hi_public_2 <- det_hi_public %>% group_by(GEOID, Public_HI) %>% 
+  summarize(count = sum(estimate)) %>% 
+  ungroup() %>% 
   group_by(GEOID) %>% 
-  mutate(n = sum(estimate),
-         prop = estimate/n) %>% 
-  filter(label %in% c("With public health coverage")) %>% 
-  mutate(prop_public = sum(prop)) %>% 
-  select(GEOID, prop_public) %>% 
-  distinct(GEOID, prop_public)
+  mutate(pop = sum(count),
+         prop = count/pop)
+### Graph Public HI Coverage by proportion
 
-lvls <- minn_insurance_public %>% 
-  arrange(prop_public) %>% 
+lvls_det_hi_public <- det_hi_public_2 %>% 
+  filter(Public_HI == "Yes") %>% 
+  arrange(prop) %>% 
   pull(GEOID)
 
-minn_insurance <- left_join(minn_insurance, minneapolis_covid, by = c("GEOID" = "ZIP"))
-
-ggplot(minn_insurance) +
-  geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
+ggplot(det_hi_public_2) +
+  geom_col(aes(factor(GEOID, levels = lvls_det_hi_public), count, fill = Public_HI),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
-                                   hjust = 1)) +
-  labs(title = "Insurance Coverage for Each Minneapolis Zip Code",
-       x = "Zip Code",
-       y = "Proportion", 
-       fill = "Insurance Coverage")
+                                   hjust = 1),
+        legend.position = "bottom") +
+  labs(title = "Prevalence of Public Health Insurance for Each Detroit ZIP Code",
+       x = "ZIP Code",
+       y = "Proportion of Population", 
+       fill = "Public Health \nInsurance Coverage?")
 ```
 
-The scatterplot shows the correlation between public health insurance and COVID. 
 ```{r}
-minn_public_cor <- left_join(minn_insurance_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_public_cor) +
-  geom_point(aes(x = prop_public, y = case_rate)) +
-  labs(title = "Correlation Between Public Health Insurance and COVID",
-       x = "Proportion of People with Public Health Insurance",
+det_hi_public_cor <- left_join(det_hi_public_2, detroit_covid, by = c("GEOID"="ZIP")) %>% 
+  filter(Public_HI == "Yes")
+
+det_hi_public_cor %>%
+  ggplot(aes(prop, Cases_per_HundThou)) +
+  geom_point() +
+  labs(title = "Public Health Insurance Seems to have a\nPositive Relation to COVID Case Rate",
+       x = "Proportion of Population that has Public Health Insurance",
        y = "Case Rate (per 100,000)")
 ```
 
-Test correlation between percentage of population with public health insurance and case rate of COVID
 ```{r}
-cor.test(minn_public_cor$prop_public, minn_public_cor$case_rate, use = "complete.obs")
+public_cor<-cor.test(det_hi_public_cor$prop, det_hi_public_cor$Cases_per_HundThou, method="pearson")
+
+public_cor$p.value
+public_cor$estimate
 ```
-The correlation between public health insurance and case rate is 0.686.  This is a positive realtionship.  The people with public insurance have been contracting more cases of COVID. 
+The correlation value is -.208 and the p-value is .365, so we cannot conclude any relationship between public health insurance coverage and case rate.
 
 ## Transportation to Work
 
 ```{r}
-minn_transport <- get_acs(geography = "zcta",
+det_transport <- get_acs(geography = "zcta",
                        table = "B08301") %>% 
-  filter(GEOID %in% zip_code_minn$zip,
-         !variable %in% c("B08301_010"))
-minn_transport <- left_join(minn_transport, variables_2018[, 1:2], by = "variable")
-minn_transport$label <- as_factor(str_replace(minn_transport$label, ".*!!(.*)", "\\1"))
+  filter(GEOID %in% zip_code_det$zip,
+          variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
+det_transport <- left_join(det_transport, variables_2018[, 1:2], by = "variable")
+det_transport$label <- as_factor(str_replace(det_transport$label, ".*!!(.*)", "\\1"))
 ```
 
 Analyzing public transporation
 ```{r}
-minn_transport_public <- minn_transport %>% 
+det_transport_public <- det_transport %>% 
   group_by(GEOID) %>% 
   mutate(n = sum(estimate),
          prop = estimate/n) %>% 
   filter(label %in% c("Public transportation (excluding taxicab)",
-                      "Bus or trolley bus",
-                      "Streetcar or trolley car (carro publico in Puerto Rico)",
-                      "Subway or elevated",
-                      "Railroad")) %>% 
+                      "Taxicab")) %>% 
   mutate(prop_pub = sum(prop)) %>% 
   select(GEOID, prop_pub) %>% 
   distinct(GEOID, prop_pub)
 
-lvls <- minn_transport_public %>% 
+lvls <- det_transport_public %>% 
   arrange(prop_pub) %>% 
   pull(GEOID)
 
-minn_transport <- left_join(minn_transport, minneapolis_covid, by = c("GEOID" = "ZIP"))
 
-ggplot(minn_transport) +
+
+ggplot(det_transport) +
   geom_col(aes(factor(GEOID, levels = lvls), estimate, fill = label),
            position = "fill") +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1)) +
-  labs(title = "Transportation Distribution for Each Minneapolis Zip Code",
+  labs(title = "Transportation Distribution for Each Detroit Zip Code",
        x = "Zip Code",
        y = "Proportion", 
        fill = "Transportation")
@@ -633,9 +656,9 @@ ggplot(minn_transport) +
 
 The scatterplot shows the correlation between public transportation and COVID.
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID" = "ZIP"))
-ggplot(minn_trans_cor) +
-  geom_point(aes(x = prop_pub, y = case_rate)) +
+det_trans_cor <- left_join(det_transport_public, detroit_covid, by = c("GEOID" = "ZIP"))
+ggplot(det_trans_cor) +
+  geom_point(aes(x = prop_pub, y = Cases_per_HundThou)) +
   labs(title = "Correlation Between Public Transportation and COVID",
        x = "Proportion of People Using Public Transportation",
        y = "Case Rate (per 100,000)")
@@ -643,11 +666,17 @@ ggplot(minn_trans_cor) +
 
 Test the correlation between the percentage of the population using public transportation and case rate of COVID
 ```{r}
-minn_trans_cor <- left_join(minn_transport_public, minneapolis_covid, by = c("GEOID"="ZIP"))
-cor.test(minn_trans_cor$prop_pub, minn_trans_cor$case_rate, use = "complete.obs")
+det_trans_cor <- left_join(det_transport_public, detroit_covid, by = c("GEOID"="ZIP"))
+trans_cor<- cor.test(det_trans_cor$prop_pub, det_trans_cor$Cases_per_HundThou, method="pearson")
+trans_cor$p.value
+trans_cor$estimate
 ```
-The correlation between public transportation and case rate is 0.549.  This is a positive relationship meaning people using public transportation are more likely to get COVID.  
+The correlation between public transportation and case rate is -.133, and the p-value is 0.564, so we cannot conclude any significant relationship between these variables.  
 
 
 ## Conclusions
+
+In Detroit we looked at 7 categories and analyzed 10 variables within them by zip code.  We removed zip codes 48209, 48212, 48216, 48217, 48226, 48233, 48242, 48243 due to them having a tiny population or being a non-population zip code. 
+
+We did not have any significant correlations between our 10 variables and case rate.  We looked at the death rate for the variables occupations, citizenship, income, and race.  The only significant correlations we had there were the correlations for essential and nonessential occupations with death rate.  This shows that Detroit may have an equal impact across all zip codes for COVID-19.  
  

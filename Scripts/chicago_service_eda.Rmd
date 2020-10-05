@@ -1,0 +1,84 @@
+---
+title: "COVID Impact on Chicago Service Workers-EDA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("functions.R")
+library(tidycensus)
+library(tidyverse)
+zip_code <- read_csv("../Data/zip_county.csv")
+zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
+                                        state == "IL")
+variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
+  rename(variable = name)
+```
+
+## Maya Frederick
+
+
+
+## Ethan Morlock
+```{r}
+# Sex by age (Hispanic or Latino)
+chicago_sex_by_age_his_lat <- get_acs(geography = "zcta",
+                                   year = 2018,
+                                   table = "B01001I") %>% 
+                              filter(GEOID %in% zip_code_chicago$zip,
+                                     variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
+chicago_sex_by_age_his_lat <- left_join(chicago_sex_by_age_his_lat, variables_2018[, 1:2], by = "variable")
+chicago_sex_by_age_his_lat$label <- as_factor(str_replace(chicago_sex_by_age_his_lat$label, ".*!!(.*)", "\\1"))
+
+# Health insurance coverage status by sex by age 
+chicago_HI <- get_acs(geography = "zcta",
+                   year = 2018,
+                   table = "B27001") %>% 
+              filter(GEOID %in% zip_code_chicago$zip,
+                     variable %in% c("B27001_001"))
+chicago_HI <- left_join(chicago_HI, variables_2018[, 1:2], by = "variable")
+chicago_HI$label <- as_factor(str_replace(chicago_HI$label, ".*!!(.*)", "\\1"))
+
+# Race (Hispanic or Latino)
+chicago_race <- get_acs(geography = "zcta",
+                     year = 2018,
+                     table = "B03002") %>% 
+                filter(GEOID %in% zip_code_chicago$zip,
+                       variable %in% c("B03002_012"))
+chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
+chicago_race$label <- as_factor(str_replace(chicago_race$label, ".*!!(.*)", "\\1"))
+```
+
+
+## Pearl Muensterman
+```{r}
+#Occupation by Class Worker
+chicago_occ_by_class <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "C24060") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         variable %in% c("C24060_007", "C24060_009", "C24060_011",
+                                         "C24060_012", "C24060_031","C24060_033",
+                                         "C24060_035", "C24060_036"))
+chicago_occ_by_class <- left_join(chicago_occ_by_class, variables_2018[, 1:2], by = "variable")
+chicago_occ_by_class$label <- as_factor(str_replace(chicago_occ_by_class$label, ".*!!(.*)", "\\1"))
+```
+Employee of private company workers: total (C24060_007); service occupation (C24060_009); natural resources, construction, and maintenance occupations (C24060_011); and production, transportation, and material moving occupations (C24060_012). 
+Self-employed in own not incorporated business workers and unpaid family workers: total (C24060_031); service occupation (C24060_033); natural resources, construction, and maintenance occupations (C24060_035); and production, transportation, and material moving occupations (C24060_036).
+
+```{r}
+#Sex by Age Total
+chicago_sex_by_age <- get_acs(geography = "zcta",
+                        year = 2018,
+                        table = "B01001") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         variable %in% c("B01001_001"))
+chicago_sex_by_age <- left_join(chicago_sex_by_age, variables_2018[, 1:2], by = "variable")
+chicago_sex_by_age$label <- as_factor(str_replace(chicago_sex_by_age$label, ".*!!(.*)", "\\1"))
+```
+
+
+
+## Timmy Miller
+
+

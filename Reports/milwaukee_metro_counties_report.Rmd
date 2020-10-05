@@ -1,0 +1,323 @@
+---
+title: "Milwaukee Metropolitan COVID-19 Data"
+author: "Timmy Miller"
+date: "9/27/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+The COVID-19 pandemic disproportionately impacts lower-income communities. The Milwaukee Metropolitan area, consisting of Milwaukee, Washington, Waukesha, and Ozaukee counties, exemplifies this disparity. Milwaukee County, which has a much greater non-white population percentage and a lower median household income than the other metropolitan counties, expereinces more cases and deaths per 100000 people than the rest of the metropolitan counties. When taking into consideration conditions or demographics pre-exposed to death from COVID-19, smoking is much more prevalent in Milwaukee County, which could explain some of the difference in deaths between counties. However, the average age in Milwaukee County is much lower than the other counties, which is surprising given the rate at which individuals 65 and older die from COVID in comparison to the rest of society. Additionally, public transporation use appeared to be tied to higher COVID-19 rates in Milwaukee County, and the health insurance coverage rate is also slightly lower in Milwaukee County than in the rest of the Metropolitan area. Unfortunately, downloadable ZIP code data for Milwaukee was not able to be found at this time, so a more specific analysis could not be performed. 
+
+
+
+```{r, echo=FALSE, message=FALSE}
+#packages required
+library(tidyverse)
+library(readxl)
+library(ggrepel)
+library(gridExtra)
+library(ggplot2)
+library(dplyr)
+library(tidycensus)
+source("../Scripts/functions.R")
+```
+
+
+
+
+
+```{r, echo=FALSE}
+#data set for Milwaukee Metropolitan COVID data, use the ../ to back up a folder
+Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
+
+
+```
+
+
+
+Case Rates
+
+
+```{r, echo=FALSE}
+ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=CASES_PER_HUNDTHOU))+geom_col(fill="blue")+xlab("County")+ylab("Cases Per 100000 People")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Case Rates in Milwaukee Metropolitan Counties")
+```
+
+
+
+Case rates are much higher in Milwaukee County compared to the other three Milwaukee metropolitan counties.
+
+Death Rates
+
+
+```{r, echo=FALSE}
+ ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=DEATHS_HUNDTHOU))+geom_col(fill="red")+xlab("County")+ylab("Deaths Per 100000 People")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Death Rates in Milwaukee Metropolitan Counties")
+```
+
+
+
+Death rates are much higher in Milwaukee County. 
+
+White Population
+
+
+```{r, echo=FALSE}
+ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=WHITEPOP))+geom_col(fill="orange")+xlab("County")+ylab("% of Population that is White")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="White Population Proportion in Milwaukee Metropolitan Counties")
+```
+
+
+
+COVID is known to affect minority communities disproportionately. There are fewer white people living in Milkwaukee County, where we previously saw that there are higher case and death rates.
+
+Income Data
+```{r, echo=FALSE}
+milwaukee_income<- get_acs(geography="County", state="WI", table="B19101")
+income <- load_variables(2018, "acs5")
+income <- income[c(11995:12011),]
+income<-rename(income, c("variable"="name"))
+income <- merge(income, milwaukee_income, by="variable")
+income <- filter( income, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+income$label <- as_factor(str_replace(income$label, ".*!!(.*)", "\\1"))
+income <- income[c(5:68),]
+```
+
+
+```{r, echo=FALSE}
+income_sixfig <- income %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("$200,000 or more",
+                      "$150,000 to $199,999",
+                      "$125,000 to $149,999",
+                      "$100,000 to $124,999")) %>% 
+  mutate(prop_100K = sum(prop)) %>% 
+  select(NAME, prop_100K) %>% 
+  distinct(NAME, prop_100K)
+
+lvls <-income_sixfig %>% 
+  arrange(prop_100K) %>% 
+  pull(NAME)
+
+ggplot(income) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Median Household Income for Each \nMilwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Income Status")
+
+
+
+```
+
+
+
+COVID is known to affect poorer populations more drastically, and Milwaukee County is poorer and more affected by COVID than the other metropolitan counties. 
+
+
+Smoking Data
+
+```{r, echo=FALSE} 
+ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="black")+xlab("County")+ylab("% of Population that Smokes")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Smoking Proportion in Milwaukee Metropolitan Counties")
+```
+
+
+
+COVID affects the respiratory system, and citizens in Milwaukee County smoke at higher rates.
+
+```{r, echo=FALSE} 
+ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Age Information for Milwaukee Metropolitan Counties")
+```
+
+COVID is known to affect older people more profoundly, but Milwaukee County actually has fewer residents 65 or older, despite its greater case and death rates. 
+
+
+Health Insurance
+
+```{r, echo=FALSE} 
+ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct18to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Health Insurance Data for Milwaukee Metropolitan Counties")
+```
+
+
+Health insurance coverage is high across the Milwaukee metropolitan area, but still slightly lower in Milwaukee County.
+
+
+
+
+
+
+GINI Index Data
+
+
+```{r, echo=FALSE}
+milwaukee_gini <- get_acs(geography = "county", table = "B19083", state= "WI")
+milwaukee_gini<- filter(milwaukee_gini, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+Milwaukee_Covid_Data <- merge(Milwaukee_Covid_Data, milwaukee_gini, by = "NAME")
+
+
+ggplot(milwaukee_gini)+geom_col(aes(x=NAME, y=estimate))+labs(title="GINI Index Data for Milwaukee Metropolitan Counties", x="County", y="GINI Index")+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+
+The GINI Index, which measures income inequality (closer to 1=more income inequality) does not appear to be tied to COVID. 
+
+
+
+Transportation Data
+
+
+```{r, echo=FALSE}
+wis_transport <- get_acs(geography="County", state="WI", table="B08301") %>%
+  filter(NAME%in%c("Milwaukee County, Wisconsin", "Ozaukee County, Wisconsin", "Waukesha County, Wisconsin", "Washington County, Wisconsin"), 
+        variable %in% c("B08301_002", str_c("B08301_0", c(10, 16:21))))
+
+mil_transport <- left_join(wis_transport, variables_2018[,1:2], by="variable")
+mil_transport$label <- as_factor(str_replace(mil_transport$label, ".*!!(.*)", "\\1"))
+  
+  
+  
+
+
+
+```
+
+```{r, echo=FALSE}
+transport_mil <- mil_transport %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Public transportation (excluding taxicab)",
+                      "Taxicab")) %>% 
+  mutate(prop_pub = sum(prop)) %>% 
+  select(NAME, prop_pub) %>% 
+  distinct(NAME, prop_pub)
+
+lvls <- transport_mil %>% 
+  arrange(prop_pub) %>% 
+  pull(NAME)
+#lvls needs to be a vector (1 dimension) not a data frame (2 dimensions)
+
+ggplot(mil_transport) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Transportation Distribution for Each \nMilwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Transportation")
+```
+
+
+
+Residents in Milwaukee County use public transportation more than other Milwaukee metro counties, which could be tied to increased transmission of COVID.
+
+Occupation
+
+
+
+```{r, echo=FALSE}
+milwaukee_occupation <- get_acs(geography="County", state="WI", table="C24060")
+occupation <- load_variables(2018, "acs5")
+occupation <- occupation[c(26451:26486),]
+occupation<-rename(occupation, c("variable"="name"))
+occupation<- merge(occupation, milwaukee_occupation, by="variable")
+occupation <- filter( occupation, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+occupation<- occupation[c(5:144),]
+occupation$label <- as_factor(str_replace(occupation$label, ".*!!(.*)", "\\1"))
+
+```
+
+
+```{r, echo=FALSE}
+wis_occupation <- get_acs(geography="County", state="WI", table="C24060") %>%
+  filter(NAME%in%c("Milwaukee County, Wisconsin", "Ozaukee County, Wisconsin", "Waukesha County, Wisconsin", "Washington County, Wisconsin"), 
+        variable %in% c("C24060_002","C24060_003", "C24060_004", "C24060_005","C24060_006"))
+
+mil_occupation <- left_join(wis_occupation, variables_2018[,1:2], by="variable")
+mil_occupation$label <- as_factor(str_replace(mil_occupation$label, ".*!!(.*)", "\\1"))
+```
+
+
+
+```{r, echo=FALSE}
+occupation <- mil_occupation %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Natural resources, construction, and maintenance occupations",
+                      "Production, transportation, and material moving occupations")) %>% 
+  mutate(prop_essen = sum(prop)) %>% 
+  select(NAME, prop_essen) %>% 
+  distinct(NAME, prop_essen)
+
+lvls <- occupation %>% 
+  arrange(prop_essen) %>% 
+  pull(NAME)
+
+ggplot(mil_occupation) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Occupations for Each Milwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Occupation")
+```
+
+
+Occupation does not appear to be tied to COVID case and death rates.
+
+Citizenship
+```{r, echo=FALSE}
+milwaukee_citizenship <- get_acs(geography="County", state="WI", table="B05001")
+citizenship <- load_variables(2018, "acs5")
+citizenship <- citizenship[c(946:957),]
+citizenship<-rename(citizenship, c("variable"="name"))
+citizenship<- merge(citizenship, milwaukee_citizenship, by="variable")
+citizenship <- filter( citizenship, NAME=="Milwaukee County, Wisconsin" | NAME=="Ozaukee County, Wisconsin" | NAME=="Waukesha County, Wisconsin" | NAME=="Washington County, Wisconsin")
+citizenship$label <- as_factor(str_replace(citizenship$label, ".*!!(.*)", "\\1"))
+citizenship<-citizenship[c(5:24),]
+
+
+
+```
+
+```{r, echo=FALSE}
+citi_status <- citizenship %>% 
+  group_by(NAME) %>% 
+  mutate(n = sum(estimate),
+         prop = estimate/n) %>% 
+  filter(label %in% c("Not a U.S. citizen")) %>% 
+  mutate(prop_not_citizen = sum(prop)) %>% 
+  select(NAME, prop_not_citizen) %>% 
+  distinct(NAME, prop_not_citizen)
+
+lvls <- citi_status %>% 
+  arrange(prop_not_citizen) %>% 
+  pull(NAME)
+
+
+
+ggplot(citizenship) +
+  geom_col(aes(factor(NAME, levels = lvls), estimate, fill = label),
+           position = "fill") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1)) +
+  labs(title = "Citizenship Status for Each Milwaukee Metropolitan County",
+       x = "County",
+       y = "Proportion", 
+       fill = "Citizenship Status")
+```
+
+
+Marginalized communities, such as those not born in the US, are known to be more impacted by COVID. Milwaukee County also has a lower percentage of natural-born US citizens than other metropolitan counties.
+
+
