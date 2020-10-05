@@ -21,6 +21,11 @@ sex_by_age_by_nativity_and_citizenship_status$label <-
 sex_by_age_by_nativity_and_citizenship_status<- 
   filter(sex_by_age_by_nativity_and_citizenship_status, label!="Total")
 
+#left join Covid data
+
+sex_by_age_by_nativity_and_citizenship_status<- 
+  left_join(sex_by_age_by_nativity_and_citizenship_status, chicago_covid, by=c("GEOID"="Zip"))
+
 
 #ancestry
 
@@ -33,6 +38,8 @@ ancestry<-filter(ancestry, label!="Total")
 
 ancestry<- filter(ancestry, GEOID %in% 60601:60827)
 
+ancestry<- left_join(ancestry, chicago_covid, by=c("GEOID"="Zip"))
+
 
 #health insurance by type 
 
@@ -43,3 +50,5 @@ HI_type$label<- as_factor(str_replace(HI_type$label, ".*!!(.*)", "\\1"))
 HI_type<-filter(HI_type, label!="Total")
 
 HI_type<-filter(HI_type, GEOID %in% 60601:60827)
+
+HI_type<- left_join(HI_type, chicago_covid, by=c("GEOID"="Zip"))
