@@ -26,7 +26,15 @@ chicago_occ1 <- get_acs(geography = "zcta",
                   filter(GEOID %in% zip_code_chicago$zip,
                          !variable %in% c("B24012_001"))
 chicago_occ1 <- left_join(chicago_occ1, variables_2018[, 1:2], by = "variable")
-chicago_occ1$label <- as_factor(str_replace(chicago_occ1$label, ".*!!(.*)", "\\1"))
+
+chicago_occ1 <- chicago_occ1 %>% filter(str_count(label, "!!") == 3)
+chicago_occ1$label <- str_remove(chicago_occ1$label, "Estimate!!Total!!")
+
+chicago_occ1 <- separate(chicago_occ1,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Occupation"))
+
 ```
 
 
@@ -38,7 +46,17 @@ chicago_citizen <- get_acs(geography = "zcta",
                   filter(GEOID %in% zip_code_chicago$zip,
                          !variable %in% c("B05003_001"))
 chicago_citizen <- left_join(chicago_citizen, variables_2018[, 1:2], by = "variable")
-chicago_citizen$label <- as_factor(str_replace(chicago_citizen$label, ".*!!(.*)", "\\1"))
+
+chicago_citizen <- chicago_citizen %>% filter(str_count(label, "!!") >= 4)
+chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!")
+
+chicago_citizen <- separate(chicago_citizen,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Age", "Citizen"))
+
+chicago_citizen$Citizen <- if_else(
+  chicago_citizen$Citizen == "Foreign born", "No", "Yes")
 ```
 
 ## Ethan Morlock
