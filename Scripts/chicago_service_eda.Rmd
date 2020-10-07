@@ -13,6 +13,7 @@ zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
                                         state == "IL")
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
+state_of_interest <- ("IL")
 ```
 
 ## Maya Frederick
@@ -43,31 +44,60 @@ chicago_citizen$label <- as_factor(str_replace(chicago_citizen$label, ".*!!(.*)"
 ## Ethan Morlock
 ```{r}
 # Sex by age (Hispanic or Latino)
-chicago_sex_by_age_his_lat <- get_acs(geography = "zcta",
+chicago_sex_age <- get_acs(geography = "zcta",
                                    year = 2018,
                                    table = "B01001I") %>% 
                               filter(GEOID %in% zip_code_chicago$zip,
-                                     variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
-chicago_sex_by_age_his_lat <- left_join(chicago_sex_by_age_his_lat, variables_2018[, 1:2], by = "variable")
-chicago_sex_by_age_his_lat$label <- as_factor(str_replace(chicago_sex_by_age_his_lat$label, ".*!!(.*)", "\\1"))
+                                     !variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
+chicago_sex_age <- left_join(chicago_sex_age, variables_2018[, 1:2], by = "variable")
+chicago_sex_age$label <- str_remove(chicago_sex_age$label, "Estimate!!Total!!")
+chicago_sex_age <- separate(chicago_sex_age,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Age"))
+chicago_sex_age$Sex <- as_factor(chicago_sex_age$Sex)
+chicago_sex_age$Age <- as_factor(chicago_sex_age$Age)
+write_csv(chicago_sex_age, "../Data/chicago_sex_age.csv")
 
 # Health insurance coverage status by sex by age 
 chicago_HI <- get_acs(geography = "zcta",
                    year = 2018,
                    table = "B27001") %>% 
               filter(GEOID %in% zip_code_chicago$zip,
-                     variable %in% c("B27001_001"))
+                     !variable %in% c("B27001_001", "B27001_002", "B27001_003", "B27001_006", "B27001_009", "B27001_012",
+                                      "B27001_015", "B27001_018", "B27001_021", "B27001_024", "B27001_027", "B27001_030", "B27001_031",
+                                      "B27001_034", "B27001_037", "B27001_040", "B27001_043", "B27001_046", "B27001_049", "B27001_052",
+                                      "B27001_055"))
 chicago_HI <- left_join(chicago_HI, variables_2018[, 1:2], by = "variable")
-chicago_HI$label <- as_factor(str_replace(chicago_HI$label, ".*!!(.*)", "\\1"))
+chicago_HI$label <- str_remove(chicago_HI$label, "Estimate!!Total!!")
+chicago_HI <- separate(chicago_HI,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Age", "HI_coverage"))
+chicago_HI$HI_coverage <- if_else(chicago_HI$HI_coverage == "With health insurance coverage", "Yes", "No")
+chicago_HI$Sex <- as_factor(chicago_HI$Sex)
+chicago_HI$Age <- as_factor(chicago_HI$Age)
+chicago_HI$HI_coverage <- as_factor(chicago_HI$HI_coverage)
+write_csv(chicago_HI, "../Data/chicago_HI.csv")
 
 # Race (Hispanic or Latino)
 chicago_race <- get_acs(geography = "zcta",
                      year = 2018,
                      table = "B03002") %>% 
                 filter(GEOID %in% zip_code_chicago$zip,
-                       variable %in% c("B03002_012"))
+                       variable %in% c("B03002_010", "B03002_011", "B03002_020", "B03002_021"))
 chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
-chicago_race$label <- as_factor(str_replace(chicago_race$label, ".*!!(.*)", "\\1"))
+chicago_race$label <- str_remove(chicago_race$label, "Estimate!!Total!!")
+chicago_race <- separate(chicago_race,
+                    label,
+                    sep = "!!",
+                    into = c("Hispanic_or_Latino", "Two_or_more", "Including_other_race"))
+chicago_race$Hispanic_or_Latino <- if_else(chicago_race$Hispanic_or_Latino == "Not Hispanic or Latino", "No", "Yes")
+chicago_race$Including_other_race <- if_else(chicago_race$Including_other_race == "Two races including Some other race", "Including", "Excluding")
+chicago_race$Hispanic_or_Latino <- as_factor(chicago_race$Hispanic_or_Latino)
+chicago_race$Two_or_more <- as_factor(chicago_race$Two_or_more)
+chicago_race$Including_other_race <- as_factor(chicago_race$Including_other_race)
+write_csv(chicago_race, "../Data/chicago_race.csv")
 ```
 
 
