@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source("functions.R")
 library(tidycensus)
 library(tidyverse)
+library(readr)
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
                                         state == "IL")
@@ -122,30 +123,56 @@ write_csv(chicago_race, "../Data/chicago_race.csv")
 ## Pearl Muensterman
 ```{r}
 #Occupation by Class Worker
-chicago_occ_by_class <- get_acs(geography = "zcta",
+chicago_ind_by_class <- get_acs(geography = "zcta",
                         year = 2018,
-                        table = "C24060") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip,
-                         variable %in% c("C24060_007", "C24060_009", "C24060_011",
-                                         "C24060_012", "C24060_031","C24060_033",
-                                         "C24060_035", "C24060_036"))
-chicago_occ_by_class <- left_join(chicago_occ_by_class, variables_2018[, 1:2], by = "variable")
-chicago_occ_by_class$label <- as_factor(str_replace(chicago_occ_by_class$label, ".*!!(.*)", "\\1"))
+                        table = "C24070") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip)
+chicago_ind_by_class <- left_join(chicago_ind_by_class, variables_2018[, 1:2], by = "variable")
+chicago_ind_by_class <- chicago_ind_by_class %>% filter(str_count(label, "!!") >= 3)
+
+chicago_ind_by_class$label <- str_remove(chicago_ind_by_class$label, "Estimate!!Total!!")
+
+chicago_ind_by_class <- separate(chicago_ind_by_class,
+                    label,
+                    sep = "!!",
+                    into = c("Class", "Industry"))
+
+chicago_updated_covid <- read_csv("chicago_updated_cases.csv")
+chicago_updated_covid <- chicago_updated_covid %>% 
+  mutate(case_rate = Cases/Population*100000) %>% 
+  mutate(pos_rate = Cases/Tested)
+
+chicago_updated_covid$Zip <- as.factor(chicago_updated_covid$Zip)
+
+chicago_ind_by_class <- left_join(chicago_ind_by_class, chicago_updated_covid, by = c("GEOID" = "Zip"))
+
+chicago_ind_by_class$Class <- as.factor(chicago_ind_by_class$Class)
+chicago_ind_by_class$Industry <- as.factor(chicago_ind_by_class$Industry)
 ```
-Employee of private company workers: total (C24060_007); service occupation (C24060_009); natural resources, construction, and maintenance occupations (C24060_011); and production, transportation, and material moving occupations (C24060_012). 
-Self-employed in own not incorporated business workers and unpaid family workers: total (C24060_031); service occupation (C24060_033); natural resources, construction, and maintenance occupations (C24060_035); and production, transportation, and material moving occupations (C24060_036).
+
 
 ```{r}
 #Sex by Age Total
 chicago_sex_by_age <- get_acs(geography = "zcta",
                         year = 2018,
                         table = "B01001") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip,
-                         variable %in% c("B01001_001"))
+                  filter(GEOID %in% zip_code_chicago$zip)
+                        
 chicago_sex_by_age <- left_join(chicago_sex_by_age, variables_2018[, 1:2], by = "variable")
-chicago_sex_by_age$label <- as_factor(str_replace(chicago_sex_by_age$label, ".*!!(.*)", "\\1"))
-```
+chicago_sex_by_age <- chicago_sex_by_age %>% filter(str_count(label, "!!") == 3)
 
+chicago_sex_by_age$label <- str_remove(chicago_sex_by_age$label, "Estimate!!Total!!")
+
+chicago_sex_by_age <- separate(chicago_sex_by_age,
+                    label,
+                    sep = "!!",
+                    into = c("Sex", "Age"))
+
+chicago_sex_by_age <- left_join(chicago_sex_by_age, chicago_updated_covid, by = c("GEOID" = "Zip"))
+
+chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
+chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
+```
 
 
 ## Timmy Miller
