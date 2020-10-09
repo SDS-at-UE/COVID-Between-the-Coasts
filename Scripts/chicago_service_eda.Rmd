@@ -8,7 +8,6 @@ knitr::opts_chunk$set(echo = TRUE)
 source("functions.R")
 library(tidycensus)
 library(tidyverse)
-library(readr)
 zip_code <- read_csv("../Data/zip_county.csv")
 zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
                                         state == "IL")
@@ -137,15 +136,6 @@ chicago_ind_by_class <- separate(chicago_ind_by_class,
                     sep = "!!",
                     into = c("Class", "Industry"))
 
-chicago_updated_covid <- read_csv("chicago_updated_cases.csv")
-chicago_updated_covid <- chicago_updated_covid %>% 
-  mutate(case_rate = Cases/Population*100000) %>% 
-  mutate(pos_rate = Cases/Tested)
-
-chicago_updated_covid$Zip <- as.factor(chicago_updated_covid$Zip)
-
-chicago_ind_by_class <- left_join(chicago_ind_by_class, chicago_updated_covid, by = c("GEOID" = "Zip"))
-
 chicago_ind_by_class$Class <- as.factor(chicago_ind_by_class$Class)
 chicago_ind_by_class$Industry <- as.factor(chicago_ind_by_class$Industry)
 ```
@@ -167,8 +157,6 @@ chicago_sex_by_age <- separate(chicago_sex_by_age,
                     label,
                     sep = "!!",
                     into = c("Sex", "Age"))
-
-chicago_sex_by_age <- left_join(chicago_sex_by_age, chicago_updated_covid, by = c("GEOID" = "Zip"))
 
 chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
