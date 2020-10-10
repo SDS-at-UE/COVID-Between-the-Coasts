@@ -59,6 +59,31 @@ chicago_citizen$Citizen <- if_else(
   chicago_citizen$Citizen == "Foreign born", "No", "Yes")
 ```
 
+### Dr. Weber's Code
+
+The following code will calculate the proportion of the ZIP code populations that fit into each category. We always need to group by GEOID since we want these numbers per ZIP code. Next, we calculate the total ZIP code population. After that, we do a series of `group_by()`, `mutate()` commands to be able to calculate the proportions for each categorical breakdown. Note the naming conventions for the new columns. Also note that I've created a new data frame to house these proportions as to not mess up the original data pulled from the ACS. You should do this for all possible one-way, two-way, three-way, etc. factorial combinations of the categories (e.g., Sex, Age, Citizen, Sex-Age, Sex-Citizen, Age-Citizen, Sex-Age-Citizen). Also note the algorithmic nature of constructing the factorial combinations. 
+
+```{r}
+chicago_citizen_2 <- chicago_citizen %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age) %>% 
+  mutate(prop_age = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Citizen) %>% 
+  mutate(prop_cit = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Age) %>% 
+  mutate(prop_sex_age = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Citizen) %>% 
+  mutate(prop_sex_cit = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age, Citizen) %>% 
+  mutate(prop_age_cit = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Age, Citizen) %>% 
+  mutate(prop_sex_age_cit = sum(estimate)/zip_pop)
+```
+
 ## Ethan Morlock
 ```{r}
 # Sex by age (Hispanic or Latino)
