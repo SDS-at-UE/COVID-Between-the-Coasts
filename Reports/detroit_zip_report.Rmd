@@ -19,31 +19,32 @@ options(tigris_use_cache = TRUE)
 variables_2018 <- load_variables(2018, "acs5", cache = TRUE) %>%
   rename(variable = name)
 zip_code <- read_csv("../Data/zip_county.csv")
-zip_code_det <- zip_code %>% filter(primary_city == "Detroit",
+zip_code_det <- zip_code %>% filter((primary_city == "Detroit"|acceptable_cities == "Detroit"),
                                       state == "MI")
 geometry_zip <- read_sf("../Data/All_zips.shp", type = 6)
 geometry_zip_det <- filter(geometry_zip, GEOID %in% zip_code_det$zip)
 det_covid <- read_csv("../Data/Detroit Rates.csv",
-                      col_types = cols(ZIP_Code = col_character())) %>%
+                      col_types = cols(ZIP_Code = col_character(),
+                                       Deaths_per_HundThou = col_double())) %>%
   filter(ZIP_Code %in% zip_code_det$zip)
 det_population <- get_acs(geography = "zcta",
                            variable = "B01003_001") %>%
   filter(GEOID %in% zip_code_det$zip)
-detroit_covid <- left_join(det_population, det_covid, by = c("GEOID" = "ZIP_Code"))
+detroit_covid <- inner_join(det_population, det_covid, by = c("GEOID" = "ZIP_Code"))
 detroit_covid <- detroit_covid %>% 
   rename(ZIP = GEOID,
          Population = estimate)
 detroit_covid <- select(detroit_covid, ZIP, Population, Deaths_per_HundThou, Cases_per_HundThou) %>%
-  filter(ZIP != '48209' & ZIP != '48216' & ZIP != '48217' & ZIP != '48226' & ZIP != '48233' & ZIP != '48242' & ZIP != '48243')
+  filter(ZIP != '48233' & ZIP != '48242' & ZIP != '48243')
 ```
 
 ## Background
 
-The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Detroit. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Detroit Department of Health.  This data was pulled on September 17, 2020 from these resources.  (https://codtableau.detroitmi.gov/t/DHD/views/CityofDetroit-PublicCOVIDDashboard/ZIPCodeCaseRatesDashboard?%3AisGuestRedirectFromVizportal=y&%3Aembed=y). 
+The goal of this analysis is to find any connections, if they exist, between demographic data and the outbreak of COVID-19 in the city of Detroit. Demographic data was obtained from the Census Bureau through their 5-year American Community Survey published in 2018 (the most recent 5-year data available). COVID-19 case numbers were obtained from the Detroit Department of Health.  This data was pulled on October 8, 2020 from these resources.  (https://codtableau.detroitmi.gov/t/DHD/views/CityofDetroit-PublicCOVIDDashboard/ZIPCodeCaseRatesDashboard?%3AisGuestRedirectFromVizportal=y&%3Aembed=y). 
 
 ## Summary
 
-To start we filtered out the zip codes 48209, 48212, 48216, 48217, 48226, 48233, 48242, 48243.  We filtered these out because some of them had no data included with case or death rate, which is likely due to an extremely small population or a non-population zip code.  None of our demographics showed significant p-values when testing for correlations between the demographics and case rate.  This seems odd; however, populations across Detroit are all relatively equally impacted by COVID-19.  We also looked at the correaltion between death rate and the demographics: occupations, citizenship, income, and race.  The only death rates with a significant p-values were the death rates for essential and nonessential workers. The correlation between essential workers and death rate was -0.576 and the correlation between nonessential workers and death rate was 0.576.  
+To start we filtered out the zip codes 48233, 48242, and 48243.  We filtered these out because they had no data included with case or death rate, which is likely due to an extremely small population or a non-population zip code.  None of our demographics showed significant p-values when testing for correlations between the demographics and case rate.  This seems odd; however, populations across Detroit are all relatively equally impacted by COVID-19.  We also looked at the correlation between death rate and the demographics: occupations, citizenship, income, and race. The only death rates with a significant p-values were the death rates for essential and nonessential workers. The correlation between essential workers and death rate was -0.576, which is a moderately strong correlation meaning that ZIP codes with higher proportions of essential workers are seeing lower death rates due to COVID.  
 
 ## Analysis
 
@@ -55,7 +56,7 @@ det_covid_geo <- st_as_sf(det_covid_geo, sf_column_name = "geometry")
 ```
 
 ```{r}
-pal <- colorNumeric(palette = "viridis", domain = det_covid_geo$Cases_per_HundThou)
+pal_case <- colorNumeric(palette = "viridis", domain = det_covid_geo$Cases_per_HundThou)
 det_covid_geo %>% 
   st_transform(crs = "+init=epsg:4326") %>% 
   leaflet(width = "100%") %>% 
@@ -65,14 +66,36 @@ det_covid_geo %>%
               weight = 4,
               smoothFactor = 0,
               fillOpacity = 0.7,
-              color = ~ pal(Cases_per_HundThou)) %>% 
+              color = ~ pal_case(Cases_per_HundThou)) %>% 
   addLegend("bottomright",
-            pal = pal,
+            pal = pal_case,
             values = ~ Cases_per_HundThou,
             title = "Case Rate (per 100,000)",
             opacity = 1)
 ```
-We see that COVID case rate is spread throughout Detroit, however ZIPs 48211, 48235, and 48207 do stand out as having a high case rate.
+
+We see that COVID case rate is spread throughout Detroit, however ZIPs 48211, 48235, and 48207 do stand out as having a higher case rates.
+
+```{r}
+pal_death <- colorNumeric(palette = "viridis", domain = det_covid_geo$Deaths_per_HundThou)
+det_covid_geo %>% 
+  st_transform(crs = "+init=epsg:4326") %>% 
+  leaflet(width = "100%") %>% 
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  addPolygons(popup = str_c("<strong>", det_covid_geo$ZIP,
+                            "</strong><br /> Case Rate ", signif(det_covid_geo$Deaths_per_HundThou, digits = 4)),
+              weight = 4,
+              smoothFactor = 0,
+              fillOpacity = 0.7,
+              color = ~ pal_death(Deaths_per_HundThou)) %>% 
+  addLegend("bottomright",
+            pal = pal_death,
+            values = ~ Deaths_per_HundThou,
+            title = "Death Rate (per 100,000)",
+            opacity = 1)
+```
+
+Here, we see that ZIP code 48207 has a high death rate.
 
 ## Occupations (Essential VS. Nonessential)
 
@@ -91,7 +114,7 @@ Many "essential" workers tend to be towards the lower end of the income bracket.
 
 The Census Bureau breaks workers into five categories: Management, business, science and arts; service; sales and office; natural resources, construction, and maintenance; and production, transportation, and material moving. Although these categories are undoubtedly not clear distinctions between essential and non-essential, we feel a good classification is to put natural resources, construction, and maintenance and production, transportation, material moving as essential and the other three categories as non-essential. 
 
-Analyzing Essential Occupations in Detroit.
+
 ```{r}
 det_occupation_essen <- det_occupation %>% 
   group_by(GEOID) %>% 
