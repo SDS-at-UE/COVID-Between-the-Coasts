@@ -319,7 +319,7 @@ HI_type_2<- HI_type  %>%
 HI_type_2 <- separate(HI_type_2,
                     variable,
                     sep = "with",
-                    into = c( "Age", "HI_Coverage"))
+                    into = c( "Age", "HI_Type"))
 
 
 HI_type<- left_join(HI_type, chicago_covid, by=c("GEOID"="Zip"))
