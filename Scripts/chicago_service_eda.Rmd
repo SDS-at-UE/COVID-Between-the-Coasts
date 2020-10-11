@@ -37,6 +37,18 @@ chicago_occ1 <- separate(chicago_occ1,
 
 ```
 
+```{r}
+chicago_occ2 <- chicago_occ1 %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Occupation) %>% 
+  mutate(prop_occ = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Occupation) %>% 
+  mutate(prop_sex_occ = sum(estimate)/zip_pop)
+```
 
 Sex by age and citizenship status
 ```{r}
@@ -51,22 +63,17 @@ chicago_citizen <- chicago_citizen %>% filter(str_count(label, "!!") >= 4)
 chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!") 
 
 chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
+chicago_citizen$label <- str_remove(chicago_citizen$label, "Foreign born!!") 
 
 # Created another column because of the fact that some of the citizens only had 3 "!!"'s and some had 4. 
 # I just need it to help determine the citizenship status, I delete it later. 
 chicago_citizen <- separate(chicago_citizen,
                     label,
                     sep = "!!",
-                    into = c("Sex", "Age", "Citizen", "Citizen2"))
+                    into = c("Sex", "Age", "Citizen"))
 
-chicago_citizen$Citizen2 <- if_else(
-  chicago_citizen$Citizen2 == "Not a U.S. citizen", "No", "Yes")
-
-# Need to change all the NA's to "Yes"
-#levels <- levels(chicago_citizen$Citizen2)
-#levels[length(levels) + 1] <- "Yes"
-#chicago_citizen$Citizen2 <- factor(chicago_citizen$Citizen2, levels = levels)
-#chicago_citizen$Citizen2[is.na(chicago_citizen$Citizen2)] <- "Yes"
+chicago_citizen$Citizen <- if_else(
+  chicago_citizen$Citizen == "Not a U.S. citizen", "No", "Yes")
 ```
 
 ### Dr. Weber's Code
