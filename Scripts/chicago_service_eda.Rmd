@@ -48,15 +48,25 @@ chicago_citizen <- get_acs(geography = "zcta",
 chicago_citizen <- left_join(chicago_citizen, variables_2018[, 1:2], by = "variable")
 
 chicago_citizen <- chicago_citizen %>% filter(str_count(label, "!!") >= 4)
-chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!")
+chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!") 
 
+chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
+
+# Created another column because of the fact that some of the citizens only had 3 "!!"'s and some had 4. 
+# I just need it to help determine the citizenship status, I delete it later. 
 chicago_citizen <- separate(chicago_citizen,
                     label,
                     sep = "!!",
-                    into = c("Sex", "Age", "Citizen"))
+                    into = c("Sex", "Age", "Citizen", "Citizen2"))
 
-chicago_citizen$Citizen <- if_else(
-  chicago_citizen$Citizen == "Foreign born", "No", "Yes")
+chicago_citizen$Citizen2 <- if_else(
+  chicago_citizen$Citizen2 == "Not a U.S. citizen", "No", "Yes")
+
+# Need to change all the NA's to "Yes"
+#levels <- levels(chicago_citizen$Citizen2)
+#levels[length(levels) + 1] <- "Yes"
+#chicago_citizen$Citizen2 <- factor(chicago_citizen$Citizen2, levels = levels)
+#chicago_citizen$Citizen2[is.na(chicago_citizen$Citizen2)] <- "Yes"
 ```
 
 ## Ethan Morlock
