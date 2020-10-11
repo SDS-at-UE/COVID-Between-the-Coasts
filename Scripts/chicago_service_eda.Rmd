@@ -233,6 +233,30 @@ chicago_ind_by_class <- separate(chicago_ind_by_class,
 
 chicago_ind_by_class$Class <- as.factor(chicago_ind_by_class$Class)
 chicago_ind_by_class$Industry <- as.factor(chicago_ind_by_class$Industry)
+  
+
+chicago_ind_by_class <- chicago_ind_by_class %>% mutate(Service_Worker = chicago_ind_by_class$Industry)
+
+chicago_ind_by_class$Service_Worker <- if_else((chicago_ind_by_class$Service_Worker == "Construction" | chicago_ind_by_class$Service_Worker == "Manufacturing" | chicago_ind_by_class$Service_Worker == "Retail trade" | chicago_ind_by_class$Service_Worker == "Transportation and warehousing, and utilities"), "Yes", "No")
+
+chicago_ind_by_class_2 <- chicago_ind_by_class %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Class) %>% 
+  mutate(prop_class = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Industry) %>% 
+  mutate(prop_ind = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Service_Worker) %>% 
+  mutate(prop_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Industry) %>% 
+  mutate(prop_class_ind = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Service_Worker) %>% 
+  mutate(prop_class_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Industry, Service_Worker) %>% 
+  mutate(prop_ind_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Industry, Service_Worker) %>% 
+  mutate(prop_class_ind_service = sum(estimate)/zip_pop)
 ```
 
 
@@ -255,6 +279,17 @@ chicago_sex_by_age <- separate(chicago_sex_by_age,
 
 chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
+
+chicago_sex_by_age_2 <- chicago_sex_by_age %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age) %>% 
+  mutate(prop_age = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Age) %>% 
+  mutate(prop_sex_age = sum(estimate)/zip_pop)
 ```
 
 
