@@ -41,13 +41,13 @@ chicago_occ1 <- separate(chicago_occ1,
 chicago_occ2 <- chicago_occ1 %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
-  mutate(zip_pop = sum(estimate)) %>% 
+  mutate(zip_pop = sum(estimate, na.rm = TRUE)) %>% 
   group_by(GEOID, Sex) %>% 
-  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  mutate(prop_sex = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Occupation) %>% 
-  mutate(prop_occ = sum(estimate)/zip_pop) %>% 
+  mutate(prop_occ = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Sex, Occupation) %>% 
-  mutate(prop_sex_occ = sum(estimate)/zip_pop) 
+  mutate(prop_sex_occ = sum(estimate, na.rm = TRUE)/zip_pop) 
 ```
 
 Sex by age and citizenship status
