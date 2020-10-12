@@ -41,13 +41,13 @@ chicago_occ1 <- separate(chicago_occ1,
 chicago_occ2 <- chicago_occ1 %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
-  mutate(zip_pop = sum(estimate)) %>% 
+  mutate(zip_pop = sum(estimate, na.rm = TRUE)) %>% 
   group_by(GEOID, Sex) %>% 
-  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  mutate(prop_sex = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Occupation) %>% 
-  mutate(prop_occ = sum(estimate)/zip_pop) %>% 
+  mutate(prop_occ = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Sex, Occupation) %>% 
-  mutate(prop_sex_occ = sum(estimate)/zip_pop) 
+  mutate(prop_sex_occ = sum(estimate, na.rm = TRUE)/zip_pop) 
 ```
 
 Sex by age and citizenship status
@@ -129,6 +129,7 @@ chicago_sex_age_2 <- chicago_sex_age %>%
   mutate(prop_age = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age) %>% 
   mutate(prop_sex_age = sum(estimate)/zip_pop) 
+write_csv(chicago_sex_age_2, "../Data/chicago_sex_age_2.csv")
 ```
 
 ```{r}
@@ -171,6 +172,7 @@ chicago_HI_2 <- chicago_HI %>%
   mutate(prop_age_HI_cov = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age, HI_coverage) %>% 
   mutate(prop_sex_age_HI_cov = sum(estimate)/zip_pop)
+write_csv(chicago_HI_2, "../Data/chicago_HI_2.csv")
 ```
 
 ```{r}
@@ -211,6 +213,7 @@ chicago_race_2 <- chicago_race %>%
   mutate(prop_Two_more_incl_other = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Hispanic_or_Latino, Two_or_more, Including_other_race) %>% 
   mutate(prop_His_Lat_Two_more_incl_other = sum(estimate)/zip_pop)
+write_csv(chicago_race_2, "../Data/chicago_race_2.csv")
 ```
 
 
