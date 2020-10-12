@@ -163,7 +163,7 @@ HI_type$variable<-
                   "B27010_009", "under 19 with VA Health Care" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_017", "under 19 without health insurance" )
+                  "B27010_017", "under 19 with no health insurance" )
 
 HI_type$variable<-
   str_replace_all(HI_type$variable,
@@ -173,7 +173,7 @@ HI_type$variable<-
                   "B27010_021", "19 to 34 with direct-purchase health insurance" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_022", "19 to 34 with Medicare" )
+                  "B27010_022", "19 to 34! with Medicare" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
                   "B27010_023", "19 to 34 with Medicaid" )
@@ -185,7 +185,7 @@ HI_type$variable<-
                   "B27010_025", "19 to 34 with VA Health Care" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_033", "19 to 34 without Health Insurance" )
+                  "B27010_033", "19 to 34 with no Health Insurance" )
 
 HI_type$variable<-
   str_replace_all(HI_type$variable,
@@ -207,7 +207,7 @@ HI_type$variable<-
                   "B27010_041", "35 to 64 with VA Health Care" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_050", "35 to 64 without Health Insurance" )
+                  "B27010_050", "35 to 64 with no Health Insurance" )
 
 HI_type$variable<-
   str_replace_all(HI_type$variable,
@@ -229,26 +229,26 @@ HI_type$variable<-
                   "B27010_057", "65 and over with VA Health Care" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_066", "65 and over without Health Insurance" )
+                  "B27010_066", "65 and over with no Health Insurance" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
                   "B27010_011", "Under 19 with employer-based and direct-purchase coverage" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_012", "Under 19 With employer-based and Medicare coverage" )
+                  "B27010_012", "Under 19 with employer-based and Medicare coverage" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_013", "Under 19 With Medicare and Medicaid" )
+                  "B27010_013", "Under 19 with Medicare and Medicaid" )
 
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_014", "Under 19 With other private-only combinations" )
+                  "B27010_014", "Under 19 with other private-only combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_015", "Under 19 With other public combinations" )
+                  "B27010_015", "Under 19 with other public combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_016", "Under 19 With other coverage combinations" )
+                  "B27010_016", "Under 19 with other coverage combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
                   "B27010_027", "19 to 34 with employer-based and direct-purchase coverage" )
@@ -257,16 +257,16 @@ HI_type$variable<-
                   "B27010_028", "19 to 34 with employer-based and Medicare coverage" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_029", "19 to 34 With Medicare and Medicaid" )
+                  "B27010_029", "19 to 34 with Medicare and Medicaid" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_030", "19 to 34 With other private-only combinations" )
+                  "B27010_030", "19 to 34 with other private-only combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_031", "19 to 34 With other public combinations" )
+                  "B27010_031", "19 to 34 with other public combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_032", "19 to 34 With other coverage combinations" )
+                  "B27010_032", "19 to 34 with other coverage combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
                   "B27010_043", "35 to 64 with employer-based and direct-purchase coverage" )
@@ -278,16 +278,16 @@ HI_type$variable<-
                   "B27010_045", "35 to 64 with direct-purchase and Medicare coverage" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_046", "35 to 64 With Medicare and Medicaid" )
+                  "B27010_046", "35 to 64 with Medicare and Medicaid" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_047", "35 to 64 With other private-only combinations" )
+                  "B27010_047", "35 to 64 with other private-only combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_048", "35 to 64 With other public combinations" )
+                  "B27010_048", "35 to 64 with other public combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_049", "35 to 64 With other coverage combinations" )
+                  "B27010_049", "35 to 64 with other coverage combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
                   "B27010_059", "65 and over with employer-based and direct-purchase coverage")
@@ -299,22 +299,27 @@ HI_type$variable<-
                   "B27010_061", "65 and over with direct-purchase and Medicare coverage" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_062", "65 and over With Medicare and Medicaid" )
+                  "B27010_062", "65 and over with Medicare and Medicaid" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_063", "65 and over With other private-only combinations" )
+                  "B27010_063", "65 and over with other private-only combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_064", "65 and over With other public combinations" )
+                  "B27010_064", "65 and over with other public combinations" )
 HI_type$variable<-
   str_replace_all(HI_type$variable,
-                  "B27010_065", "65 and over With other coverage combinations" )
+                  "B27010_065", "65 and over with other coverage combinations" )
 HI_type_2<- HI_type  %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
   mutate(zip_pop = sum(estimate)) %>% 
   group_by(GEOID, variable) %>% 
   mutate(prop_HItype = sum(estimate)/zip_pop)
+
+HI_type_2 <- separate(HI_type_2,
+                    variable,
+                    sep = "with",
+                    into = c( "Age", "HI_Type"))
 
 
 HI_type<- left_join(HI_type, chicago_covid, by=c("GEOID"="Zip"))

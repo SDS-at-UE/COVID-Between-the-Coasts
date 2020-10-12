@@ -37,6 +37,18 @@ chicago_occ1 <- separate(chicago_occ1,
 
 ```
 
+```{r}
+chicago_occ2 <- chicago_occ1 %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Occupation) %>% 
+  mutate(prop_occ = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Occupation) %>% 
+  mutate(prop_sex_occ = sum(estimate)/zip_pop) 
+```
 
 Sex by age and citizenship status
 ```{r}
@@ -51,22 +63,17 @@ chicago_citizen <- chicago_citizen %>% filter(str_count(label, "!!") >= 4)
 chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!") 
 
 chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
+chicago_citizen$label <- str_remove(chicago_citizen$label, "Foreign born!!") 
 
 # Created another column because of the fact that some of the citizens only had 3 "!!"'s and some had 4. 
 # I just need it to help determine the citizenship status, I delete it later. 
 chicago_citizen <- separate(chicago_citizen,
                     label,
                     sep = "!!",
-                    into = c("Sex", "Age", "Citizen", "Citizen2"))
+                    into = c("Sex", "Age", "Citizen"))
 
-chicago_citizen$Citizen2 <- if_else(
-  chicago_citizen$Citizen2 == "Not a U.S. citizen", "No", "Yes")
-
-# Need to change all the NA's to "Yes"
-#levels <- levels(chicago_citizen$Citizen2)
-#levels[length(levels) + 1] <- "Yes"
-#chicago_citizen$Citizen2 <- factor(chicago_citizen$Citizen2, levels = levels)
-#chicago_citizen$Citizen2[is.na(chicago_citizen$Citizen2)] <- "Yes"
+chicago_citizen$Citizen <- if_else(
+  chicago_citizen$Citizen == "Not a U.S. citizen", "No", "Yes")
 ```
 
 ### Dr. Weber's Code
@@ -229,6 +236,30 @@ chicago_ind_by_class <- separate(chicago_ind_by_class,
 
 chicago_ind_by_class$Class <- as.factor(chicago_ind_by_class$Class)
 chicago_ind_by_class$Industry <- as.factor(chicago_ind_by_class$Industry)
+  
+
+chicago_ind_by_class <- chicago_ind_by_class %>% mutate(Service_Worker = chicago_ind_by_class$Industry)
+
+chicago_ind_by_class$Service_Worker <- if_else((chicago_ind_by_class$Service_Worker == "Construction" | chicago_ind_by_class$Service_Worker == "Manufacturing" | chicago_ind_by_class$Service_Worker == "Retail trade" | chicago_ind_by_class$Service_Worker == "Transportation and warehousing, and utilities"), "Yes", "No")
+
+chicago_ind_by_class_2 <- chicago_ind_by_class %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Class) %>% 
+  mutate(prop_class = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Industry) %>% 
+  mutate(prop_ind = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Service_Worker) %>% 
+  mutate(prop_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Industry) %>% 
+  mutate(prop_class_ind = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Service_Worker) %>% 
+  mutate(prop_class_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Industry, Service_Worker) %>% 
+  mutate(prop_ind_service = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Class, Industry, Service_Worker) %>% 
+  mutate(prop_class_ind_service = sum(estimate)/zip_pop)
 ```
 
 
@@ -251,6 +282,17 @@ chicago_sex_by_age <- separate(chicago_sex_by_age,
 
 chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
+
+chicago_sex_by_age_2 <- chicago_sex_by_age %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age) %>% 
+  mutate(prop_age = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Sex, Age) %>% 
+  mutate(prop_sex_age = sum(estimate)/zip_pop)
 ```
 
 
