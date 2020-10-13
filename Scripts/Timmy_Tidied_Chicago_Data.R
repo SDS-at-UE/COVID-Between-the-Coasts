@@ -4,13 +4,13 @@ library(tidycensus)
 
 #load Chicago data
 
-chicago_covid <- read_csv("../Data/chicago_zip_positive_cases.csv",
+chicago_covid <- read_csv("Data/chicago_zip_positive_cases.csv",
                           col_types = cols(Zip = col_character()))
 chicago_covid <- na.omit(chicago_covid)
 chicago_covid <- chicago_covid %>% 
   mutate(case_rate = Cases/Population*100000) %>% 
   mutate(pos_rate = Cases/Tested)
-zip_code <- read_csv("../Data/zip_county.csv")
+zip_code <- read_csv("Data/zip_county.csv")
 zip_code_chicago <- zip_code %>% filter(primary_city == "Chicago",
                                         state == "IL")
 
@@ -128,12 +128,26 @@ ancestry<- left_join(ancestry, chicago_covid, by=c("GEOID"="Zip"))
 
 #health insurance by type 
 
-HI_type<-left_join((get_acs(geography="zcta", table="B27010")), variables_2018, by="variable")
+HI_type_orig<-left_join(
+  (get_acs(geography="zcta", table="B27010")), variables_2018, by="variable") %>% 
+  filter(GEOID %in% zip_code_chicago$zip)
 
-HI_type$label<- as_factor(str_replace(HI_type$label, ".*!!(.*)", "\\1"))
+HI_type_final<-HI_type_orig%>%filter(str_count(label, "!!") >=3, 
+                                     !str_detect(label, "of health insurance coverage$"))
+HI_type_final$label<-str_remove(HI_type_final$label, "Estimate!!Total!!")
 
 
-HI_type<-filter(HI_type, GEOID %in% 60601:60827)
+HI_type_final <- separate(HI_type_final,
+                      label,
+                      sep = "!!",
+                      into = c( "Age Group", "Number_HI_polcies", "HI_Type"))
+
+HI_type_final<- HI_type_final  %>% 
+  arrange(GEOID) %>% 
+  group_by(GEOID) %>% 
+  mutate(zip_pop = sum(estimate)) %>% 
+  group_by(GEOID, variable) %>% 
+  mutate(prop_HItype = sum(estimate)/zip_pop)
 
 HI_type<-filter (HI_type, !variable %in% 
                   c( "B27010_001","B27010_010",  "B27010_002", "B27010_003", 
