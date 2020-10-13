@@ -18,38 +18,6 @@ state_of_interest <- ("IL")
 
 ## Maya Frederick
 
-Sex by occupation and median earnings
-```{r}
-chicago_occ1 <- get_acs(geography = "zcta",
-                        year = 2018,
-                        table = "B24012") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip,
-                         !variable %in% c("B24012_001"))
-chicago_occ1 <- left_join(chicago_occ1, variables_2018[, 1:2], by = "variable")
-
-chicago_occ1 <- chicago_occ1 %>% filter(str_count(label, "!!") == 3)
-chicago_occ1$label <- str_remove(chicago_occ1$label, "Estimate!!Total!!")
-
-chicago_occ1 <- separate(chicago_occ1,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Occupation"))
-
-```
-
-```{r}
-chicago_occ2 <- chicago_occ1 %>% 
-  arrange(GEOID) %>% 
-  group_by(GEOID) %>% 
-  mutate(zip_pop = sum(estimate, na.rm = TRUE)) %>% 
-  group_by(GEOID, Sex) %>% 
-  mutate(prop_sex = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
-  group_by(GEOID, Occupation) %>% 
-  mutate(prop_occ = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
-  group_by(GEOID, Sex, Occupation) %>% 
-  mutate(prop_sex_occ = sum(estimate, na.rm = TRUE)/zip_pop) 
-```
-
 Sex by age and citizenship status
 ```{r}
 chicago_citizen <- get_acs(geography = "zcta",
