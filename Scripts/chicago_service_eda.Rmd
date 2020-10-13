@@ -149,18 +149,22 @@ chicago_race <- get_acs(geography = "zcta",
                      year = 2018,
                      table = "B03002") %>% 
                 filter(GEOID %in% zip_code_chicago$zip,
-                       variable %in% c("B03002_010", "B03002_011", "B03002_020", "B03002_021"))
+                       variable %in% c(str_c("B03002_00", 3:9), str_c("B03002_0", 13:19)))
 chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
 chicago_race$label <- str_remove(chicago_race$label, "Estimate!!Total!!")
 chicago_race <- separate(chicago_race,
                     label,
                     sep = "!!",
-                    into = c("Hispanic_or_Latino", "Two_or_more", "Including_other_race"))
+                    into = c("Hispanic_or_Latino", "Race"))
 chicago_race$Hispanic_or_Latino <- if_else(chicago_race$Hispanic_or_Latino == "Not Hispanic or Latino", "No", "Yes")
-chicago_race$Including_other_race <- if_else(chicago_race$Including_other_race == "Two races including Some other race", "Including", "Excluding")
+chicago_race$Race <- if_else(chicago_race$Race == "White alone", "White",
+                      if_else(chicago_race$Race == "Black or African American alone", "Black",
+                        if_else(chicago_race$Race == "American Indian and Alaska Native alone", "AIAN", 
+                          if_else(chicago_race$Race == "Asian alone", "Asian", 
+                            if_else(chicago_race$Race == "Native Hawaiian and Other Pacific Islander alone", "NHPI", 
+                              if_else(chicago_race$Race == "Some other race alone", "Other", "Two or more"))))))
 chicago_race$Hispanic_or_Latino <- as_factor(chicago_race$Hispanic_or_Latino)
-chicago_race$Two_or_more <- as_factor(chicago_race$Two_or_more)
-chicago_race$Including_other_race <- as_factor(chicago_race$Including_other_race)
+chicago_race$Race <- as_factor(chicago_race$Race)
 write_csv(chicago_race, "../Data/chicago_race.csv")
 
 chicago_race_2 <- chicago_race %>% 
@@ -169,19 +173,19 @@ chicago_race_2 <- chicago_race %>%
   mutate(zip_pop = sum(estimate)) %>% 
   group_by(GEOID, Hispanic_or_Latino) %>% 
   mutate(prop_His_Lat = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Two_or_more) %>% 
-  mutate(prop_Two_more = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Including_other_race) %>% 
-  mutate(prop_incl_other = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Hispanic_or_Latino, Two_or_more) %>% 
-  mutate(prop_His_Lat_Two_more = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Hispanic_or_Latino, Including_other_race) %>% 
-  mutate(prop_His_Lat_incl_other = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Two_or_more, Including_other_race) %>% 
-  mutate(prop_Two_more_incl_other = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Hispanic_or_Latino, Two_or_more, Including_other_race) %>% 
-  mutate(prop_His_Lat_Two_more_incl_other = sum(estimate)/zip_pop)
+  group_by(GEOID, Race) %>% 
+  mutate(prop_Race = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Hispanic_or_Latino, Race) %>% 
+  mutate(prop_His_Lat_Race = sum(estimate)/zip_pop)
 write_csv(chicago_race_2, "../Data/chicago_race_2.csv")
+
+chicago_race_ex <- chicago_race_2 %>%
+  filter(variable == "B03002_003") # no, white
+
+chicago_race_ex <- chicago_race_ex %>%
+  rename(prop_not_His = prop_His_Lat,
+         prop_White = prop_Race,
+         prop_not_His_White = prop_His_Lat_Race)
 ```
 
 
