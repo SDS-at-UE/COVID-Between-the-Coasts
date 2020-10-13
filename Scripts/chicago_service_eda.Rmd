@@ -216,7 +216,7 @@ chicago_race_2 <- chicago_race %>%
 
 ## Pearl Muensterman
 ```{r}
-#Occupation by Class Worker
+#Industry by Class Worker
 chicago_ind_by_class <- get_acs(geography = "zcta",
                         year = 2018,
                         table = "C24070") %>% 
