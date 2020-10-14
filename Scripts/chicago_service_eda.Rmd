@@ -33,8 +33,7 @@ chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!")
 chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
 chicago_citizen$label <- str_remove(chicago_citizen$label, "Foreign born!!") 
 
-# Created another column because of the fact that some of the citizens only had 3 "!!"'s and some had 4. 
-# I just need it to help determine the citizenship status, I delete it later. 
+ 
 chicago_citizen <- separate(chicago_citizen,
                     label,
                     sep = "!!",
@@ -42,6 +41,21 @@ chicago_citizen <- separate(chicago_citizen,
 
 chicago_citizen$Citizen <- if_else(
   chicago_citizen$Citizen == "Not a U.S. citizen", "No", "Yes")
+```
+
+Choosing example variable (Need to run Dr. Weber's code first):
+```{r}
+chicago_citizen_ex <- chicago_citizen_2 %>%
+  filter(variable == "B05003_020") # female, over 18, citizen
+
+chicago_citizen_ex <- chicago_citizen_ex %>%
+  rename(prop_female = prop_sex,
+         prop_over_18 = prop_age,
+         prop_citizen = prop_cit,
+         prop_female_over_18 = prop_sex_age,
+         prop_female_citizen = prop_sex_cit,
+         prop_over_18_citizen = prop_age_cit,
+         prop_female_over_18_citizen = prop_sex_age_cit)
 ```
 
 ### Dr. Weber's Code
@@ -240,18 +254,27 @@ chicago_sex_by_ind <- subset(chicago_sex_by_ind, select = -Industry)
 chicago_sex_by_ind_2 <- chicago_sex_by_ind %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
-  mutate(zip_pop = sum(estimate, is.na = TRUE)) %>% 
+  mutate(zip_pop = sum(estimate, na.rm = TRUE)) %>% 
   group_by(GEOID, Sex) %>% 
-  mutate(prop_sex = sum(estimate, is.na = TRUE)/zip_pop) %>% 
+  mutate(prop_sex = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Service_Worker) %>% 
-  mutate(prop_service = sum(estimate, is.na = TRUE)/zip_pop) %>% 
+  mutate(prop_service = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Sex, Service_Worker) %>% 
-  mutate(prop_sex_service = sum(estimate, is.na = TRUE)/zip_pop)
+  mutate(prop_sex_service = sum(estimate, na.rm = TRUE)/zip_pop)
+
+#Male, Non-Service Worker
+chicago_sex_by_ind_pick <- chicago_sex_by_ind_2 %>% 
+  filter(variable == "B24032_002")
+
+chicago_sex_by_ind_pick <- chicago_sex_by_ind_pick %>%
+  rename(prop_male = prop_sex,
+         prop_non_service = prop_service,
+         prop_male_non_service =  prop_sex_service)
 ```
 
 
 ```{r}
-#Sex by Age Total
+#Sex by Age
 chicago_sex_by_age <- get_acs(geography = "zcta",
                         year = 2018,
                         table = "B01001") %>% 
@@ -271,19 +294,14 @@ chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
 
 chicago_sex_by_age <- chicago_sex_by_age %>% 
-  group_by(GEOID, Age) %>% 
-  summarize("Under 5 to 17" = "Under 5 years" + "5 to 9 years" +
-                              "10 to 14 years" + "15 to 17 years",
-            "18 to 34" = "18 and 19 years" + "20 years" + 
-                         "21 years" + "22 to 24 years" + 
-                         "25 to 29 years" + "30 to 34 years",
-            "35 to 64" = "35 to 39 years" + "40 to 44 years" + 
-                         "45 to 49 years" + "50 to 54 years" +
-                         "55 to 59 years" + "60 and 61 years" + 
-                                            "62 to 64 years",
-            "65 and Older" = "65 and 66 years" + "67 to 69 years" +
-                             "70 to 74 years" + "75 to 79 years" +
-                             "80 to 84 years" + "85 years and over")
+  mutate(Age_Group = case_when(
+    variable %in% c(str_c("B01001_00", 3:6), str_c("B01001_0", 27:30)) ~ "Under 5 to 17",
+    variable %in% c(str_c("B01001_00", 7:9), str_c("B01001_0", 10:12), 
+                                              str_c("B01001_0", 31:36)) ~ "18 to 34",
+    variable %in% c(str_c("B01001_0", 13:19), str_c("B01001_0", 37:43)) ~ "35 to 64",
+    variable %in% c(str_c("B01001_0", 20:25), str_c("B01001_0", 44:49)) ~ "65 and Older"))
+
+chicago_sex_by_age <- subset(chicago_sex_by_age, select = -Age)
 
 chicago_sex_by_age_2 <- chicago_sex_by_age %>% 
   arrange(GEOID) %>% 
@@ -291,10 +309,19 @@ chicago_sex_by_age_2 <- chicago_sex_by_age %>%
   mutate(zip_pop = sum(estimate)) %>% 
   group_by(GEOID, Sex) %>% 
   mutate(prop_sex = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Age) %>% 
+  group_by(GEOID, Age_Group) %>% 
   mutate(prop_age = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Sex, Age) %>% 
+  group_by(GEOID, Sex, Age_Group) %>% 
   mutate(prop_sex_age = sum(estimate)/zip_pop)
+
+#Female, 18-34 years
+chicago_sex_by_age_pick <- chicago_sex_by_age_2 %>% 
+  filter(variable == "B01001_031")
+
+chicago_sex_by_age_pick <- chicago_sex_by_age_pick %>% 
+  rename(prop_female = prop_sex,
+         prop_18_to_34 = prop_age,
+         prop_female_18_to_34 = prop_sex_age)
 ```
 
 
