@@ -83,9 +83,11 @@ chicago_sex_age <- separate(chicago_sex_age,
                     label,
                     sep = "!!",
                     into = c("Sex", "Age"))
+chicago_sex_age$Age <- if_else(chicago_sex_age$Age %in% c('Under 5 years', '5 to 9 years', '10 to 14 years', '15 to 17 years'), "0-17 years",
+                        if_else(chicago_sex_age$Age %in% c('18 and 19 years', '20 to 24 years', '25 to 29 years', '30 to 34 years'), "18-34 years",
+                          if_else(chicago_sex_age$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
 chicago_sex_age$Sex <- as_factor(chicago_sex_age$Sex)
 chicago_sex_age$Age <- as_factor(chicago_sex_age$Age)
-write_csv(chicago_sex_age, "../Data/chicago_sex_age.csv")
 
 chicago_sex_age_2 <- chicago_sex_age %>% 
   arrange(GEOID) %>% 
@@ -97,7 +99,14 @@ chicago_sex_age_2 <- chicago_sex_age %>%
   mutate(prop_age = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age) %>% 
   mutate(prop_sex_age = sum(estimate)/zip_pop) 
-write_csv(chicago_sex_age_2, "../Data/chicago_sex_age_2.csv")
+
+chicago_sex_age_ex <- chicago_sex_age_2 %>%
+  filter(variable == "B01001I_018") # female, 0-17 
+  
+chicago_sex_age_ex <- chicago_sex_age_ex %>%
+  rename(prop_female = prop_sex,
+         prop_0_17 = prop_age,
+         prop_not_female_0_17 = prop_sex_age)
 ```
 
 ```{r}
@@ -117,10 +126,12 @@ chicago_HI <- separate(chicago_HI,
                     sep = "!!",
                     into = c("Sex", "Age", "HI_coverage"))
 chicago_HI$HI_coverage <- if_else(chicago_HI$HI_coverage == "With health insurance coverage", "Yes", "No")
+chicago_HI$Age <- if_else(chicago_HI$Age %in% c('Under 6 years', '6 to 18 years'), "0-18 years",
+                    if_else(chicago_HI$Age %in% c('19 to 25 years', '26 to 34 years'), "19-34 years",
+                      if_else(chicago_HI$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
 chicago_HI$Sex <- as_factor(chicago_HI$Sex)
 chicago_HI$Age <- as_factor(chicago_HI$Age)
 chicago_HI$HI_coverage <- as_factor(chicago_HI$HI_coverage)
-write_csv(chicago_HI, "../Data/chicago_HI.csv")
 
 chicago_HI_2 <- chicago_HI %>% 
   arrange(GEOID) %>% 
@@ -140,7 +151,18 @@ chicago_HI_2 <- chicago_HI %>%
   mutate(prop_age_HI_cov = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age, HI_coverage) %>% 
   mutate(prop_sex_age_HI_cov = sum(estimate)/zip_pop)
-write_csv(chicago_HI_2, "../Data/chicago_HI_2.csv")
+
+chicago_HI_ex <- chicago_HI_2 %>%
+  filter(variable == "B27001_032") # female, under 6, yes
+
+chicago_HI_ex <- chicago_HI_ex %>%
+  rename(prop_female = prop_sex,
+         prop_under_6 = prop_age,
+         prop_with_HI = prop_HI_cov,
+         prop_female_under_6 = prop_sex_age,
+         prop_female_with_Hi = prop_sex_HI_cov,
+         prop_under_6_with_HI = prop_age_HI_cov,
+         prop_female_under_6_with_HI = prop_sex_age_HI_cov)
 ```
 
 ```{r}
@@ -165,7 +187,6 @@ chicago_race$Race <- if_else(chicago_race$Race == "White alone", "White",
                               if_else(chicago_race$Race == "Some other race alone", "Other", "Two or more"))))))
 chicago_race$Hispanic_or_Latino <- as_factor(chicago_race$Hispanic_or_Latino)
 chicago_race$Race <- as_factor(chicago_race$Race)
-write_csv(chicago_race, "../Data/chicago_race.csv")
 
 chicago_race_2 <- chicago_race %>% 
   arrange(GEOID) %>% 
@@ -177,7 +198,6 @@ chicago_race_2 <- chicago_race %>%
   mutate(prop_Race = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Hispanic_or_Latino, Race) %>% 
   mutate(prop_His_Lat_Race = sum(estimate)/zip_pop)
-write_csv(chicago_race_2, "../Data/chicago_race_2.csv")
 
 chicago_race_ex <- chicago_race_2 %>%
   filter(variable == "B03002_003") # no, white
@@ -191,47 +211,42 @@ chicago_race_ex <- chicago_race_ex %>%
 
 ## Pearl Muensterman
 ```{r}
-#Industry by Class Worker
-chicago_ind_by_class <- get_acs(geography = "zcta",
+#Sex by Industry
+chicago_sex_by_ind <- get_acs(geography = "zcta",
                         year = 2018,
-                        table = "C24070") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip)
-chicago_ind_by_class <- left_join(chicago_ind_by_class, variables_2018[, 1:2], by = "variable")
-chicago_ind_by_class <- chicago_ind_by_class %>% filter(str_count(label, "!!") >= 3)
+                        table = "B24032") %>% 
+                  filter(GEOID %in% zip_code_chicago$zip,
+                         !variable %in% c("B24032_001", "B24032_003", "B24032_004", "B24032_010", "B24032_011", "B24032_014", "B24032_015","B24032_017", "B24032_018", "B24032_019", "B24032_021", "B24032_022", "B24032_023", "B24032_028", "B24032_030", "B24032_031", "B24032_037", "B24032_038", "B24032_041", "B24032_042", "B24032_044", "B24032_045", "B24032_046", "B24032_048", "B24032_049", "B24032_050"))
+chicago_sex_by_ind <- left_join(chicago_sex_by_ind, variables_2018[, 1:2], by = "variable")
 
-chicago_ind_by_class$label <- str_remove(chicago_ind_by_class$label, "Estimate!!Total!!")
+chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Estimate!!")
+chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Arts, entertainment, and recreation, and accommodation and food services!!")
 
-chicago_ind_by_class <- separate(chicago_ind_by_class,
+chicago_sex_by_ind <- separate(chicago_sex_by_ind,
                     label,
                     sep = "!!",
-                    into = c("Class", "Industry"))
+                    into = c("Sex", "Industry"))
 
-chicago_ind_by_class$Class <- as.factor(chicago_ind_by_class$Class)
-chicago_ind_by_class$Industry <- as.factor(chicago_ind_by_class$Industry)
+chicago_sex_by_ind$Sex <- as.factor(chicago_sex_by_ind$Sex)
+chicago_sex_by_ind$Industry <- as.factor(chicago_sex_by_ind$Industry)
   
 
-chicago_ind_by_class <- chicago_ind_by_class %>% mutate(Service_Worker = chicago_ind_by_class$Industry)
+chicago_sex_by_ind <- chicago_sex_by_ind %>% mutate(Service_Worker = chicago_sex_by_ind$Industry)
 
-chicago_ind_by_class$Service_Worker <- if_else((chicago_ind_by_class$Service_Worker == "Construction" | chicago_ind_by_class$Service_Worker == "Manufacturing" | chicago_ind_by_class$Service_Worker == "Retail trade" | chicago_ind_by_class$Service_Worker == "Transportation and warehousing, and utilities"), "Yes", "No")
+chicago_sex_by_ind$Service_Worker <- if_else((chicago_sex_by_ind$Service_Worker == "Construction" | chicago_sex_by_ind$Service_Worker == "Manufacturing" | chicago_sex_by_ind$Service_Worker == "Retail trade" | chicago_sex_by_ind$Service_Worker == "Transportation and warehousing, and utilities" | chicago_sex_by_ind$Service_Worker == "Accommodation and food services"), "Yes", "No")
 
-chicago_ind_by_class_2 <- chicago_ind_by_class %>% 
+chicago_sex_by_ind <- subset(chicago_sex_by_ind, select = -Industry)
+
+chicago_sex_by_ind_2 <- chicago_sex_by_ind %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
-  mutate(zip_pop = sum(estimate)) %>% 
-  group_by(GEOID, Class) %>% 
-  mutate(prop_class = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Industry) %>% 
-  mutate(prop_ind = sum(estimate)/zip_pop) %>% 
+  mutate(zip_pop = sum(estimate, is.na = TRUE)) %>% 
+  group_by(GEOID, Sex) %>% 
+  mutate(prop_sex = sum(estimate, is.na = TRUE)/zip_pop) %>% 
   group_by(GEOID, Service_Worker) %>% 
-  mutate(prop_service = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Class, Industry) %>% 
-  mutate(prop_class_ind = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Class, Service_Worker) %>% 
-  mutate(prop_class_service = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Industry, Service_Worker) %>% 
-  mutate(prop_ind_service = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, Class, Industry, Service_Worker) %>% 
-  mutate(prop_class_ind_service = sum(estimate)/zip_pop)
+  mutate(prop_service = sum(estimate, is.na = TRUE)/zip_pop) %>% 
+  group_by(GEOID, Sex, Service_Worker) %>% 
+  mutate(prop_sex_service = sum(estimate, is.na = TRUE)/zip_pop)
 ```
 
 
@@ -254,6 +269,21 @@ chicago_sex_by_age <- separate(chicago_sex_by_age,
 
 chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
+
+chicago_sex_by_age <- chicago_sex_by_age %>% 
+  group_by(GEOID, Age) %>% 
+  summarize("Under 5 to 17" = "Under 5 years" + "5 to 9 years" +
+                              "10 to 14 years" + "15 to 17 years",
+            "18 to 34" = "18 and 19 years" + "20 years" + 
+                         "21 years" + "22 to 24 years" + 
+                         "25 to 29 years" + "30 to 34 years",
+            "35 to 64" = "35 to 39 years" + "40 to 44 years" + 
+                         "45 to 49 years" + "50 to 54 years" +
+                         "55 to 59 years" + "60 and 61 years" + 
+                                            "62 to 64 years",
+            "65 and Older" = "65 and 66 years" + "67 to 69 years" +
+                             "70 to 74 years" + "75 to 79 years" +
+                             "80 to 84 years" + "85 years and over")
 
 chicago_sex_by_age_2 <- chicago_sex_by_age %>% 
   arrange(GEOID) %>% 
