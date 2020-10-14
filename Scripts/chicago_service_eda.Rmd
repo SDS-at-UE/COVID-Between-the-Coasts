@@ -63,7 +63,8 @@ chicago_citizen_2 <- chicago_citizen %>%
   group_by(GEOID, Age, Citizen) %>% 
   mutate(prop_age_cit = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age, Citizen) %>% 
-  mutate(prop_sex_age_cit = sum(estimate)/zip_pop)
+  mutate(prop_sex_age_cit = sum(estimate)/zip_pop) %>% 
+  ungroup()
 ```
 
 ```{r}
@@ -110,15 +111,17 @@ chicago_sex_age_2 <- chicago_sex_age %>%
   group_by(GEOID, Age) %>% 
   mutate(prop_age = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age) %>% 
-  mutate(prop_sex_age = sum(estimate)/zip_pop) 
+  mutate(prop_sex_age = sum(estimate)/zip_pop) %>% 
+  ungroup()
 
 chicago_sex_age_ex <- chicago_sex_age_2 %>%
-  filter(variable == "B01001I_018") # female, 0-17 
+  filter(variable == "B01001I_022") # female, 18-34 
   
 chicago_sex_age_ex <- chicago_sex_age_ex %>%
-  rename(prop_female = prop_sex,
-         prop_0_17 = prop_age,
-         prop_not_female_0_17 = prop_sex_age)
+  rename(zip_pop_hisp = zip_pop,
+         prop_female_hisp = prop_sex,
+         prop_18_to_34_hisp = prop_age,
+         prop_female_18_to_34_hisp = prop_sex_age)
 ```
 
 ```{r}
@@ -162,19 +165,20 @@ chicago_HI_2 <- chicago_HI %>%
   group_by(GEOID, Age, HI_coverage) %>% 
   mutate(prop_age_HI_cov = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age, HI_coverage) %>% 
-  mutate(prop_sex_age_HI_cov = sum(estimate)/zip_pop)
+  mutate(prop_sex_age_HI_cov = sum(estimate)/zip_pop) %>% 
+  ungroup()
 
 chicago_HI_ex <- chicago_HI_2 %>%
-  filter(variable == "B27001_032") # female, under 6, yes
+  filter(variable == "B27001_038") # female, 19-34 year olds, yes
 
 chicago_HI_ex <- chicago_HI_ex %>%
   rename(prop_female = prop_sex,
-         prop_under_6 = prop_age,
+         prop_19_to_34 = prop_age,
          prop_with_HI = prop_HI_cov,
-         prop_female_under_6 = prop_sex_age,
+         prop_female_19_to_34 = prop_sex_age,
          prop_female_with_Hi = prop_sex_HI_cov,
-         prop_under_6_with_HI = prop_age_HI_cov,
-         prop_female_under_6_with_HI = prop_sex_age_HI_cov)
+         prop_19_to_34_with_HI = prop_age_HI_cov,
+         prop_female_19_to_34_with_HI = prop_sex_age_HI_cov)
 ```
 
 ```{r}
@@ -209,7 +213,8 @@ chicago_race_2 <- chicago_race %>%
   group_by(GEOID, Race) %>% 
   mutate(prop_Race = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Hispanic_or_Latino, Race) %>% 
-  mutate(prop_His_Lat_Race = sum(estimate)/zip_pop)
+  mutate(prop_His_Lat_Race = sum(estimate)/zip_pop) %>% 
+  ungroup()
 
 chicago_race_ex <- chicago_race_2 %>%
   filter(variable == "B03002_003") # no, white
@@ -317,7 +322,8 @@ chicago_sex_by_age_2 <- chicago_sex_by_age %>%
   group_by(GEOID, Age_Group) %>% 
   mutate(prop_age = sum(estimate)/zip_pop) %>% 
   group_by(GEOID, Sex, Age_Group) %>% 
-  mutate(prop_sex_age = sum(estimate)/zip_pop)
+  mutate(prop_sex_age = sum(estimate)/zip_pop) %>% 
+  ungroup()
 
 #Female, 18-34 years
 chicago_sex_by_age_pick <- chicago_sex_by_age_2 %>% 
@@ -331,7 +337,6 @@ chicago_sex_by_age_pick <- chicago_sex_by_age_pick %>%
 
 
 ## Timmy Miller
-
 
 ```{r}
 #ancestry
@@ -353,9 +358,11 @@ ancestry_2 <- ancestry %>%
   mutate(zip_pop = sum(estimate)) %>% 
   group_by(GEOID, label) %>% 
   mutate(prop_anc = sum(estimate)/zip_pop) %>% 
-  group_by(GEOID, label) 
+  group_by(GEOID, label)%>% 
+  ungroup()
 
-ancestry<- left_join(ancestry, chicago_covid, by=c("GEOID"="Zip"))
+#The next line doesn't run since chicago_covid doesn't exist. 
+#ancestry<- left_join(ancestry, chicago_covid, by=c("GEOID"="Zip"))
 
 ```
 
