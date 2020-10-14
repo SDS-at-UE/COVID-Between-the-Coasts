@@ -33,8 +33,7 @@ chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!")
 chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
 chicago_citizen$label <- str_remove(chicago_citizen$label, "Foreign born!!") 
 
-# Created another column because of the fact that some of the citizens only had 3 "!!"'s and some had 4. 
-# I just need it to help determine the citizenship status, I delete it later. 
+ 
 chicago_citizen <- separate(chicago_citizen,
                     label,
                     sep = "!!",
@@ -42,6 +41,21 @@ chicago_citizen <- separate(chicago_citizen,
 
 chicago_citizen$Citizen <- if_else(
   chicago_citizen$Citizen == "Not a U.S. citizen", "No", "Yes")
+```
+
+Choosing example variable (Need to run Dr. Weber's code first):
+```{r}
+chicago_citizen_ex <- chicago_citizen_2 %>%
+  filter(variable == "B05003_020") # female, over 18, citizen
+
+chicago_citizen_ex <- chicago_citizen_ex %>%
+  rename(prop_female = prop_sex,
+         prop_over_18 = prop_age,
+         prop_citizen = prop_cit,
+         prop_female_over_18 = prop_sex_age,
+         prop_female_citizen = prop_sex_cit,
+         prop_over_18_citizen = prop_age_cit,
+         prop_female_over_18_citizen = prop_sex_age_cit)
 ```
 
 ### Dr. Weber's Code
