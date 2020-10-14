@@ -224,14 +224,19 @@ chicago_race_ex <- chicago_race_ex %>%
 ## Pearl Muensterman
 ```{r}
 #Sex by Industry
-chicago_sex_by_ind <- get_acs(geography = "zcta",
+chicago_sex_by_ind_orig <- get_acs(geography = "zcta",
                         year = 2018,
-                        table = "B24032") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip,
-                         !variable %in% c("B24032_001", "B24032_003", "B24032_004", "B24032_010", "B24032_011", "B24032_014", "B24032_015","B24032_017", "B24032_018", "B24032_019", "B24032_021", "B24032_022", "B24032_023", "B24032_028", "B24032_030", "B24032_031", "B24032_037", "B24032_038", "B24032_041", "B24032_042", "B24032_044", "B24032_045", "B24032_046", "B24032_048", "B24032_049", "B24032_050"))
+                        table = "C24030") %>% 
+  filter(GEOID %in% zip_code_chicago$zip)
+
+
+chicago_sex_by_ind <- chicago_sex_by_ind_orig %>% 
+  filter(variable %in% c(str_c("C24030_00", c(3, 6:9)), 
+                         str_c("C24030_0", c(10, 13:14, 17, 21, 25:28, 30, 33:37, 40:41, 44, 48, 52:55))))
+  
 chicago_sex_by_ind <- left_join(chicago_sex_by_ind, variables_2018[, 1:2], by = "variable")
 
-chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Estimate!!")
+chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Estimate!!Total!!")
 chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Arts, entertainment, and recreation, and accommodation and food services!!")
 
 chicago_sex_by_ind <- separate(chicago_sex_by_ind,
@@ -247,7 +252,7 @@ chicago_sex_by_ind <- chicago_sex_by_ind %>% mutate(Service_Worker = chicago_sex
 
 chicago_sex_by_ind$Service_Worker <- if_else((chicago_sex_by_ind$Service_Worker == "Construction" | chicago_sex_by_ind$Service_Worker == "Manufacturing" | chicago_sex_by_ind$Service_Worker == "Retail trade" | chicago_sex_by_ind$Service_Worker == "Transportation and warehousing, and utilities" | chicago_sex_by_ind$Service_Worker == "Accommodation and food services"), "Yes", "No")
 
-chicago_sex_by_ind <- subset(chicago_sex_by_ind, select = -Industry)
+chicago_sex_by_ind <- select(chicago_sex_by_ind, -Industry, -moe)
 
 chicago_sex_by_ind_2 <- chicago_sex_by_ind %>% 
   arrange(GEOID) %>% 
@@ -258,16 +263,18 @@ chicago_sex_by_ind_2 <- chicago_sex_by_ind %>%
   group_by(GEOID, Service_Worker) %>% 
   mutate(prop_service = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
   group_by(GEOID, Sex, Service_Worker) %>% 
-  mutate(prop_sex_service = sum(estimate, na.rm = TRUE)/zip_pop)
+  mutate(prop_sex_service = sum(estimate, na.rm = TRUE)/zip_pop) %>% 
+  ungroup()
 
-#Male, Non-Service Worker
+#Male, Service Worker
 chicago_sex_by_ind_pick <- chicago_sex_by_ind_2 %>% 
-  filter(variable == "B24032_002")
+  filter(variable == "C24030_006")
 
 chicago_sex_by_ind_pick <- chicago_sex_by_ind_pick %>%
-  rename(prop_male = prop_sex,
-         prop_non_service = prop_service,
-         prop_male_non_service =  prop_sex_service)
+  rename(zip_pop_work_eligible = zip_pop,
+         prop_male_work_eligible = prop_sex,
+         prop_service = prop_service,
+         prop_male_work_eligible_service =  prop_sex_service)
 ```
 
 
@@ -374,6 +381,31 @@ HI_type_final<- HI_type_final  %>%
   group_by(GEOID) %>% 
   mutate(zip_pop = sum(estimate)) %>% 
   group_by(GEOID, variable) %>% 
-  mutate(prop_HItype = sum(estimate)/zip_pop)
+  mutate(prop_HItype = sum(estimate)/zip_pop) %>% 
+  ungroup()
 
 ```
+
+We now select the appropriate rows to create a tidy dataset to work with. 
+
+```{r}
+
+```
+
+
+## Join all data frames together
+
+Here, we join the final proportion columns chosen above to create a master data frame.
+
+```{r}
+chicago_master <- chicago_citizen_ex %>% 
+  select(GEOID, zip_pop, starts_with("prop"))
+chicago_master <- full_join(chicago_master, chicago_sex_age_ex, by = "GEOID")
+chicago_master <- full_join(chicago_master, chicago_HI_ex, by = "GEOID")
+chicago_master <- full_join(chicago_master, chicago_race_ex, by = "GEOID")
+chicago_master <- full_join(chicago_master, chicago_sex_by_ind_pick, by = "GEOID")
+chicago_master <- full_join(chicago_master, chicago_sex_by_age_pick, by = "GEOID")
+chicago_master <- chicago_master %>% 
+  select(GEOID, zip_pop.x, starts_with("zip_pop_"), starts_with("prop"), -prop_female.x, -prop_female.y)
+```
+
