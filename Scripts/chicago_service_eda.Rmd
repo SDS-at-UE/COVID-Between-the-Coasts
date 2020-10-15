@@ -21,10 +21,10 @@ state_of_interest <- ("IL")
 Sex by age and citizenship status
 ```{r}
 chicago_citizen <- get_acs(geography = "zcta",
-                        year = 2018,
-                        table = "B05003") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip,
-                         !variable %in% c("B05003_001"))
+                           year = 2018,
+                           table = "B05003") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B05003_001"))
 chicago_citizen <- left_join(chicago_citizen, variables_2018[, 1:2], by = "variable")
 
 chicago_citizen <- chicago_citizen %>% filter(str_count(label, "!!") >= 4)
@@ -33,11 +33,11 @@ chicago_citizen$label <- str_remove(chicago_citizen$label, "Estimate!!Total!!")
 chicago_citizen <- chicago_citizen %>% filter(!str_detect(label,"Foreign born$"))
 chicago_citizen$label <- str_remove(chicago_citizen$label, "Foreign born!!") 
 
- 
+
 chicago_citizen <- separate(chicago_citizen,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Age", "Citizen"))
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age", "Citizen"))
 
 chicago_citizen$Citizen <- if_else(
   chicago_citizen$Citizen == "Not a U.S. citizen", "No", "Yes")
@@ -86,19 +86,19 @@ chicago_citizen_ex <- chicago_citizen_ex %>%
 ```{r}
 # Sex by age (Hispanic or Latino)
 chicago_sex_age <- get_acs(geography = "zcta",
-                                   year = 2018,
-                                   table = "B01001I") %>% 
-                              filter(GEOID %in% zip_code_chicago$zip,
-                                     !variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
+                           year = 2018,
+                           table = "B01001I") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         !variable %in% c("B01001I_001", "B01001I_002", "B01001I_017"))
 chicago_sex_age <- left_join(chicago_sex_age, variables_2018[, 1:2], by = "variable")
 chicago_sex_age$label <- str_remove(chicago_sex_age$label, "Estimate!!Total!!")
 chicago_sex_age <- separate(chicago_sex_age,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Age"))
+                            label,
+                            sep = "!!",
+                            into = c("Sex", "Age"))
 chicago_sex_age$Age <- if_else(chicago_sex_age$Age %in% c('Under 5 years', '5 to 9 years', '10 to 14 years', '15 to 17 years'), "0-17 years",
-                        if_else(chicago_sex_age$Age %in% c('18 and 19 years', '20 to 24 years', '25 to 29 years', '30 to 34 years'), "18-34 years",
-                          if_else(chicago_sex_age$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
+                               if_else(chicago_sex_age$Age %in% c('18 and 19 years', '20 to 24 years', '25 to 29 years', '30 to 34 years'), "18-34 years",
+                                       if_else(chicago_sex_age$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
 chicago_sex_age$Sex <- as_factor(chicago_sex_age$Sex)
 chicago_sex_age$Age <- as_factor(chicago_sex_age$Age)
 
@@ -116,7 +116,7 @@ chicago_sex_age_2 <- chicago_sex_age %>%
 
 chicago_sex_age_ex <- chicago_sex_age_2 %>%
   filter(variable == "B01001I_022") # female, 18-34 
-  
+
 chicago_sex_age_ex <- chicago_sex_age_ex %>%
   rename(zip_pop_hisp = zip_pop,
          prop_female_hisp = prop_sex,
@@ -126,24 +126,23 @@ chicago_sex_age_ex <- chicago_sex_age_ex %>%
 
 ```{r}
 # Health insurance coverage status by sex by age 
-chicago_HI <- get_acs(geography = "zcta",
-                   year = 2018,
-                   table = "B27001") %>% 
-              filter(GEOID %in% zip_code_chicago$zip,
-                     !variable %in% c("B27001_001", "B27001_002", "B27001_003", "B27001_006", "B27001_009", "B27001_012",
-                                      "B27001_015", "B27001_018", "B27001_021", "B27001_024", "B27001_027", "B27001_030", "B27001_031",
-                                      "B27001_034", "B27001_037", "B27001_040", "B27001_043", "B27001_046", "B27001_049", "B27001_052",
-                                      "B27001_055"))
-chicago_HI <- left_join(chicago_HI, variables_2018[, 1:2], by = "variable")
+chicago_HI_orig <- get_acs(geography = "zcta",
+                           year = 2018,
+                           table = "B27001") %>% 
+  filter(GEOID %in% zip_code_chicago$zip)
+
+chicago_HI <- left_join(chicago_HI_orig, variables_2018[, 1:2], by = "variable") %>% 
+  filter(str_count(label, "!!") >= 4)
+
 chicago_HI$label <- str_remove(chicago_HI$label, "Estimate!!Total!!")
 chicago_HI <- separate(chicago_HI,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Age", "HI_coverage"))
+                       label,
+                       sep = "!!",
+                       into = c("Sex", "Age", "HI_coverage"))
 chicago_HI$HI_coverage <- if_else(chicago_HI$HI_coverage == "With health insurance coverage", "Yes", "No")
 chicago_HI$Age <- if_else(chicago_HI$Age %in% c('Under 6 years', '6 to 18 years'), "0-18 years",
-                    if_else(chicago_HI$Age %in% c('19 to 25 years', '26 to 34 years'), "19-34 years",
-                      if_else(chicago_HI$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
+                          if_else(chicago_HI$Age %in% c('19 to 25 years', '26 to 34 years'), "19-34 years",
+                                  if_else(chicago_HI$Age %in% c('35 to 44 years', '45 to 54 years', '55 to 64 years'), "35-64 years", "65+")))
 chicago_HI$Sex <- as_factor(chicago_HI$Sex)
 chicago_HI$Age <- as_factor(chicago_HI$Age)
 chicago_HI$HI_coverage <- as_factor(chicago_HI$HI_coverage)
@@ -184,23 +183,23 @@ chicago_HI_ex <- chicago_HI_ex %>%
 ```{r}
 # Race (Hispanic or Latino)
 chicago_race <- get_acs(geography = "zcta",
-                     year = 2018,
-                     table = "B03002") %>% 
-                filter(GEOID %in% zip_code_chicago$zip,
-                       variable %in% c(str_c("B03002_00", 3:9), str_c("B03002_0", 13:19)))
+                        year = 2018,
+                        table = "B03002") %>% 
+  filter(GEOID %in% zip_code_chicago$zip,
+         variable %in% c(str_c("B03002_00", 3:9), str_c("B03002_0", 13:19)))
 chicago_race <- left_join(chicago_race, variables_2018[, 1:2], by = "variable")
 chicago_race$label <- str_remove(chicago_race$label, "Estimate!!Total!!")
 chicago_race <- separate(chicago_race,
-                    label,
-                    sep = "!!",
-                    into = c("Hispanic_or_Latino", "Race"))
+                         label,
+                         sep = "!!",
+                         into = c("Hispanic_or_Latino", "Race"))
 chicago_race$Hispanic_or_Latino <- if_else(chicago_race$Hispanic_or_Latino == "Not Hispanic or Latino", "No", "Yes")
 chicago_race$Race <- if_else(chicago_race$Race == "White alone", "White",
-                      if_else(chicago_race$Race == "Black or African American alone", "Black",
-                        if_else(chicago_race$Race == "American Indian and Alaska Native alone", "AIAN", 
-                          if_else(chicago_race$Race == "Asian alone", "Asian", 
-                            if_else(chicago_race$Race == "Native Hawaiian and Other Pacific Islander alone", "NHPI", 
-                              if_else(chicago_race$Race == "Some other race alone", "Other", "Two or more"))))))
+                             if_else(chicago_race$Race == "Black or African American alone", "Black",
+                                     if_else(chicago_race$Race == "American Indian and Alaska Native alone", "AIAN", 
+                                             if_else(chicago_race$Race == "Asian alone", "Asian", 
+                                                     if_else(chicago_race$Race == "Native Hawaiian and Other Pacific Islander alone", "NHPI", 
+                                                             if_else(chicago_race$Race == "Some other race alone", "Other", "Two or more"))))))
 chicago_race$Hispanic_or_Latino <- as_factor(chicago_race$Hispanic_or_Latino)
 chicago_race$Race <- as_factor(chicago_race$Race)
 
@@ -230,28 +229,28 @@ chicago_race_ex <- chicago_race_ex %>%
 ```{r}
 #Sex by Industry
 chicago_sex_by_ind_orig <- get_acs(geography = "zcta",
-                        year = 2018,
-                        table = "C24030") %>% 
+                                   year = 2018,
+                                   table = "C24030") %>% 
   filter(GEOID %in% zip_code_chicago$zip)
 
 
 chicago_sex_by_ind <- chicago_sex_by_ind_orig %>% 
   filter(variable %in% c(str_c("C24030_00", c(3, 6:9)), 
                          str_c("C24030_0", c(10, 13:14, 17, 21, 25:28, 30, 33:37, 40:41, 44, 48, 52:55))))
-  
+
 chicago_sex_by_ind <- left_join(chicago_sex_by_ind, variables_2018[, 1:2], by = "variable")
 
 chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Estimate!!Total!!")
 chicago_sex_by_ind$label <- str_remove(chicago_sex_by_ind$label, "Arts, entertainment, and recreation, and accommodation and food services!!")
 
 chicago_sex_by_ind <- separate(chicago_sex_by_ind,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Industry"))
+                               label,
+                               sep = "!!",
+                               into = c("Sex", "Industry"))
 
 chicago_sex_by_ind$Sex <- as.factor(chicago_sex_by_ind$Sex)
 chicago_sex_by_ind$Industry <- as.factor(chicago_sex_by_ind$Industry)
-  
+
 
 chicago_sex_by_ind <- chicago_sex_by_ind %>% mutate(Service_Worker = chicago_sex_by_ind$Industry)
 
@@ -286,19 +285,19 @@ chicago_sex_by_ind_pick <- chicago_sex_by_ind_pick %>%
 ```{r}
 #Sex by Age
 chicago_sex_by_age <- get_acs(geography = "zcta",
-                        year = 2018,
-                        table = "B01001") %>% 
-                  filter(GEOID %in% zip_code_chicago$zip)
-                        
+                              year = 2018,
+                              table = "B01001") %>% 
+  filter(GEOID %in% zip_code_chicago$zip)
+
 chicago_sex_by_age <- left_join(chicago_sex_by_age, variables_2018[, 1:2], by = "variable")
 chicago_sex_by_age <- chicago_sex_by_age %>% filter(str_count(label, "!!") == 3)
 
 chicago_sex_by_age$label <- str_remove(chicago_sex_by_age$label, "Estimate!!Total!!")
 
 chicago_sex_by_age <- separate(chicago_sex_by_age,
-                    label,
-                    sep = "!!",
-                    into = c("Sex", "Age"))
+                               label,
+                               sep = "!!",
+                               into = c("Sex", "Age"))
 
 chicago_sex_by_age$Sex <- as.factor(chicago_sex_by_age$Sex)
 chicago_sex_by_age$Age <- as.factor(chicago_sex_by_age$Age)
@@ -307,7 +306,7 @@ chicago_sex_by_age <- chicago_sex_by_age %>%
   mutate(Age_Group = case_when(
     variable %in% c(str_c("B01001_00", 3:6), str_c("B01001_0", 27:30)) ~ "Under 5 to 17",
     variable %in% c(str_c("B01001_00", 7:9), str_c("B01001_0", 10:12), 
-                                              str_c("B01001_0", 31:36)) ~ "18 to 34",
+                    str_c("B01001_0", 31:36)) ~ "18 to 34",
     variable %in% c(str_c("B01001_0", 13:19), str_c("B01001_0", 37:43)) ~ "35 to 64",
     variable %in% c(str_c("B01001_0", 20:25), str_c("B01001_0", 44:49)) ~ "65 and Older"))
 
@@ -379,16 +378,38 @@ HI_type_final$label<-str_remove(HI_type_final$label, "Estimate!!Total!!")
 
 
 HI_type_final <- separate(HI_type_final,
-                      label,
-                      sep = "!!",
-                      into = c( "Age Group", "Number_HI_polcies", "HI_Type"))
+                          label,
+                          sep = "!!",
+                          into = c( "Age_Group", "Number_HI_polcies", "HI_Type"))
 
-HI_type_final<- HI_type_final  %>% 
+HI_type_final <- HI_type_final %>% 
+  mutate(num_HI_policies = case_when(
+    str_detect(Number_HI_polcies, "With one") ~ "One",
+    str_detect(Number_HI_polcies, "With two") ~ "Two or more",
+    TRUE ~ "None"
+  )) %>% 
+  select(-Number_HI_polcies, -concept)
+
+HI_type_final$HI_Type <- replace_na(HI_type_final$HI_Type, "None")
+
+HI_type_final_2 <- HI_type_final  %>% 
   arrange(GEOID) %>% 
   group_by(GEOID) %>% 
   mutate(zip_pop = sum(estimate)) %>% 
-  group_by(GEOID, variable) %>% 
-  mutate(prop_HItype = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age_Group) %>% 
+  mutate(prop_age = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, num_HI_policies) %>% 
+  mutate(prop_num_policies = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, HI_Type) %>% 
+  mutate(prop_HI_type = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age_Group, num_HI_policies) %>% 
+  mutate(prop_age_num_policies = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age_Group, HI_Type) %>% 
+  mutate(prop_age_HI_type = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, num_HI_policies, HI_Type) %>% 
+  mutate(prop_num_policies_HI_type = sum(estimate)/zip_pop) %>% 
+  group_by(GEOID, Age_Group, num_HI_policies, HI_Type) %>% 
+  mutate(prop_age_num_policies_HI_type = sum(estimate)/zip_pop) %>% 
   ungroup()
 
 ```
@@ -396,7 +417,48 @@ HI_type_final<- HI_type_final  %>%
 We now select the appropriate rows to create a tidy dataset to work with. 
 
 ```{r}
+#19-34 years, one policy, employer-based and
+#19-34 years, no policy, none
+chicago_HI_type_ex <- HI_type_final_2 %>% 
+  filter(variable %in% c("B27010_020", "B27010_023", "B27010_033"))
 
+#Since we are selecting two rows per ZIP code, we need to move one of the proportions to its own column
+# to create a tidy dataset
+chicago_HI_type_ex <- pivot_wider(chicago_HI_type_ex, 
+                                  names_from = variable, 
+                                  values_from = c(prop_num_policies,
+                                                  prop_HI_type,
+                                                  prop_age_num_policies,
+                                                  prop_age_HI_type,
+                                                  prop_num_policies_HI_type,
+                                                  prop_age_num_policies_HI_type)) %>%
+  select(GEOID, zip_pop, starts_with("prop")) %>% 
+  group_by(GEOID) %>% 
+  summarise_each(funs(first(.[!is.na(.)]))) #this collapses and consolidates the rows since 
+# the pivot_wider() command introduced several NAs
+
+chicago_HI_type_ex <- chicago_HI_type_ex %>% 
+  rename_with(~ str_replace(., "B27010_020", "employer"), ends_with("B27010_020")) %>% 
+  rename_with(~ str_replace(., "B27010_023", "medicaid"), ends_with("B27010_023")) %>%  
+  rename_with(~ str_replace(., "B27010_033", "none"), ends_with("B27010_033"))
+
+#This renames the columns appropriately and deletes duplicated columns
+chicago_HI_type_ex <- chicago_HI_type_ex %>% 
+  rename_with(~ str_replace(., "age", "19_to_34")) %>% 
+  rename_with(~ str_replace(., "prop_HI_type", "prop")) %>% 
+  rename_with(~ str_replace(., "num_policies_employer", "one_policy")) %>% 
+  select(-contains("num_policies_medicaid"), 
+         -prop_none,
+         -prop_19_to_34_HI_type_none,
+         -prop_num_policies_HI_type_none) %>% 
+  rename_with(~ str_replace(., "HI_type_employer", "employer")) %>% 
+  rename_with(~ str_replace(., "HI_type_medicaid", "medicaid")) %>% 
+  rename(prop_no_HI = prop_num_policies_none,
+         prop_19_to_34_no_HI = prop_19_to_34_num_policies_none) %>% 
+  select(-prop_19_to_34_num_policies_medicaid,
+         -prop_19_to_34_num_policies_employer,
+         -starts_with("prop_num_policies_"),
+         -prop_19_to_34_num_policies_HI_type_none) 
 ```
 
 
@@ -412,7 +474,9 @@ chicago_master <- full_join(chicago_master, chicago_HI_ex, by = "GEOID")
 chicago_master <- full_join(chicago_master, chicago_race_ex, by = "GEOID")
 chicago_master <- full_join(chicago_master, chicago_sex_by_ind_pick, by = "GEOID")
 chicago_master <- full_join(chicago_master, chicago_sex_by_age_pick, by = "GEOID")
+chicago_master <- full_join(chicago_master, chicago_HI_type_ex, by = "GEOID")
 chicago_master <- chicago_master %>% 
-  select(GEOID, zip_pop.x, starts_with("zip_pop_"), starts_with("prop"), -prop_female.x, -prop_female.y)
+  select(GEOID, zip_pop.x, starts_with("zip_pop_"), starts_with("prop"), -prop_female.x, -prop_female.y, -prop_19_to_34.y) %>% 
+  rename_with(~ str_remove(., "\\.x"))
 ```
 
