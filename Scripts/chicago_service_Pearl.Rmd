@@ -1,0 +1,81 @@
+---
+title: "chicago_service_Pearl"
+author: "Pearl Muensterman"
+date: "10/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(readr)
+master <- read_csv(".../Data/chicago_master_for_service_model.csv")
+```
+
+Looking at proportions to prop_service:
+  zip_prop_work_eligible
+  prop_male_work_eligible
+  prop_male_work_eligible_service
+  prop_female
+  prop_18_to_34
+  prop_female_18_to_34
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = prop_male_work_eligible))
+```
+```{r}
+cor.test(master$prop_service, master$prop_male_work_eligible)
+```
+
+
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = prop_male_work_eligible_service))
+```
+```{r}
+cor.test(master$prop_service, master$prop_male_work_eligible_service)
+```
+r = 0.97
+
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = zip_pop_work_eligible))
+```
+
+```{r}
+cor.test(master$prop_service, master$zip_pop_work_eligible)
+```
+r = 0.33
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = prop_female))
+```
+
+```{r}
+cor.test(master$prop_service, master$prop_female)
+```
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = prop_18_to_34))
+```
+
+```{r}
+cor.test(master$prop_service, master$prop_18_to_34)
+```
+r = -0.70
+
+```{r}
+ggplot(master) +
+  geom_point(aes(x = prop_service, y = prop_female_18_to_34))
+```
+
+```{r}
+cor.test(master$prop_service, master$prop_female_18_to_34)
+```
+r = -0.73
