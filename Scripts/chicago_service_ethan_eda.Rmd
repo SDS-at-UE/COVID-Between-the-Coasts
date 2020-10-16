@@ -1,0 +1,95 @@
+---
+title: "Chicago Service Ethan"
+author: "Ethan Morlock"
+date: "October 15, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+master <- read.csv("../Data/chicago_master_for_service_model.csv")
+```
+
+## R Markdown
+
+This is an R Markdown document for Ethan's variables compared with the service workers. 
+
+## Sex by Age (Hispanic or Latino)
+```{r}
+ggplot(master, aes(x = prop_service, y = zip_pop_hisp)) +
+  geom_point()
+cor.test(master$prop_service, master$zip_pop_hisp)
+# High Positive Correlation, Low P-Value 
+
+ggplot(master, aes(x = prop_service, y = prop_female_hisp)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female_hisp)
+
+ggplot(master, aes(x = prop_service, y = prop_18_to_34_hisp)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_18_to_34_hisp)
+# Moderate Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_female_18_to_34_hisp)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female_18_to_34_hisp)
+# Moderate Negative Correlation, Low P-Value
+```
+
+## HI Coverage by Sex by Age
+```{r}
+ggplot(master, aes(x = prop_service, y = prop_female)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female)
+
+ggplot(master, aes(x = prop_service, y = prop_19_to_34)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_19_to_34)
+# High Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_with_HI)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_with_HI)
+# High Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_female_19_to_34)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female_19_to_34)
+# High Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_female_with_HI)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female_with_HI)
+# High Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_female_19_to_34_with_HI)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_female_19_to_34_with_HI)
+# High Negative Correlation, Low P-Value 
+
+ggplot(master, aes(x = prop_service, y = prop_19_to_34_with_HI)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_19_to_34_with_HI)
+# High Negative Correlation, Low P-Value 
+```
+
+## Race
+```{r}
+ggplot(master, aes(x = prop_service, y = prop_not_His)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_not_His)
+# High Negative Correlation, Low P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_White)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_White)
+# Moderate Negative Correlation, Decent P-Value
+
+ggplot(master, aes(x = prop_service, y = prop_not_His_White)) +
+  geom_point()
+cor.test(master$prop_service, master$prop_not_His_White)
+# Moderate-High Negative Correlation, Low P-Value
+```
+
