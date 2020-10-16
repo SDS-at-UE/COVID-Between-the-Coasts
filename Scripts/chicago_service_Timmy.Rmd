@@ -25,9 +25,8 @@ chicago_master<-read_csv("../Data/chicago_master_for_service_model.csv")
 
 cormat<- round(cor(chicago_master), 2)
 head(cormat)
+
 ```
-
-
 
 
 ```{r}
