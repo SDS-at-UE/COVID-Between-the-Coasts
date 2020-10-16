@@ -40,24 +40,40 @@ get_upper_tri <- function(cormat){
 ```{r}
 upper_tri <- get_upper_tri(cormat)
 melted_cormat <- melt(upper_tri, na.rm = TRUE)
+```
 
 
-###actually make the heatmap
-ggheatmap<-ggplot(data = melted_cormat, aes(Var2, Var1, fill = value ))+
+
+```{r}
+reorder_cormat <- function(cormat){
+# Use correlation between variables as distance
+dd <- as.dist((1-cormat)/2)
+hc <- hclust(dd)
+cormat <-cormat[hc$order, hc$order]
+}
+```
+
+```{r}
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap1 <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
  geom_tile(color = "white")+
  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
    midpoint = 0, limit = c(-1,1), space = "Lab", 
-   name="Pearson\nCorrelation") +
-  theme_minimal()+ 
+    name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
-    size = 5, hjust = 1))+theme(axis.text.y=element_text(size=5))
+    size = 5, hjust = 1))+
  coord_fixed()
 ```
 
 ```{r}
-###add the correlation values to the heatmap
-ggheatmap + 
-geom_text(aes(Var2, Var1, label = value), color = "black", size = 1.5) +
+ggheatmap1 + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 1.6) +
 theme(
   axis.title.x = element_blank(),
   axis.title.y = element_blank(),
@@ -70,5 +86,6 @@ theme(
   legend.direction = "horizontal")+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                 title.position = "top", title.hjust = 0.5))
+###show in new window to see this with optimal sizing, need to figure out how to knit this better
 ```
 
