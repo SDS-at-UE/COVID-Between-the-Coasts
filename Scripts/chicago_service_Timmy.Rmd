@@ -3,24 +3,26 @@ title: "Timmy Chicago Master Analysis"
 author: "Timmy Miller"
 date: "10/15/2020"
 output: html_document
+
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.width = 12, fig.height = 12)
 library(tidyverse)
 library(tidycensus)
 library(reshape2)
+library(ggcorrplot)
 ```
 
 
 
-```{r}
+```{r, include=FALSE}
 chicago_master<-read_csv("../Data/chicago_master_for_service_model.csv")
 ```
 
 
 
-```{r}
+```{r, include=FALSE}
 ###correlation heatmap derived from http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization
 
 cormat<- round(cor(chicago_master), 2)
@@ -29,21 +31,21 @@ head(cormat)
 ```
 
 
-```{r}
+```{r, include=FALSE}
 get_upper_tri <- function(cormat){
     cormat[lower.tri(cormat)]<- NA
     return(cormat)
   }
 ```
 
-```{r}
+```{r, include=FALSE}
 upper_tri <- get_upper_tri(cormat)
 melted_cormat <- melt(upper_tri, na.rm = TRUE)
 ```
 
 
 
-```{r}
+```{r, include=FALSE}
 reorder_cormat <- function(cormat){
 # Use correlation between variables as distance
 dd <- as.dist((1-cormat)/2)
@@ -52,7 +54,7 @@ cormat <-cormat[hc$order, hc$order]
 }
 ```
 
-```{r}
+```{r, include=FALSE}
 # Reorder the correlation matrix
 cormat <- reorder_cormat(cormat)
 upper_tri <- get_upper_tri(cormat)
@@ -66,11 +68,12 @@ ggheatmap1 <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
     name="Pearson\nCorrelation") +
   theme_minimal()+ # minimal theme
  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+    size = 5, hjust = 1))+theme(axis.text.y = element_text( vjust = 1, 
     size = 5, hjust = 1))+
  coord_fixed()
 ```
 
-```{r}
+```{r, include=FALSE}
 ggheatmap1 + 
 geom_text(aes(Var2, Var1, label = value), color = "black", size = 1.6) +
 theme(
@@ -86,5 +89,18 @@ theme(
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                 title.position = "top", title.hjust = 0.5))
 ###show in new window to see this with optimal sizing, need to figure out how to knit this better
+```
+
+
+
+
+
+```{r, echo=FALSE}
+#or make using ggcorrplot; this example shows only coefficients with significant p-values
+p.mat <- cor_pmat(chicago_master)
+ggcorrplot(cormat, p.mat = p.mat, hc.order = TRUE,
+    type = "lower", insig = "blank", lab=TRUE, lab_size=2.5)+theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1))+theme(axis.text.y = element_text( vjust = 1, 
+    size = 12, hjust = 1))
 ```
 
