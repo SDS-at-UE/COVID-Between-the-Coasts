@@ -1,0 +1,54 @@
+---
+title: "Timmy Chicago Master Analysis"
+author: "Timmy Miller"
+date: "10/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(reshape2)
+```
+
+
+
+```{r}
+chicago_master<-read_csv("../Data/chicago_master_for_service_model.csv")
+```
+
+
+
+```{r}
+###correlation heatmap derived from http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization
+
+cormat<- round(cor(chicago_master), 2)
+head(cormat)
+```
+
+
+
+
+```{r}
+get_upper_tri <- function(cormat){
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+  }
+```
+
+```{r}
+upper_tri <- get_upper_tri(cormat)
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Pearson\nCorrelation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+    size = 5, hjust = 1))+theme(axis.text.y=element_text(size=5))
+ coord_fixed()
+```
+
