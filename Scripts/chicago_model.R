@@ -4,7 +4,6 @@
 library(tidyverse)
 library(glmnet) # lasso
 library(MASS) # stepAIC
-library(leaps) # regsubsets
 
 # read in the master chicago service data set
 chicago_master <- read_csv("Data/chicago_master_for_service_model.csv")
