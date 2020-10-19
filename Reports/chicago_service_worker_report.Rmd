@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-We answer two questions in this report: who is the Chicago service worker? and what demographics explain the COVID case rate in Chicago ZIP codes. We look at ZIP code level data in order to understand what the service worker looks like in Chicago. We also examine the available COVID data on a ZIP code level and run a statistical linear model to find the demographics that explain the variation we see from the COVID case rate. 
+We answer two questions in this report: who is the Chicago service worker? and what demographics explain the COVID case rate in Chicago ZIP codes. We look at ZIP code level data in order to understand what the service worker looks like in Chicago. We also examine the available COVID data on a ZIP code level and run a statistical linear model to find the demographics that explain the variation we see from the COVID case rate. These demographics do not necessarily drive the COVID case rate, but they do help explain the differences we are seeing in the case rate from ZIP code to ZIP code. 
 
 ## Data Obtained
 
@@ -21,7 +21,7 @@ Pearl's section
 
 ### Demographics
 
-Ethan's section
+Pearl's section and then Ethan's section
 
 ## Who is a Chicago Service Worker?
 
