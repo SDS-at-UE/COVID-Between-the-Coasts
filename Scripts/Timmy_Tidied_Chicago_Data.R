@@ -337,3 +337,8 @@ HI_type_2 <- separate(HI_type_2,
 
 
 HI_type<- left_join(HI_type, chicago_covid, by=c("GEOID"="Zip"))
+
+
+
+
+new table to look at: B05003

@@ -12,6 +12,7 @@ library(tidyverse)
 library(tidycensus)
 library(reshape2)
 library(ggcorrplot)
+library(data.table)
 ```
 
 
@@ -103,4 +104,24 @@ ggcorrplot(cormat, p.mat = p.mat, hc.order = TRUE,
     size = 12, hjust = 1))+theme(axis.text.y = element_text( vjust = 1, 
     size = 12, hjust = 1))
 ```
+
+As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. The table below shows the correlations to the proportion of service workers (prop_service) for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers (prop_service) and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. Futher down the table, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers (prop_service) and the proportion of individuals with Medicaid (prop_medicaid). This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) increases.
+```{r}
+#one row correlation matrix
+
+yyy<-cor(x=chicago_master, y=chicago_master$prop_service)
+yyy<-as.data.frame(yyy, col.names=c("Variable", "Correlation Coefficient"))
+orc<-yyy%>%subset(V1>=.7 |V1<= -.7)
+orc<-orc%>%subset(V1!=1)
+orc<-setDT(orc, keep.rownames = TRUE)
+orc<-orc %>% arrange(desc(abs(V1)))
+orc<-orc%>%rename(Variable=rn, Correlation.Coefficient=V1 )
+print(orc)
+
+
+
+
+```
+
+
 
