@@ -13,7 +13,7 @@ chicago_master <- read_csv("Data/chicago_master_for_service_model.csv")
 chicago_covid <- read_csv("Data/chicago_updated_cases.csv")
 chicago_covid <- na.omit(chicago_covid)
 chicago_covid <- chicago_covid %>% 
-  mutate(case_rate = Cases/Population) %>% 
+  mutate(case_rate = Cases/Population*100000) %>% 
   mutate(pos_rate = Cases/Tested)
 
 # join the two data sets 
@@ -56,14 +56,27 @@ full <- lm(case_rate ~ . -GEOID, chicago_master2)
 base <- lm(case_rate ~ 1, chicago_master2)
 
 # foward 
-stepAIC(base, direction = "forward", scope = list(upper = full,lower = base))$anova
+stepAIC(base, direction = "forward", scope = list(upper = full,lower = base), trace = FALSE)$anova
 
 # backward
-stepAIC(full, direction = "backward")$anova
+stepAIC(full, direction = "backward", trace = FALSE)$anova
 
 # stepwise
-stepAIC(base, direction = "both", scope = list(upper = full,lower = base))$anova
-stepAIC(full, direction = "both", scope = list(upper = full,lower = base))$anova
+stepAIC(base, direction = "both", scope = list(upper = full,lower = base), trace = FALSE)$anova
+stepAIC(full, direction = "both", scope = list(upper = full,lower = base), trace = FALSE)$anova
 
 # some variables are the same as the lasso, backwards and stepwise backward eliminated few variables
 
+
+####################################################
+# I couldn't get the lasso to run on my computer. So I recreated the analysis below:
+
+grid <- 10^seq(10, -2, length = 100)
+lasso_start <- glmnet(x, chicago_master2$case_rate, alpha = 1, lambda = grid)
+
+set.seed(1)
+cv_out <- cv.glmnet(x, chicago_master2$case_rate, alpha = 1)
+best_lam <- cv_out$lambda.min
+lasso_final <- glmnet(x, chicago_master2$case_rate, alpha = 1, lambda = grid)
+lasso_coef <- predict(lasso_final, type = "coefficients", s = best_lam)
+lasso_coef
