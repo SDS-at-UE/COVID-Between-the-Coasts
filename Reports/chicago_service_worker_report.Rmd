@@ -1,0 +1,32 @@
+---
+title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Chicago Service Worker Analysis"
+date: "10/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+We answer two questions in this report: who is the Chicago service worker? and what demographics explain the COVID case rate in Chicago ZIP codes. We look at ZIP code level data in order to understand what the service worker looks like in Chicago. We also examine the available COVID data on a ZIP code level and run a statistical linear model to find the demographics that explain the variation we see from the COVID case rate. 
+
+## Data Obtained
+
+### COVID-19
+
+Pearl's section
+
+### Demographics
+
+Ethan's section
+
+## Who is a Chicago Service Worker?
+
+Timmy's section. (Timmy, be sure to include a simply interpretation of who the service worker is along as well as what professions we defined as being a service worker, along with the graphic)
+
+## What Demographics Explain the COVID Case Rate?
+
+Maya's section
