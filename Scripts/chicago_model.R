@@ -44,7 +44,7 @@ x=x[,-1]
 # lasso model
 lasso <-glmnet(x = x,y = chicago_master2$case_rate, alpha=1)
 
-c <- coef.glmnet(lasso, s = 'lambda.min', exact = TRUE)
+c <- coef.glmnet(lasso, s = 'lambda.min')
 inds <- which(c != 0)
 variables <- row.names(c)[inds]
 variables <- variables[!variables %in% '(Intercept)']
@@ -62,10 +62,20 @@ stepAIC(base, direction = "forward", scope = list(upper = full,lower = base), tr
 stepAIC(full, direction = "backward", trace = FALSE)$anova
 
 # stepwise
-stepAIC(base, direction = "both", scope = list(upper = full,lower = base), trace = FALSE)$anova
+step_model <- stepAIC(base, direction = "both", scope = list(upper = full,lower = base), trace = FALSE)
 stepAIC(full, direction = "both", scope = list(upper = full,lower = base), trace = FALSE)$anova
 
+summary(step_model)
 # some variables are the same as the lasso, backwards and stepwise backward eliminated few variables
+
+# Add in service variable to see how it changes
+summary(lm(formula = case_rate ~ prop_not_His + zip_pop_work_eligible + 
+             prop_female + prop_18_to_34_hisp + prop_female_18_to_34_hisp + 
+             prop_female_hisp + prop_female_citizen + prop_citizen + prop_medicaid + 
+             prop_service, data = chicago_master2))
+# We can see that adding in prop_service actually decreases the predictive power of the model
+# It appears the proportion of service workers does not explain any significant amount of the 
+# COVID case rate. 
 
 
 ####################################################
@@ -80,3 +90,4 @@ best_lam <- cv_out$lambda.min
 lasso_final <- glmnet(x, chicago_master2$case_rate, alpha = 1, lambda = grid)
 lasso_coef <- predict(lasso_final, type = "coefficients", s = best_lam)
 lasso_coef
+
