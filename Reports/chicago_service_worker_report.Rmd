@@ -21,7 +21,33 @@ Pearl's section
 
 ### Demographics
 
-Pearl's section and then Ethan's section
+Pearl's section
+
+The tables we used are as follows:
+
+1. B05003 - Sex by Age and Citizenship Status
+    i. broken down into: prop_female, prop_over_18, prop_citizen, prop_female_over_18, prop_female_citizen, prop_over_18_citizen,
+                         prop_female_over_18_citizen
+                         
+2. B01001I - Sex by Age (Hispanic or Latino)
+    i. broken down into: zip_pop_hisp, prop_female_hisp, prop_18_to_34_hisp, prop_female_18_to_34_hisp
+    
+3. B27001 - Health Insurance Coverage Status by Sex by Age
+    i. broken down into: prop_female, prop_19_to_34, prop_with_HI, prop_female_19_to_34, prop_female_with_HI, prop_19_to_34_with_HI,
+                                      prop_female_19_to_34_with_HI
+                                      
+4. B03002 - Race (Hispanic or Latino)
+    i. broken down into: prop_not_His, prop_White, prop_not_His_White
+    
+5. C24030 - Sex by Industry
+    i. broken down into: zip_pop_work_eligible, prop_male_work_eligible, prop_service, prop_male_work_eligible_service
+    
+6. B01001 - Sex by Age
+    i. broken down into: prop_female, prop_18_to_34, prop_female_18_to_34
+    
+7. B27010 - Health Insurance by Type
+    i. broken down into: prop_one_policy, prop_employer, prop_medicaid, prop_19_to_34_one_policy, prop_19_to_34_no_HI, prop_19_to_34_employer,
+                         prop_19_to_34_medicaid
 
 ## Who is a Chicago Service Worker?
 
