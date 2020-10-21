@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 ```
 
 ## Introduction
@@ -15,19 +15,42 @@ We answer two questions in this report: who is the Chicago service worker? and w
 
 ## Data Obtained
 
-### COVID-19
-
-Pearl's section
+We obtained Chicago's most recent COVID-19 numbers of individuals tested and those who had confirmed cases on October 1 from the [Illinois Department of Public Health](https://www.dph.illinois.gov/covid19/covid19-statistics). We paired Chicago's COVID-19 numbers with the 5-year American Community Survey (ACS) data which was last published in 2018. When first investigating the survey data, we had an option between the most recent 1-year data or the more precise 5-year estimates. The 5-year data is from a larger sample which has less error attached to estimates as well as a higher reliability statistically. The downside is it's not as current as the 1-year data, because the most recent 5-year data from 2018 had been collected from January 2014 to December 2018. We used the 2018 estimates as they were released in December 2019. The next collection of 5-year data ending in 2019 is to be released December 2020. The data is different between the 1-year and 5-year estimates since they were collected in two different periods. A 5-year estimate will show a smooth curve while 1-year data demonstrates changes each year resulting in less appealing graphs. 
 
 ### Demographics
 
-Pearl's section and then Ethan's section
+The tables we used are as follows:
+
+1. B05003 - Sex by Age and Citizenship Status
+    i. broken down into: prop_female, prop_over_18, prop_citizen, prop_female_over_18, prop_female_citizen, prop_over_18_citizen,
+                         prop_female_over_18_citizen
+                         
+2. B01001I - Sex by Age (Hispanic or Latino)
+    i. broken down into: zip_pop_hisp, prop_female_hisp, prop_18_to_34_hisp, prop_female_18_to_34_hisp
+    
+3. B27001 - Health Insurance Coverage Status by Sex by Age
+    i. broken down into: prop_female, prop_19_to_34, prop_with_HI, prop_female_19_to_34, prop_female_with_HI, prop_19_to_34_with_HI,
+                                      prop_female_19_to_34_with_HI
+                                      
+4. B03002 - Race (Hispanic or Latino)
+    i. broken down into: prop_not_His, prop_White, prop_not_His_White
+    
+5. C24030 - Sex by Industry
+    i. broken down into: zip_pop_work_eligible, prop_male_work_eligible, prop_service, prop_male_work_eligible_service
+    
+6. B01001 - Sex by Age
+    i. broken down into: prop_female, prop_18_to_34, prop_female_18_to_34
+    
+7. B27010 - Health Insurance by Type
+    i. broken down into: prop_one_policy, prop_employer, prop_medicaid, prop_19_to_34_one_policy, prop_19_to_34_no_HI, prop_19_to_34_employer,
+                         prop_19_to_34_medicaid
 
 ## Who is a Chicago Service Worker?
 
 Timmy's section. (Timmy, be sure to include a simply interpretation of who the service worker is along as well as what professions we defined as being a service worker, along with the graphic)
 
 As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. The table below shows the correlations to the proportion of service workers (prop_service) for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers (prop_service) and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. Futher down the table, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers (prop_service) and the proportion of individuals with Medicaid (prop_medicaid). This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) increases. The table is ordered by the magnitude of the correlation, meaning that the strongest correlations, regardless of whether they are positive or negative, are listed at the top.
+
 ```{r}
 #one row correlation matrix
 library(tidyverse)
@@ -35,7 +58,7 @@ library(tidycensus)
 library(reshape2)
 library(ggcorrplot)
 library(data.table)
-
+chicago_master <- read_csv("../Data/chicago_master_for_service_model.csv")
 yyy<-cor(x=chicago_master, y=chicago_master$prop_service)
 yyy<-as.data.frame(yyy, col.names=c("Variable", "Correlation Coefficient"))
 orc<-yyy%>%subset(V1>=.7 |V1<= -.7)
