@@ -21,29 +21,23 @@ We obtained Chicago's most recent COVID-19 numbers of individuals tested and tho
 
 The tables we used are as follows:
 
-1. B05003 - Sex by Age and Citizenship Status
-    i. broken down into: prop_female, prop_over_18, prop_citizen, prop_female_over_18, prop_female_citizen, prop_over_18_citizen,
-                         prop_female_over_18_citizen
-                         
-2. B01001I - Sex by Age (Hispanic or Latino)
-    i. broken down into: zip_pop_hisp, prop_female_hisp, prop_18_to_34_hisp, prop_female_18_to_34_hisp
+1. B05003 - Sex by Age and Citizenship Status which is broken down into 2 categories for sex, 2 categories for age, 2 categories for nativity, and 
+              2 categories for citizenship. 
     
-3. B27001 - Health Insurance Coverage Status by Sex by Age
-    i. broken down into: prop_female, prop_19_to_34, prop_with_HI, prop_female_19_to_34, prop_female_with_HI, prop_19_to_34_with_HI,
-                                      prop_female_19_to_34_with_HI
+2. B01001I - Sex by Age (Hispanic or Latino) which is broken down into 2 categories for sex and 14 categories for age.
+    
+3. B27001 - Health Insurance Coverage Status by Sex by Age which is broken down into 2 categories for sex, 9 categories for age, and 2 categories
+              for health insurance coverage.
                                       
-4. B03002 - Race (Hispanic or Latino)
-    i. broken down into: prop_not_His, prop_White, prop_not_His_White
+4. B03002 - Race (Hispanic or Latino) which is broken down into 2 categories for origin, 7 categories for race, and 2 categories for multiple races.
     
-5. C24030 - Sex by Industry
-    i. broken down into: zip_pop_work_eligible, prop_male_work_eligible, prop_service, prop_male_work_eligible_service
+5. C24030 - Sex by Industry which is broken down into 2 categories for sex, 13 categories for industry, and an additional 13 categories for industry 
+              again. 
     
-6. B01001 - Sex by Age
-    i. broken down into: prop_female, prop_18_to_34, prop_female_18_to_34
+6. B01001 - Sex by Age which is broken down into 2 categories for sex and 23 categories for age. 
     
-7. B27010 - Health Insurance by Type
-    i. broken down into: prop_one_policy, prop_employer, prop_medicaid, prop_19_to_34_one_policy, prop_19_to_34_no_HI, prop_19_to_34_employer,
-                         prop_19_to_34_medicaid
+7. B27010 - Health Insurance by Type which is broken down into 4 categories for age, 3 categories for types of insurance, and 12 categories for 
+              coverages of insurance. 
 
 ## Who is a Chicago Service Worker?
 
