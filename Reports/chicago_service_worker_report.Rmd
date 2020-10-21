@@ -15,7 +15,7 @@ We answer two questions in this report: who is the Chicago service worker? and w
 
 ## Data Obtained
 
-We obtained Chicago's most recent COVID-19 numbers of individuals tested and those who had confirmed cases on October 1 from the [Illinois Department of Public Health](https://www.dph.illinois.gov/covid19/covid19-statistics). We paired Chicago's COVID-19 numbers with the five-year American Community Survey (ACS) data which was last published in 2018.
+We obtained Chicago's most recent COVID-19 numbers of individuals tested and those who had confirmed cases on October 1 from the [Illinois Department of Public Health](https://www.dph.illinois.gov/covid19/covid19-statistics). We paired Chicago's COVID-19 numbers with the 5-year American Community Survey (ACS) data which was last published in 2018. When first investigating the survey data, we had an option between the most recent 1-year data or the more precise 5-year estimates. The 5-year data is from a larger sample which has less error attached to estimates as well as a higher reliability statistically. The downside is it's not as current as the 1-year data, because the most recent 5-year data from 2018 had been collected from January 2014 to December 2018. We used the 2018 estimates as they were released in December 2019. The next collection of 5-year data ending in 2019 is to be released December 2020. The data is different between the 1-year and 5-year estimates since they were collected in two different periods. A 5-year estimate will show a smooth curve while 1-year data demonstrates changes each year resulting in less appealing graphs. 
 
 ### Demographics
 
