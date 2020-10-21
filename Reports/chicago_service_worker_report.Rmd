@@ -47,24 +47,21 @@ The tables we used are as follows:
 
 ## Who is a Chicago Service Worker?
 
-Timmy's section. (Timmy, be sure to include a simply interpretation of who the service worker is along as well as what professions we defined as being a service worker, along with the graphic)
-
-As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. The table below shows the correlations to the proportion of service workers (prop_service) for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers (prop_service) and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. Futher down the table, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers (prop_service) and the proportion of individuals with Medicaid (prop_medicaid). This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) increases. The table is ordered by the magnitude of the correlation, meaning that the strongest correlations, regardless of whether they are positive or negative, are listed at the top.
+As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. Service worker data was compiled from Census Bureau data on costruction, manufacturing, retail trade, transportation, warehousing, utilities, and accomoodation and food services. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. The table below shows the correlations to the proportion of service workers (prop_service) for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers (prop_service) and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. Futher down the table, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers (prop_service) and the proportion of individuals with Medicaid (prop_medicaid). This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) increases. The table is ordered by the magnitude of the correlation, meaning that the strongest correlations, regardless of whether they are positive or negative, are listed at the top. 
 
 ```{r}
 #one row correlation matrix
 library(tidyverse)
 library(tidycensus)
 library(reshape2)
-library(ggcorrplot)
 library(data.table)
 chicago_master <- read_csv("../Data/chicago_master_for_service_model.csv")
-yyy<-cor(x=chicago_master, y=chicago_master$prop_service)
-yyy<-as.data.frame(yyy, col.names=c("Variable", "Correlation Coefficient"))
-orc<-yyy%>%subset(V1>=.7 |V1<= -.7)
+one.row.correlation<-cor(x=chicago_master, y=chicago_master$prop_service)
+one.row.correlation<-as.data.frame(one.row.correlation, col.names=c("Variable", "Correlation Coefficient"))
+orc<-one.row.correlation%>%subset(V1>=.7 |V1<= -.7)
 orc<-orc%>%subset(V1!=1)
 orc<-setDT(orc, keep.rownames = TRUE)
-orc<-orc %>% arrange(desc(abs(V1)))
+orc<-orc %>% arrange(desc(V1))
 orc<-orc%>%rename(Variable=rn, Correlation.Coefficient=V1 )
 print(orc)
 
