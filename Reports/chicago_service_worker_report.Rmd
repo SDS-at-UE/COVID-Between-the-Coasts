@@ -21,9 +21,7 @@ We obtained Chicago's most recent COVID-19 numbers of individuals tested and tho
 
 The tables we used are as follows:
 
-1. B05003 - Sex by Age and Citizenship Status
-    i. broken down into: prop_female, prop_over_18, prop_citizen, prop_female_over_18, prop_female_citizen, prop_over_18_citizen,
-                         prop_female_over_18_citizen
+1. B05003 - Breaks the population into sex, and then age (11 categories), and then again into citizenship status, which has 5 categories. 
                          
 2. B01001I - Sex by Age (Hispanic or Latino)
     i. broken down into: zip_pop_hisp, prop_female_hisp, prop_18_to_34_hisp, prop_female_18_to_34_hisp
