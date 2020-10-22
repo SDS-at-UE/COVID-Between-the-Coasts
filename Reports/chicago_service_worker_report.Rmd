@@ -21,23 +21,19 @@ We obtained Chicago's most recent COVID-19 numbers of individuals tested and tho
 
 The tables we used are as follows:
 
-1. B05003 - Sex by Age and Citizenship Status which is broken down into 2 categories for sex, 2 categories for age, 2 categories for nativity, and 
-              2 categories for citizenship. 
+1. **B05003** - Sex by Age and Citizenship Status, which is broken down into 2 categories for sex, 2 categories for age, 2 categories for nativity, and 2 categories for citizenship. 
     
-2. B01001I - Sex by Age (Hispanic or Latino) which is broken down into 2 categories for sex and 14 categories for age.
+2. **B01001I** - Sex by Age for the Hispanic and Latino population, which is broken down into 2 categories for sex and 14 categories for age.
     
-3. B27001 - Health Insurance Coverage Status by Sex by Age which is broken down into 2 categories for sex, 9 categories for age, and 2 categories
-              for health insurance coverage.
+3. **B27001** - Health Insurance Coverage Status by Sex by Age, which is broken down into 2 categories for sex, 9 categories for age, and 2 categories for health insurance coverage.
                                       
-4. B03002 - Race (Hispanic or Latino) which is broken down into 2 categories for origin, 7 categories for race, and 2 categories for multiple races.
+4. **B03002** - Race for the Hispanic and Latino population, which is broken down into 2 categories for origin, 7 categories for race, and 2 categories for multiple races.
     
-5. C24030 - Sex by Industry which is broken down into 2 categories for sex, 13 categories for industry, and an additional 13 categories for industry 
-              again. 
+5. **C24030** - Sex by Industry, which is broken down into 2 categories for sex, 13 categories for industry, and an additional 13 categories for industry again. 
     
-6. B01001 - Sex by Age which is broken down into 2 categories for sex and 23 categories for age. 
+6. **B01001** - Sex by Age, which is broken down into 2 categories for sex and 23 categories for age. 
     
-7. B27010 - Health Insurance by Type which is broken down into 4 categories for age, 3 categories for types of insurance, and 12 categories for 
-              coverages of insurance. 
+7. **B27010** - Health Insurance by Type, which is broken down into 4 categories for age, 3 categories for types of insurance, and 12 categories for coverages of insurance. 
 
 ## Who is a Chicago Service Worker?
 
