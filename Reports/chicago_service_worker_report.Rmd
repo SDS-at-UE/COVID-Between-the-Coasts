@@ -7,6 +7,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+library(tidyverse)
+library(tidycensus)
+library(reshape2)
+library(data.table)
+library(knitr)
+library(kableExtra)
 ```
 
 ## Introduction
@@ -15,7 +21,7 @@ We answer two questions in this report: who is the Chicago service worker? and w
 
 ## Data Obtained
 
-We obtained Chicago's most recent COVID-19 numbers of individuals tested and those who had confirmed cases on October 1 from the [Illinois Department of Public Health](https://www.dph.illinois.gov/covid19/covid19-statistics). We paired Chicago's COVID-19 numbers with the 5-year American Community Survey (ACS) data which was last published in 2018. When first investigating the survey data, we had an option between the most recent 1-year data or the more precise 5-year estimates. The 5-year data is from a larger sample which has less error attached to estimates as well as a higher reliability statistically. The downside is it's not as current as the 1-year data, because the most recent 5-year data from 2018 had been collected from January 2014 to December 2018. We used the 2018 estimates as they were released in December 2019. The next collection of 5-year data ending in 2019 is to be released December 2020. The data is different between the 1-year and 5-year estimates since they were collected in two different periods. A 5-year estimate will show a smooth curve while 1-year data demonstrates changes each year resulting in less appealing graphs. 
+We obtained Chicago's most recent COVID-19 numbers of individuals tested and those who had confirmed cases on October 1 from the [Illinois Department of Public Health](https://www.dph.illinois.gov/covid19/covid19-statistics). We paired Chicago's COVID-19 numbers with the 5-year American Community Survey (ACS) data ending in 2018. The Census Bureau provides two options: the most recent 1-year data or the more precise 5-year estimates. The 5-year data is from a larger sample, which has less error attached to estimates as well as a higher statistical reliability. However, it is not as current as the 1-year data, because the most recent 5-year data from 2018 had been collected from January 2014 to December 2018. The 2018 estimates were released in December 2019, and the next collection of 5-year data ending in 2019 will be released December 2020. In addition, the 1-year data is not available for smaller geographic areas such as ZIP codes. Thus, we are only left with the 5-year option.  
 
 ### Demographics
 
@@ -37,14 +43,12 @@ The tables we used are as follows:
 
 ## Who is a Chicago Service Worker?
 
-As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. Service worker data was compiled from Census Bureau data on costruction, manufacturing, retail trade, transportation, warehousing, utilities, and accomoodation and food services. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. The table below shows the correlations to the proportion of service workers (prop_service) for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers (prop_service) and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. Futher down the table, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers (prop_service) and the proportion of individuals with Medicaid (prop_medicaid). This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) increases. The table is ordered by the magnitude of the correlation, meaning that the strongest correlations, regardless of whether they are positive or negative, are listed at the top. 
+As we performed this analysis, much of our focus was on the typical characteristics of the service worker in Chicago. Service worker data was compiled from Census Bureau data on construction, manufacturing, retail trade, transportation, warehousing, utilities, and accommodation and food services. We used correlation analyses, where we compared how strongly correlated one demographic value is with the proportion of service workers for each ZIP code. Correlations are measured from -1 to 1, where a correlation of -1 means that as one variable increases, the other variable decreases. A correlation of 1 means that as one variable increases, the other variable increases. 
+
+The table below shows the correlations to the proportion of service workers for each demographic characteristic that we analyzed. Here are a couple examples of how to read this table: the correlation between the proportion of service workers and the proportion of people with health insurance is -.8965770. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with health insurance decreases. As another example, we see a correlation value of 0.76046345 for the correlation between the proportion of service workers and the proportion of individuals with Medicaid. This means that as the proportion of service workers in a ZIP code increases, the proportion of people with Medicaid (as opposed to other kinds of health insurance policies) also increases. The table is ordered by the correlation values. 
 
 ```{r}
 #one row correlation matrix
-library(tidyverse)
-library(tidycensus)
-library(reshape2)
-library(data.table)
 chicago_master <- read_csv("../Data/chicago_master_for_service_model.csv")
 one.row.correlation<-cor(x=chicago_master, y=chicago_master$prop_service)
 one.row.correlation<-as.data.frame(one.row.correlation, col.names=c("Variable", "Correlation Coefficient"))
@@ -52,10 +56,39 @@ orc<-one.row.correlation%>%subset(V1>=.7 |V1<= -.7)
 orc<-orc%>%subset(V1!=1)
 orc<-setDT(orc, keep.rownames = TRUE)
 orc<-orc %>% arrange(desc(V1))
-orc<-orc%>%rename(Variable=rn, Correlation.Coefficient=V1 )
-print(orc)
-
+orc<-orc%>%rename(Demographic=rn, `Correlation to Service Worker`=V1 )
+orc <- orc[-1,]
+orc$Demographic <- c("19 to 34 year olds with no health insurance",
+                     "On Medicaid",
+                     "19 to 34 year olds",
+                     "Not Hispanic or Latino",
+                     "Females between 19 and 34",
+                     "Females between 18 and 34",
+                     "Has only one health insurance policy",
+                     "19 to 34 year olds with one health insurance policy",
+                     "Has employer-based health insurance",
+                     "Females between 19 and 34 that have health insurance",
+                     "19 to 34 year olds with any health insurance",
+                     "19 to 34 year olds with employer-based health insurance",
+                     "Citizens over 18 years old",
+                     "Females over 18 years old",
+                     "People over 18 years old",
+                     "People with health insurance")
 ```
+
+```{r}
+orc %>% 
+    kbl(caption = "Various demographics as they are correlated to the service worker population") %>% 
+    kable_paper(full_width = FALSE) %>% 
+    column_spec(2, color = "white",
+                background = spec_color(orc$`Correlation to Service Worker`,
+                                        direction = -1,
+                                        begin = 0.2,
+                                        end = 0.75))
+```
+
+
+From these values, we can speculate that service workers appear to be comprised of people on medicaid or between 19 and 34 years old without health insurance. It also appears that service workers are more Hispanic or Latino, male, and are non-citizens than the people who do not work in a service industry. 
 
 ## What Demographics Explain the COVID Case Rate?
 
