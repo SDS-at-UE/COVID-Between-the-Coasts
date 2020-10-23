@@ -1,18 +1,14 @@
 ---
-title: "Milwaukee Metropolitan COVID-19 Data"
-author: "Timmy Miller"
-date: "9/27/2020"
+title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
+author: "Milwaukee Metropolitan COVID-19 Data"
 output:
   html_document:
     df_print: paged
 ---
 
-
-The COVID-19 pandemic disproportionately impacts lower-income communities. The Milwaukee Metropolitan area, consisting of Milwaukee, Washington, Waukesha, and Ozaukee counties, exemplifies this disparity. Milwaukee County, which has a much greater non-white population percentage and a lower median household income than the other metropolitan counties, expereinces more cases and deaths per 100000 people than the rest of the metropolitan counties. When taking into consideration conditions or demographics pre-exposed to death from COVID-19, smoking is much more prevalent in Milwaukee County, which could explain some of the difference in deaths between counties. However, the average age in Milwaukee County is much lower than the other counties, which is surprising given the rate at which individuals 65 and older die from COVID in comparison to the rest of society. Additionally, public transporation use appeared to be tied to higher COVID-19 rates in Milwaukee County, and the health insurance coverage rate is also slightly lower in Milwaukee County than in the rest of the Metropolitan area. Unfortunately, downloadable ZIP code data for Milwaukee was not able to be found at this time, so a more specific analysis could not be performed. 
-
-
-
-```{r, echo=FALSE, message=FALSE}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9)
+options(scipen = 999, digits = 4)
 #packages required
 library(tidyverse)
 library(readxl)
@@ -24,20 +20,18 @@ library(tidycensus)
 source("../Scripts/functions.R")
 ```
 
+## Introduction
 
-
-
+The COVID-19 pandemic disproportionately impacts lower-income communities. The Milwaukee Metropolitan area, consisting of Milwaukee, Washington, Waukesha, and Ozaukee counties, exemplifies this disparity. Milwaukee County, which has a much greater non-white population percentage and a lower median household income than the other metropolitan counties, experiences more cases and deaths per 100,000 people than the rest of the metropolitan counties. When taking into consideration conditions or demographics pre-exposed to death from COVID-19, smoking is much more prevalent in Milwaukee County, which could explain some of the difference in deaths between counties. However, the average age in Milwaukee County is much lower than the other counties, which is surprising given the rate at which individuals 65 and older die from COVID in comparison to the rest of society. Additionally, public transportation use appeared to be tied to higher COVID-19 rates in Milwaukee County. Unfortunately, downloadable ZIP code data for Milwaukee was not able to be found at this time, so a more specific analysis could not be performed. 
 
 ```{r, echo=FALSE}
 #data set for Milwaukee Metropolitan COVID data, use the ../ to back up a folder
 Milwaukee_Covid_Data <- read_excel("../Data/Milwaukee Covid Data.xls")
-
-
 ```
 
 
 
-Case Rates
+## Case Rates
 
 
 ```{r, echo=FALSE}
@@ -48,29 +42,27 @@ ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=CASES_PER_HUNDTHOU))+geom_col(fi
 
 Case rates are much higher in Milwaukee County compared to the other three Milwaukee metropolitan counties.
 
-Death Rates
+## Death Rates
 
 
 ```{r, echo=FALSE}
  ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=DEATHS_HUNDTHOU))+geom_col(fill="red")+xlab("County")+ylab("Deaths Per 100000 People")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Death Rates in Milwaukee Metropolitan Counties")
 ```
 
-
-
 Death rates are much higher in Milwaukee County. 
 
-White Population
+
+## White Population
 
 
 ```{r, echo=FALSE}
 ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=WHITEPOP))+geom_col(fill="orange")+xlab("County")+ylab("% of Population that is White")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="White Population Proportion in Milwaukee Metropolitan Counties")
 ```
 
+COVID is known to affect minority communities disproportionately. There are fewer white people living in Milwaukee County, where we previously saw that there are higher case and death rates.
 
+## Income Data
 
-COVID is known to affect minority communities disproportionately. There are fewer white people living in Milkwaukee County, where we previously saw that there are higher case and death rates.
-
-Income Data
 ```{r, echo=FALSE}
 milwaukee_income<- get_acs(geography="County", state="WI", table="B19101")
 income <- load_variables(2018, "acs5")
@@ -114,20 +106,18 @@ ggplot(income) +
 
 ```
 
-
-
 COVID is known to affect poorer populations more drastically, and Milwaukee County is poorer and more affected by COVID than the other metropolitan counties. 
 
 
-Smoking Data
+## Smoking Data
 
 ```{r, echo=FALSE} 
 ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_SMK))+geom_col(fill="black")+xlab("County")+ylab("% of Population that Smokes")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Smoking Proportion in Milwaukee Metropolitan Counties")
 ```
 
+COVID affects the respiratory system, and citizens in Milwaukee County smoke at higher rates. This might explain some of the higher death rate in Milwaukee.
 
-
-COVID affects the respiratory system, and citizens in Milwaukee County smoke at higher rates.
+## Age
 
 ```{r, echo=FALSE} 
 ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yellow")+xlab("County")+ylab("% of Population 65 or Older")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Age Information for Milwaukee Metropolitan Counties")
@@ -136,21 +126,7 @@ ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=PCT_POP_65))+geom_col(fill="yell
 COVID is known to affect older people more profoundly, but Milwaukee County actually has fewer residents 65 or older, despite its greater case and death rates. 
 
 
-Health Insurance
-
-```{r, echo=FALSE} 
-ggplot(data=Milwaukee_Covid_Data, aes(x=NAME, y=Pct18to64HI))+geom_col(fill="purple")+xlab("County")+ylab("% of Population with Health Insurance")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+labs(title="Health Insurance Data for Milwaukee Metropolitan Counties")
-```
-
-
-Health insurance coverage is high across the Milwaukee metropolitan area, but still slightly lower in Milwaukee County.
-
-
-
-
-
-
-GINI Index Data
+## GINI Index Data
 
 
 ```{r, echo=FALSE}
@@ -165,11 +141,11 @@ ggplot(milwaukee_gini)+geom_col(aes(x=NAME, y=estimate))+labs(title="GINI Index 
 
 
 
-The GINI Index, which measures income inequality (closer to 1=more income inequality) does not appear to be tied to COVID. 
+The GINI Index, which measures income inequality (closer to 1 means more income inequality) does not appear to be tied to COVID. 
 
 
 
-Transportation Data
+## Transportation Data
 
 
 ```{r, echo=FALSE}
@@ -179,12 +155,6 @@ wis_transport <- get_acs(geography="County", state="WI", table="B08301") %>%
 
 mil_transport <- left_join(wis_transport, variables_2018[,1:2], by="variable")
 mil_transport$label <- as_factor(str_replace(mil_transport$label, ".*!!(.*)", "\\1"))
-  
-  
-  
-
-
-
 ```
 
 ```{r, echo=FALSE}
@@ -218,9 +188,7 @@ ggplot(mil_transport) +
 
 Residents in Milwaukee County use public transportation more than other Milwaukee metro counties, which could be tied to increased transmission of COVID.
 
-Occupation
-
-
+## Occupation
 
 ```{r, echo=FALSE}
 milwaukee_occupation <- get_acs(geography="County", state="WI", table="C24060")
@@ -275,7 +243,8 @@ ggplot(mil_occupation) +
 
 Occupation does not appear to be tied to COVID case and death rates.
 
-Citizenship
+## Citizenship
+
 ```{r, echo=FALSE}
 milwaukee_citizenship <- get_acs(geography="County", state="WI", table="B05001")
 citizenship <- load_variables(2018, "acs5")
