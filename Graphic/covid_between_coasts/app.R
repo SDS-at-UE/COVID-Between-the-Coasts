@@ -8,10 +8,13 @@
 #
 
 ######################################################
-# Everything in this section is run only once.
-# This is where you want to load up your libraries,
-# import your data, and perform any calculations
-# that will never change based on any user input
+# Everything in this section is run only once for the 
+# whole application. Multiple users will take advantage
+# of this code being run. 
+# This is where you want to load up 
+# your libraries, import your data, and perform any 
+# calculations that will never change based on any user 
+# input
 ######################################################
 
 library(shiny)
@@ -52,11 +55,18 @@ ui <- fluidPage(
 # to make calculations, create graphics, to R stuff.
 # This is where a majority of the code you've
 # already seen/written would go if we were to 
-# include it in the graphic
+# include it in the graphic. 
 ##################################################
 server <- function(input, output) {
+    
+    # code in here (inside the server function, but outside of a render function)
+    # will run once per user. 
 
     output$distPlot <- renderPlot({
+    # code in here (inside a render function) will run many times per user.
+    # You want to put as little code in here as possible, because it will run
+    # over and over again for each individual user.
+        
         # generate bins based on input$bins from ui.R
         x    <- faithful[, 2]
         bins <- seq(min(x), max(x), length.out = input$bins + 1)
