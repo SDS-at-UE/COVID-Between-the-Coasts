@@ -22,7 +22,7 @@ What follows is an explanation for all of the variables in `chicago_master_for_s
 - **prop_over_18_citizen:** Proportion of population that are over 18 years and are citizens (by any means)
 - **prop_female_over_18_citizen:** Proportion of population that are female, over 18 years old, and are citizens (by any means)
 - **prop_female_hisp:** Proportion of the Hispanic or Latino population that are female
-- **prop_prop_18_to_34_hisp:** Proportion of the Hispanic or Latino population that are between 18 and 34 years old
+- **prop_18_to_34_hisp:** Proportion of the Hispanic or Latino population that are between 18 and 34 years old
 - **prop_female_18_to_34_hisp:** Proportion of the Hispanic or Latino population that are female and between 18 and 34 years old
 - **prop_19_to_34:** Proportion of the population that are between 19 and 34 years old
 - **prop_with_HI:** Proportion of the population that has some type of health insurance
