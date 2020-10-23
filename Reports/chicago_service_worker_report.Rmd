@@ -1,7 +1,7 @@
 ---
 title: 'COVID-19: A Midwestern Reporting Project of WNIN and the University of Evansville'
 author: "Chicago Service Worker Analysis"
-date: "10/19/2020"
+date: "10/22/2020"
 output: html_document
 ---
 
@@ -98,10 +98,18 @@ As a result, it appears that the 18 to 34 demographic really drives COVID case r
 
 In all, while building a model that tries to explain the relationship between the COVID case rate between all 34 predictor variables considered, there were seven that did the most to explain that relationship. Those seven were the number of people that are Hispanic; the number of people that are work eligible; the proportion of citizens over 18; the proportion of 18 to 34 year olds that are Hispanic; the proportions of 19 to 34 year olds that are female; the proportion that is not Hispanic; and the proportion that is not Hispanic but white. 
 
+### Statistical Model
+
 Our model can be represented as: 
 
 \begin{align*}
-
+\text{COVID Case Rate} & = 0.00542(\text{Hispanic Population}) \\
+& \quad - 0.0186(\text{Work Eligible Population}) \\
+& \quad - 798.1(\text{Proportion that are citizens and over 18}) \\
+& \quad - 1330.0(\text{Proportion of Hispanics that are 18 to 34}) \\
+& \quad + 180.8(\text{Proportion that are female and 19 to 34}) \\
+& \quad + 2553.5(\text{Proportion that is Hispanic}) \\
+& \quad - 263.0(\text{Proportion that is not Hispanic and is white})
 \end{align*}
 
-The coefficients indicate how influential each demographic is. For example: A 0.1 increase in the proportion of 18 to 34 year old Hispanic/Latinos will correspond to a decrease of 133 per 100,000 in the COVID case rate. Contrast this with the fact that a 0.1 increase in the proportion of Hispanic/Latinos (not necessarily 18 to 34) will correspond to an increase in the case rate of 255 per 100,000. It seems we have an almost 400 cases per 100,000 swing just by focusing on the 18 to 34 age range. Looking at a far less significant variable, the population that is Hispanic (note this was a positive correlation), a 0.1 increase in this population does not even increase the case rate by 1 person per 100,000. 
+The coefficients indicate how influential each demographic is on the COVID case rate. For example: A 0.1 increase in the proportion of Hispanic/Latinos that are 18 to 34 years old will correspond to a decrease of 133 per 100,000 in the COVID case rate. Contrast this with the fact that a 0.1 increase in the proportion of Hispanic/Latinos (not necessarily 18 to 34) will correspond to an increase in the case rate of 255 per 100,000. It seems we have an almost 400 cases per 100,000 swing just by focusing on the 18 to 34 age range. If our ZIP code population is more Hispanic or Latino, then our COVID case rate increases, unless that proportion is made up of more and more 18 to 34 year olds. Then our COVID case rate decreases. Looking at a far less significant variable, the population that is Hispanic (note this was a positive correlation), a 1000 increase in this population corresponds to an increase in the case rate by just 5 cases per 100,000. 
