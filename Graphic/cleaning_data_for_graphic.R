@@ -33,8 +33,13 @@ deaths <- deaths %>%
 cases_and_deaths <- merge(cases, deaths)
 cases_deaths_pop <- merge(cases_and_deaths, population)
 
-# Making the case rate and death rate columns
+# Making the case rate and death rate columns and renaming variables 
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
                                            death_rate = deaths/population*100000)
+
+final_covid <- final_covid %>% rename(county_name = `County Name`,
+                                      state = State,
+                                      date = Date)
+
 write_csv(final_covid, "Data/graphic_covid.csv")
  
