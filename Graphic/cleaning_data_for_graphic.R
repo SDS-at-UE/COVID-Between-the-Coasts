@@ -12,15 +12,15 @@ deaths <- read_csv("Data/usafacts_deaths.csv")
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
 cases <- cases %>% filter(!str_detect(`County Name`, "Statewide Unallocated"))
-cases <- cases %>% filter(State == c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
 deaths <- deaths %>% filter(!str_detect(`County Name`, "Statewide Unallocated"))
-deaths <- deaths %>% filter(State == c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
 population <- population %>% filter(!str_detect(`County Name`, "Statewide Unallocated"))
-population <- population %>% filter(State == c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
