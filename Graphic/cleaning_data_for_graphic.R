@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(stringr)
+library(readr)
 
 # Loading in the data
 cases <- read_csv("Data/usafacts_covid_confirmed.csv")
