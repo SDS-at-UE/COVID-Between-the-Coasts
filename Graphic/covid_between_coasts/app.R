@@ -91,7 +91,7 @@ server <- function(input, output) {
     
     dates <- reactive({
         covid_map_data %>% 
-            filter(date == input$dates)
+            filter(as.Date(date) == input$dates)
     })
     
     
