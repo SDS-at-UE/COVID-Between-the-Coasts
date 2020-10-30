@@ -102,7 +102,7 @@ server <- function(input, output) {
                         fillOpacity = 0.7,
                         color = ~ pal_case(cases)) %>% 
             addLegend("bottomright",
-                      pal = pal_cases,
+                      pal = pal_case,
                       values = ~ cases,
                       title = "COVID Between the Coasts",
                       opacity = 1)
