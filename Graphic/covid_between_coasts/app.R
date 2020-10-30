@@ -18,7 +18,32 @@
 ######################################################
 
 library(shiny)
+library(tidyverse)
+library(sf)
+library(tigris)
+library(leaflet)
 
+## states_map gives NAME in format of "Vanderburgh County, Indiana"
+states_map <- read_sf("Data/All_counties.shp", type = 6)
+
+#graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
+graphic_covid <- read_csv("Data/graphic_covid.csv")
+
+#state and their abbrevations
+state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
+
+#Left joining covid and state names by their abbrevations
+covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
+
+#Combine county_name and new state column with a comma between them to match format of states_map
+covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
+
+#Joining two datasets
+covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
+
+#Palette for leaflet
+#In package RColorBrewer, RdYlGn goes from dark red to dark green
+pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 ######################################################
 # Define UI for application
@@ -28,25 +53,22 @@ library(shiny)
 ######################################################
 ui <- fluidPage(
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
+  # Application title
+  titlePanel("COVID Between the Coasts"),
+  
+  selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
+  
+  radioButtons(inputId = "stat", "Choose a Statistic", c("Total Cases", "Total Deaths", "Case Rate per 100,000", 
+                                                         "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
+  
+  sliderInput(inputId = "dates", "Timeline of COVID", 
+              min = as.Date("01-01-2020","%m-%d-%Y"),
+              max = as.Date("10-31-2020","%m-%d-%Y"),
+              value=as.Date("06-24-2020","%m-%d-%Y")),
+  
+  dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
 )
+
 
 ##################################################
 # Define server logic
@@ -61,19 +83,36 @@ server <- function(input, output) {
     
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
+    
+    # included Cases, Deaths, Case Rate, and Death Rate to leaflet
 
-    output$distPlot <- renderPlot({
-    # code in here (inside a render function) will run many times per user.
-    # You want to put as little code in here as possible, because it will run
-    # over and over again for each individual user.
-        
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    output$map_cases <- renderLeaflet({
+        covid_map_data %>% 
+            st_transform(crs = "+init=epsg:4326") %>% 
+            leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(popup = str_c("<strong>", covid_map_data$county_name, ", ", covid_map_data$state,
+                                      "</strong><br /> Cases: ", covid_map_data$cases,
+                                      "</strong><br /> Deaths: ", covid_map_data$deaths,
+                                      "</strong><br /> Case Rate: ", covid_map_data$case_rate,
+                                      "</strong><br /> Death Rate: ", covid_map_data$death_rate),
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal_case(cases)) %>% 
+            addLegend("bottomright",
+                      pal = pal_case,
+                      values = ~ cases,
+                      title = "COVID Between the Coasts",
+                      opacity = 1)
     })
+
+  output$states <- renderText({input$states})
+  
+  output$stat <- renderText({input$stat})
+  
+
 }
 
 # Run the application 
