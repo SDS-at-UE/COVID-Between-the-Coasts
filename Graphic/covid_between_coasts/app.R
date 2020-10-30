@@ -81,6 +81,12 @@ ui <- fluidPage(
 ##################################################
 server <- function(input, output) {
     
+    dates <- reactive({
+        covid_map_data %>% 
+            filter(date == input$dates)
+    })
+    
+    
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
     
@@ -88,7 +94,7 @@ server <- function(input, output) {
 
 
     output$map_cases <- renderLeaflet({
-        covid_map_data %>% 
+        dates() %>% 
             st_transform(crs = "+init=epsg:4326") %>% 
             leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
