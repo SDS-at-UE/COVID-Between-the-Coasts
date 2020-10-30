@@ -62,18 +62,7 @@ server <- function(input, output) {
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
 
-    output$distPlot <- renderPlot({
-    # code in here (inside a render function) will run many times per user.
-    # You want to put as little code in here as possible, because it will run
-    # over and over again for each individual user.
-        
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+    
 }
 
 # Run the application 
