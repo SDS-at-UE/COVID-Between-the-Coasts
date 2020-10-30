@@ -18,7 +18,32 @@
 ######################################################
 
 library(shiny)
+library(tidyverse)
+library(sf)
+library(tigris)
+library(leaflet)
 
+## states_map gives NAME in format of "Vanderburgh County, Indiana"
+states_map <- read_sf("Data/All_counties.shp", type = 6)
+
+#graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
+graphic_covid <- read_csv("Data/graphic_covid.csv")
+
+#state and their abbrevations
+state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
+
+#Left joining covid and state names by their abbrevations
+covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
+
+#Combine county_name and new state column with a comma between them to match format of states_map
+covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
+
+#Joining two datasets
+covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
+
+#Palette for leaflet
+#In package RColorBrewer, RdYlGn goes from dark red to dark green
+pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 ######################################################
 # Define UI for application
@@ -43,10 +68,15 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+           plotOutput("distPlot"),
+           #map_cases needed for leaflet output
+           fluidRow(
+               splitLayout(cellWidths = c("50%", "50%"),
+                           leafletOutput("map_cases"))
+           ))
         )
     )
-)
+
 
 ##################################################
 # Define server logic
@@ -61,8 +91,29 @@ server <- function(input, output) {
     
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
-
     
+    # included Cases, Deaths, Case Rate, and Death Rate to leaflet
+
+    output$map_cases <- renderLeaflet({
+        covid_map_data %>% 
+            st_transform(crs = "+init=epsg:4326") %>% 
+            leaflet(width = "100%") %>% 
+            addProviderTiles(provider = "CartoDB.Positron") %>% 
+            addPolygons(popup = str_c("<strong>", covid_map_data$county_name, ", ", covid_map_data$state,
+                                      "</strong><br /> Cases: ", covid_map_data$cases,
+                                      "</strong><br /> Deaths: ", covid_map_data$deaths,
+                                      "</strong><br /> Case Rate: ", covid_map_data$case_rate,
+                                      "</strong><br /> Death Rate: ", covid_map_data$death_rate),
+                        stroke = FALSE,
+                        smoothFactor = 0,
+                        fillOpacity = 0.7,
+                        color = ~ pal_case(cases)) %>% 
+            addLegend("bottomright",
+                      pal = pal_cases,
+                      values = ~ cases,
+                      title = "COVID Between the Coasts",
+                      opacity = 1)
+    })
 }
 
 # Run the application 
