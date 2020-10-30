@@ -4,6 +4,7 @@ library(tidyverse)
 library(stringr)
 library(readr)
 library(rvest)
+library(lubridate)
 
 ##### Web Scraping #####
 
@@ -56,6 +57,7 @@ final_covid <- final_covid %>% rename(county_name = County.Name,
 # Getting rid of the X in front of the date and fixing the date
 final_covid$date <- str_remove(final_covid$date, "X")
 final_covid$date <- gsub("\\.", "/", final_covid$date)
+final_covid$date <- as.Date(final_covid$date, "%m/%d/%y")
 
 # writing out the final csv file 
 write_csv(final_covid, "Data/graphic_covid.csv")
