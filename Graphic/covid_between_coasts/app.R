@@ -39,11 +39,13 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
 #Joining two datasets
-covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
+#covid_map_data2 <- geo_join(states_map, covid_data, by = "NAME")
+covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+#pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 ######################################################
 # Define UI for application
@@ -91,7 +93,11 @@ server <- function(input, output) {
     
     dates <- reactive({
         covid_map_data %>% 
-            filter(as.Date(date) == input$dates)
+            filter(date == as.character("8/22/20"))
+    })
+    
+    pal_case <- reactive({
+      colorNumeric(palette = "viridis", domain = dates()$cases)
     })
     
     
@@ -106,17 +112,17 @@ server <- function(input, output) {
             st_transform(crs = "+init=epsg:4326") %>% 
             leaflet(width = "100%") %>% 
             addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(popup = str_c("<strong>", covid_map_data$county_name, ", ", covid_map_data$state,
-                                      "</strong><br /> Cases: ", covid_map_data$cases,
-                                      "</strong><br /> Deaths: ", covid_map_data$deaths,
-                                      "</strong><br /> Case Rate: ", covid_map_data$case_rate,
-                                      "</strong><br /> Death Rate: ", covid_map_data$death_rate),
+            addPolygons(popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                      "</strong><br /> Cases: ", dates()$cases,
+                                      "</strong><br /> Deaths: ", dates()$deaths,
+                                      "</strong><br /> Case Rate: ", dates()$case_rate,
+                                      "</strong><br /> Death Rate: ", dates()$death_rate),
                         stroke = FALSE,
                         smoothFactor = 0,
                         fillOpacity = 0.7,
-                        color = ~ pal_case(cases)) %>% 
+                        color = ~ pal_case()(cases)) %>% 
             addLegend("bottomright",
-                      pal = pal_case,
+                      pal = pal_case(),
                       values = ~ cases,
                       title = "COVID Between the Coasts",
                       opacity = 1)
