@@ -47,13 +47,15 @@ pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 #table  for markers
 
-City<- c("Chicago", "Indianapolis", "Detroit", "Louisville")
-Lat<- c(41.8985, 39.7688, 42.3410, 38.2731)
-Long<- c(-87.6341, -86.1649, -83.0630, -85.7627)
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
 Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
          "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
          "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
-         "<a href='https://en.wikipedia.org/wiki/Louisville'> Louisville </a>")
+         "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
+         "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
+         "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
 
 Marker<-data.frame(City, Lat, Long, Link)
 
