@@ -87,16 +87,14 @@ ui <- fluidPage(
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
 ),
-xyz <- mainPanel(
-  leafletOutput("mymap"),
+mainPanel(
 
-  fluidPage(
     leafletOutput("map_cases")
    
     
   ))  
 
-))
+)
 
 
 ##################################################
@@ -127,34 +125,32 @@ server <- function(input, output) {
 
 
     output$map_cases <- renderLeaflet({
-        dates() %>% 
-            st_transform(crs = "+init=epsg:4326") %>% 
-            leaflet(width = "100%") %>% 
-            addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
-                                      "</strong><br /> Cases: ", dates()$cases,
-                                      "</strong><br /> Deaths: ", dates()$deaths,
-                                      "</strong><br /> Case Rate: ", dates()$case_rate,
-                                      "</strong><br /> Death Rate: ", dates()$death_rate),
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = ~ pal_case()(cases)) %>% 
-            addLegend("bottomright",
-                      pal = pal_case(),
-                      values = ~ cases,
-                      title = "COVID Between the Coasts",
-                      opacity = 1)
+      dates() %>% 
+        st_transform(crs = "+init=epsg:4326") %>% 
+        leaflet(width = "100%") %>%
+        addProviderTiles(provider = "CartoDB.Positron") %>% 
+        addPolygons(popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                  "</strong><br /> Cases: ", dates()$cases,
+                                  "</strong><br /> Deaths: ", dates()$deaths,
+                                  "</strong><br /> Case Rate: ", dates()$case_rate,
+                                  "</strong><br /> Death Rate: ", dates()$death_rate),
+                    stroke = FALSE,
+                    smoothFactor = 0,
+                    fillOpacity = 0.7,
+                    color = ~ pal_case()(cases)) %>%
+        addMarkers(data = Marker,
+                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
+        addLegend("bottomright",
+                  pal = pal_case(),
+                  values = ~ cases,
+                  title = "COVID Between the Coasts",
+                  opacity = 1)
     })
 
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
-  
-  
-  output$mymap<- renderLeaflet({
-  markers<- leaflet(data = Marker) %>% addTiles() %>%
-    addMarkers(~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))})
+
   
 }
 
