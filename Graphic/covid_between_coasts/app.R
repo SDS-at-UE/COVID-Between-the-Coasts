@@ -47,6 +47,20 @@ covid_map_data <- st_as_sf(covid_map_data)
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
 #pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
+#table  for markers
+
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
+         "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
+         "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
+         "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
+         "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
+         "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
+
+Marker<-data.frame(City, Lat, Long, Link)
+
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -73,11 +87,16 @@ ui <- fluidPage(
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
 ),
+xyz <- mainPanel(
+  leafletOutput("mymap"),
 
-  mainPanel(
+  fluidPage(
     leafletOutput("map_cases")
-  ))
-)
+   
+    
+  ))  
+
+))
 
 
 ##################################################
@@ -132,7 +151,11 @@ server <- function(input, output) {
   
   output$stat <- renderText({input$stat})
   
-
+  
+  output$mymap<- renderLeaflet({
+  markers<- leaflet(data = Marker) %>% addTiles() %>%
+    addMarkers(~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))})
+  
 }
 
 # Run the application 
