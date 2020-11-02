@@ -4,6 +4,7 @@ library(tidyverse)
 library(stringr)
 library(readr)
 library(rvest)
+library(zoo) # for 7 day moving average
 
 # Loading in the data
 cases <- read_csv("Data/usafacts_covid_confirmed.csv")
@@ -34,11 +35,15 @@ deaths <- deaths %>%
 cases_and_deaths <- merge(cases, deaths)
 cases_deaths_pop <- merge(cases_and_deaths, population)
 
-# Making the case rate and death rate columns and renaming variables 
+# Making the case rate, death rate, and 7 day moving average columns and renaming variables 
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
                                            death_rate = deaths/population*100000)
 
-final_covid <- final_covid %>% rename(county_name = County.Name,
+final_covid <- final_covid %>% 
+  group_by(`County Name`, State) %>% 
+  mutate(moving_avg_7 = rollmean(cases, k = 7, fill = NA, align = "right"))
+
+final_covid <- final_covid %>% rename(county_name = `County Name`,
                                       state = State)
 
 # writing out the final csv file 
