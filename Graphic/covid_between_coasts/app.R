@@ -47,6 +47,22 @@ covid_map_data <- st_as_sf(covid_map_data)
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
 #pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
+##############
+# Gini Info for temp use
+##############
+gini <- read_csv("Data/gini.csv",
+                 col_types = cols(
+                   NAME = col_character(),
+                   County = col_character(),
+                   State = col_character(),
+                   variable = col_character(),
+                   estimate = col_double(),
+                   label = col_character()
+                 ))
+covid_data_gini <- left_join(covid_data, select(gini, NAME, Gini = estimate), by = "NAME")
+covid_map_data_gini <- geo_join(states_map, covid_data_gini, by = "NAME")
+pal_gini <- colorNumeric(palette = "viridis", domain = covid_map_data_gini$Gini)
+
 #table  for markers
 
 City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
@@ -89,7 +105,8 @@ ui <- fluidPage(
 ),
 mainPanel(
 
-    leafletOutput("map_cases")
+    #leafletOutput("map_cases")
+  leafletOutput("map_gini")
    
     
   ))  
@@ -150,6 +167,26 @@ server <- function(input, output) {
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
+  
+  output$map_gini <- renderLeaflet({
+    covid_map_data_gini %>% 
+      st_transform(crs = "+init=epsg:4326") %>% 
+      leaflet(width = "100%") %>% 
+      addProviderTiles(provider = "CartoDB.Positron") %>% 
+      addPolygons(popup = str_c("<strong>", covid_map_data_gini$County, ", ", covid_map_data_gini$State_abb,
+                                "</strong><br /> Gini Index: ", covid_map_data_gini$Gini),
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7,
+                  color = ~ pal_gini(Gini)) %>%
+      addMarkers(data = Marker,
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
+      addLegend("bottomright",
+                pal = pal_gini,
+                values = ~ Gini,
+                title = "Gini Index",
+                opacity = 1)
+  })
 
   
 }
