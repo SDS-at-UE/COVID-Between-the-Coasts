@@ -45,7 +45,7 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-#pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 ##############
 # Gini Info for temp use
@@ -130,10 +130,6 @@ server <- function(input, output) {
             filter(date == as.character("8/22/20"))
     })
     
-    pal_case <- reactive({
-      colorNumeric(palette = "viridis", domain = dates()$cases)
-    })
-    
     
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
@@ -154,11 +150,11 @@ server <- function(input, output) {
                     stroke = FALSE,
                     smoothFactor = 0,
                     fillOpacity = 0.7,
-                    color = ~ pal_case()(cases)) %>%
+                    color = ~ pal_case(cases)) %>%
         addMarkers(data = Marker,
                    ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
         addLegend("bottomright",
-                  pal = pal_case(),
+                  pal = pal_case,
                   values = ~ cases,
                   title = "COVID Between the Coasts",
                   opacity = 1)
