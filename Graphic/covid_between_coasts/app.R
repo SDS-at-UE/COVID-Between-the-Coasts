@@ -59,6 +59,7 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker<-data.frame(City, Lat, Long, Link)
 
+
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -89,7 +90,14 @@ xyz <- mainPanel(
   leafletOutput("mymap"),
 
   fluidPage(
-    leafletOutput("map_cases")
+    leafletOutput("map_cases"), 
+    
+    basicPage(helpText("A note on testing data: A case is defined as any individual
+                              who tests positive (via a PCR or antigen test) within a three month window. 
+                              Serological tests do not count toward this total. For more on classifying cases,
+                               see https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/"))
+    
+   
    
     
   ))  
@@ -144,6 +152,8 @@ server <- function(input, output) {
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
+  
+  
   
   
   output$mymap<- renderLeaflet({
