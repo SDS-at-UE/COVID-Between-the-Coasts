@@ -106,9 +106,14 @@ ui <- fluidPage(
 mainPanel(
 
     #leafletOutput("map_cases")
-  leafletOutput("map_gini")
+  leafletOutput("map_gini"), 
+  
+  helpText("A note on testing data: A case is defined as any individual
+            who tests positive (via a PCR or antigen test) within a three month window. 
+             Serological tests do not count toward this total. For more on classifying cases,
+            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", "the CDC COVID Case Classification Page"))
    
-    
+  
   ))  
 
 )
