@@ -1,4 +1,4 @@
-county_name,state,date,cases,deaths,population,case_rate,death_rate
+statewide_unallocated,state,date,cases,deaths,population,case_rate,death_rate
 Statewide Unallocated,IL,1/22/20,0,0,0,NaN,NaN
 Statewide Unallocated,IL,1/23/20,0,0,0,NaN,NaN
 Statewide Unallocated,IL,1/24/20,0,0,0,NaN,NaN
