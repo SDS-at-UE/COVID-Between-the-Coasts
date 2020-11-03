@@ -47,6 +47,9 @@ covid_map_data <- st_as_sf(covid_map_data)
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
+#Putting in new dataset for Statewide Unallocated
+sw <- read_csv("Data/statewide_unallocated.csv")
+
 ##############
 # Gini Info for temp use
 ##############
@@ -101,7 +104,8 @@ ui <- fluidPage(
               value=as.Date("06-24-2020","%m-%d-%Y"),
               animate = TRUE),
   
-      dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
+      dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
+      
 ),
 mainPanel(
 
@@ -111,8 +115,12 @@ mainPanel(
   helpText("A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window. 
              Serological tests do not count toward this total. For more on classifying cases,
+
             see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
-                         "the CDC COVID Case Classification Page"),".")
+                         "the CDC COVID Case Classification Page"),"."),
+  
+  dataTableOutput("swun")
+
    
   
   ))  
@@ -190,6 +198,7 @@ server <- function(input, output) {
                 opacity = 1)
   })
 
+  output$swun <- renderDataTable(sw)
   
 }
 
