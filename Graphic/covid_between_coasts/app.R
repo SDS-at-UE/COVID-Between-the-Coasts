@@ -47,6 +47,9 @@ covid_map_data <- st_as_sf(covid_map_data)
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
+#Putting in new dataset for Statewide Unallocated
+state_unallocated_data <- read_csv("Data/graphic_covid.csv")
+
 ##############
 # Gini Info for temp use
 ##############
@@ -111,8 +114,9 @@ mainPanel(
   helpText("A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window. 
              Serological tests do not count toward this total. For more on classifying cases,
-            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", "the CDC COVID Case Classification Page"))
+            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", "the CDC COVID Case Classification Page")),
    
+  dataTableOutput("unallocated")
   
   ))  
 
@@ -189,7 +193,7 @@ server <- function(input, output) {
                 opacity = 1)
   })
 
-  
+  output$unallocated <- renderDataTable(state_unallocated_data)
 }
 
 # Run the application 
