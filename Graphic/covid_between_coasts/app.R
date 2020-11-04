@@ -194,7 +194,7 @@ server <- function(input, output) {
                 opacity = 1)
   })
 
-  output$unallocated <- renderDataTable(state_unallocated_data)
+  output$unallocated <- renderDataTable(state_unallocated_data, options = list(pageLength = 5))
 }
 
 # Run the application 
