@@ -48,7 +48,7 @@ covid_map_data <- st_as_sf(covid_map_data)
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
-state_unallocated_data <- read_csv("Data/graphic_covid.csv")
+state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
 
 ##############
 # Gini Info for temp use
