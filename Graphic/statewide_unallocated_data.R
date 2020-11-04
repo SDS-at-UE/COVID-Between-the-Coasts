@@ -15,4 +15,4 @@ statewide_unallocated <- cases %>%
 statewide_unallocated <- statewide_unallocated %>% rename(county_name = `County Name`)
 
 
-write_csv(statewide_unallocated, "Data/graphic_covid.csv")
+write_csv(statewide_unallocated, "Data/statewide_unallocated.csv")
