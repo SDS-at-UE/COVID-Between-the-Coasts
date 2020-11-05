@@ -50,6 +50,7 @@ pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
 state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
+state_unallocated_data$Date <- mdy(state_unallocated_data$Date)
 
 ##############
 # Gini Info for temp use
@@ -80,6 +81,8 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
          "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
 
 Marker<-data.frame(City, Lat, Long, Link)
+
+table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 ######################################################
 # Define UI for application
@@ -197,10 +200,14 @@ server <- function(input, output) {
   filtered_states_unallocated <- reactive({
       state_unallocated_data %>% 
       filter(Date == input$dates) %>% 
-      select(States, cases) %>% 
-      t(state_unallocated_data)
+      select(State, cases)
   })
-  output$unallocated <- renderTable(filtered_states_unallocated(), options = list(pageLength = 5))
+  
+  output$unallocated <- renderTable(
+      t(filtered_states_unallocated()), options = list(pageLength = 5),
+      rownames = TRUE, colnames = FALSE)
+  # Need this to connect to table
+  caption = table_caption
 }
 
 # Run the application 
