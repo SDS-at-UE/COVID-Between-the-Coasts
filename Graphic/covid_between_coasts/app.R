@@ -22,9 +22,10 @@ library(tidyverse)
 library(sf)
 library(tigris)
 library(leaflet)
+library(lubridate)
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
-states_map <- read_sf("Data/All_counties.shp", type = 6)
+states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- read_csv("Data/graphic_covid.csv")
@@ -41,6 +42,7 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 #Joining two datasets
 #covid_map_data2 <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -80,6 +82,7 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker<-data.frame(City, Lat, Long, Link)
 
+
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -109,7 +112,7 @@ ui <- fluidPage(
 ),
 mainPanel(
 
-    #leafletOutput("map_cases")
+  leafletOutput("map_cases"),
   leafletOutput("map_gini"), 
   
   helpText("A note on testing data: A case is defined as any individual
@@ -141,7 +144,7 @@ server <- function(input, output) {
     
     dates <- reactive({
         covid_map_data %>% 
-            filter(date == as.character("8/22/20"))
+            filter(date == input$dates)
     })
     
     
