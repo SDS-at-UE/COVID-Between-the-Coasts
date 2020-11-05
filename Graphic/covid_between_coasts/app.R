@@ -158,6 +158,11 @@ server <- function(input, output) {
                   title = "COVID Between the Coasts",
                   opacity = 1)
     })
+    
+    observeEvent(input$map_cases, {
+      leafletProxy("map_cases", session) %>%
+        clearControls()
+    })
 
   output$states <- renderText({input$states})
   
