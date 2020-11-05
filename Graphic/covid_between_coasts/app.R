@@ -117,7 +117,7 @@ mainPanel(
              Serological tests do not count toward this total. For more on classifying cases,
             see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", "the CDC COVID Case Classification Page")),
    
-  dataTableOutput("unallocated")
+  tableOutput("unallocated")
   
   ))  
 
@@ -193,8 +193,14 @@ server <- function(input, output) {
                 title = "Gini Index",
                 opacity = 1)
   })
-
-  output$unallocated <- renderDataTable(state_unallocated_data, options = list(pageLength = 5))
+  
+  filtered_states_unallocated <- reactive({
+      state_unallocated_data %>% 
+      filter(Date == input$dates) %>% 
+      select(States, cases) %>% 
+      t(state_unallocated_data)
+  })
+  output$unallocated <- renderTable(filtered_states_unallocated(), options = list(pageLength = 5))
 }
 
 # Run the application 
