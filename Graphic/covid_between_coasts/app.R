@@ -23,6 +23,7 @@ library(sf)
 library(tigris)
 library(leaflet)
 library(DT)
+library(lubridate)
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- read_sf("Data/All_counties.shp", type = 6)
@@ -43,6 +44,7 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 #covid_map_data2 <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data <- st_as_sf(covid_map_data)
+covid_map_data$date <- mdy(covid_map_data$date)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
@@ -103,9 +105,9 @@ ui <- fluidPage(
                                                          "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
   
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = as.Date("01-01-2020","%m-%d-%Y"),
-              max = as.Date("10-31-2020","%m-%d-%Y"),
-              value=as.Date("06-24-2020","%m-%d-%Y"),
+              min = min(covid_map_data$date),
+              max = max(covid_map_data$date),
+              value = max(covid_map_data$date),
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
@@ -200,7 +202,8 @@ server <- function(input, output) {
   filtered_states_unallocated <- reactive({
       state_unallocated_data %>% 
       filter(Date == input$dates) %>% 
-      select(State, cases)
+      select(State, cases) %>% 
+      rename(Cases = cases)
   })
   
   output$unallocated <- renderTable(
