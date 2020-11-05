@@ -40,7 +40,6 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
 #Joining two datasets
-#covid_map_data2 <- geo_join(states_map, covid_data, by = "NAME")
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
@@ -52,35 +51,19 @@ pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 #Putting in new dataset for Statewide Unallocated
 sw <- read_csv("Data/statewide_unallocated.csv")
 
-##############
-# Gini Info for temp use
-##############
-gini <- read_csv("Data/gini.csv",
-                 col_types = cols(
-                   NAME = col_character(),
-                   County = col_character(),
-                   State = col_character(),
-                   variable = col_character(),
-                   estimate = col_double(),
-                   label = col_character()
-                 ))
-covid_data_gini <- left_join(covid_data, select(gini, NAME, Gini = estimate), by = "NAME")
-covid_map_data_gini <- geo_join(states_map, covid_data_gini, by = "NAME")
-pal_gini <- colorNumeric(palette = "viridis", domain = covid_map_data_gini$Gini)
+#tablefor markers
 
-#table  for markers
-
-City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
-Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
-Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
-Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
+City <- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat <- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long <- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link <- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
          "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
          "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
          "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
          "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
          "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
 
-Marker<-data.frame(City, Lat, Long, Link)
+Marker <- data.frame(City, Lat, Long, Link)
 
 
 ######################################################
@@ -113,7 +96,6 @@ ui <- fluidPage(
 mainPanel(
 
   leafletOutput("map_cases"),
-  leafletOutput("map_gini"), 
   
   helpText("A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window. 
@@ -180,26 +162,6 @@ server <- function(input, output) {
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
-  
-  output$map_gini <- renderLeaflet({
-    covid_map_data_gini %>% 
-      st_transform(crs = "+init=epsg:4326") %>% 
-      leaflet(width = "100%") %>% 
-      addProviderTiles(provider = "CartoDB.Positron") %>% 
-      addPolygons(popup = str_c("<strong>", covid_map_data_gini$County, ", ", covid_map_data_gini$State_abb,
-                                "</strong><br /> Gini Index: ", covid_map_data_gini$Gini),
-                  stroke = FALSE,
-                  smoothFactor = 0,
-                  fillOpacity = 0.7,
-                  color = ~ pal_gini(Gini)) %>%
-      addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
-      addLegend("bottomright",
-                pal = pal_gini,
-                values = ~ Gini,
-                title = "Gini Index",
-                opacity = 1)
-  })
 
   output$swun <- renderDataTable(sw)
   
