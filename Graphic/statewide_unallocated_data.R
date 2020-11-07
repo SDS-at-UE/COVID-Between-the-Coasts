@@ -4,12 +4,14 @@ library(tidyverse)
 library(stringr)
 library(readr)
 
+
 # Loading in the data
 cases <- read_csv("Data/usafacts_covid_confirmed.csv")
 population <- read_csv("Data/usafacts_covid_county_population.csv")
 deaths <- read_csv("Data/usafacts_deaths.csv")
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
+
 cases <- cases[,-c(1,4)]
 cases <- cases %>% filter(str_detect(`County Name`, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
@@ -43,3 +45,10 @@ final_covid <- final_covid %>% rename(statewide_unallocated = `County Name`,
 
 write_csv(final_covid, "Data/statewide_unallocated.csv")
 
+statewide_unallocated <- cases %>% 
+  pivot_longer(!c(`County Name`, State), names_to = "Date", values_to = "cases")
+
+statewide_unallocated <- statewide_unallocated %>% rename(county_name = `County Name`)
+
+
+write_csv(statewide_unallocated, "Data/statewide_unallocated.csv")
