@@ -22,6 +22,7 @@ library(tidyverse)
 library(sf)
 library(tigris)
 library(leaflet)
+library(DT)
 library(lubridate)
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
@@ -49,14 +50,16 @@ covid_map_data <- st_as_sf(covid_map_data)
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
-sw <- read_csv("Data/statewide_unallocated.csv")
 
-#tablefor markers
+state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
+state_unallocated_data$date <- mdy(state_unallocated_data$date)
 
-City <- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
-Lat <- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
-Long <- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
-Link <- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
+#table for markers
+
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
          "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
          "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
          "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
@@ -65,6 +68,8 @@ Link <- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+
+table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 ######################################################
 # Define UI for application
@@ -85,32 +90,27 @@ ui <- fluidPage(
                                                          "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
   
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = as.Date("01-01-2020","%m-%d-%Y"),
-              max = as.Date("10-31-2020","%m-%d-%Y"),
-              value=as.Date("06-24-2020","%m-%d-%Y"),
+              min = min(covid_map_data$date),
+              max = max(covid_map_data$date),
+              value = max(covid_map_data$date),
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
 ),
 mainPanel(
-
+  
   leafletOutput("map_cases"),
   
   helpText("A note on testing data: A case is defined as any individual
-            who tests positive (via a PCR or antigen test) within a three month window. 
-             Serological tests do not count toward this total. For more on classifying cases,
-
-
-            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
-                         "the CDC COVID Case Classification Page"),"."),
+            who tests positive (via a PCR or antigen test) within a three month window.
+            Serological tests do not count toward this total. For more on classifying cases,
+           see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
+                        "the CDC COVID Case Classification Page"),"."),
   
-  dataTableOutput("swun")
-
-
-   
+  tableOutput("unallocated")
   
-  ))  
+))  
 
 )
 
@@ -167,6 +167,19 @@ server <- function(input, output) {
 
   output$swun <- renderDataTable(sw)
   
+  filtered_states_unallocated <- reactive({
+      state_unallocated_data %>% 
+      filter(date == input$dates) %>% 
+      select(state, cases) %>% 
+      rename(Cases = cases,
+             State = state)
+  })
+  
+  output$unallocated <- renderTable(
+      t(filtered_states_unallocated()), options = list(pageLength = 5),
+      rownames = TRUE, colnames = FALSE)
+  # Need this to connect to table
+  caption = table_caption
 }
 
 # Run the application 
