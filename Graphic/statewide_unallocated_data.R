@@ -4,7 +4,6 @@ library(tidyverse)
 library(stringr)
 library(readr)
 
-
 # Loading in the data
 cases <- read_csv("Data/usafacts_covid_confirmed.csv")
 population <- read_csv("Data/usafacts_covid_county_population.csv")
@@ -44,6 +43,7 @@ final_covid <- final_covid %>% rename(statewide_unallocated = `County Name`,
                                       date = Date)
 
 write_csv(final_covid, "Data/statewide_unallocated.csv")
+
 
 statewide_unallocated <- cases %>% 
   pivot_longer(!c(`County Name`, State), names_to = "Date", values_to = "cases")
