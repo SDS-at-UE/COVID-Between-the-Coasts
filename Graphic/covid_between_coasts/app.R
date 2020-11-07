@@ -24,6 +24,7 @@ library(tigris)
 library(leaflet)
 library(DT)
 library(lubridate)
+library(RColorBrewer)
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
@@ -47,7 +48,8 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+pal_case<- rev(brewer.pal(50, name="RdYlGn"))
+pal_case <- colorNumeric(palette = pal_case, domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
 
@@ -156,9 +158,11 @@ server <- function(input, output) {
                    ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
         addLegend("bottomright",
                   pal = pal_case,
-                  values = ~ cases,
-                  title = "COVID Between the Coasts",
-                  opacity = 1)
+                  values = ~cases,
+                  title = "COVID Between the Coasts", 
+                  opacity=5)
+               
+                  
     })
 
   output$states <- renderText({input$states})
