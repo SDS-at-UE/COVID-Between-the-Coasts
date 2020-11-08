@@ -32,6 +32,8 @@ states_map <- st_read("Data/All_counties.shp", type = 6)
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- read_csv("Data/graphic_covid.csv")
 
+
+
 #state and their abbrevations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
@@ -72,6 +74,8 @@ Marker <- data.frame(City, Lat, Long, Link)
 
 
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
+
+legendvalues<- c(1:100000)
 
 ######################################################
 # Define UI for application
@@ -158,7 +162,7 @@ server <- function(input, output) {
                    ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
         addLegend("bottomright",
                   pal = pal_case,
-                  values = ~cases,
+                  values = ~legendvalues,
                   title = "COVID Between the Coasts", 
                   opacity=5)
                
