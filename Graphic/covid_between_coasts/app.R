@@ -43,9 +43,6 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data$date <- mdy(covid_map_data$date)
-#covid_map_data$date <- as.Date(covid_map_data$date, format = "%m-%d-%Y")
-
-#covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -56,7 +53,6 @@ pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
 state_unallocated_data$date <- mdy(state_unallocated_data$date)
-#state_unallocated_data$date <- as.Date(state_unallocated_data$date, format = "%m-%d-%Y")
 
 #table for markers
 
@@ -94,9 +90,10 @@ ui <- fluidPage(
                                                          "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
   
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = min(covid_map_data$date),
-              max = max(covid_map_data$date),
-              value = max(covid_map_data$date),
+              min = as.Date(min(covid_map_data$date)),
+              max = as.Date(max(covid_map_data$date)),
+              value = as.Date(max(covid_map_data$date)),
+              timeFormat = "%m-%d-%Y",
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
@@ -180,11 +177,12 @@ server <- function(input, output) {
   })
   
   output$unallocated <- renderTable(
-      t(filtered_states_unallocated()), options = list(pageLength = 5),
-      rownames = TRUE, colnames = FALSE)
-  # Need this to connect to table
-  caption = table_caption
-}
+      t(filtered_states_unallocated()),
+      rownames = TRUE, colnames = FALSE) 
+  # Need caption to connect to table
+  # caption = table_caption, caption.placement = "top"
 
+}
+  
 # Run the application 
 shinyApp(ui = ui, server = server)
