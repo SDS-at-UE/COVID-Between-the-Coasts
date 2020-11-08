@@ -43,6 +43,9 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data$date <- mdy(covid_map_data$date)
+#covid_map_data$date <- as.Date(covid_map_data$date, format = "%m-%d-%Y")
+
+#covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -53,6 +56,7 @@ pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
 state_unallocated_data$date <- mdy(state_unallocated_data$date)
+#state_unallocated_data$date <- as.Date(state_unallocated_data$date, format = "%m-%d-%Y")
 
 #table for markers
 
