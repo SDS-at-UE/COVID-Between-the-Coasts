@@ -25,6 +25,7 @@ library(leaflet)
 library(rvest)
 library(DT)
 library(lubridate)
+library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 
 ##### Web Scraping #####
@@ -116,6 +117,8 @@ states_map <- st_read("Data/All_counties.shp", type = 6)
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid
 
+
+
 #state and their abbrevations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
@@ -131,7 +134,8 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+color_pal <- rev(brewer.pal(50, name="RdYlGn"))
+pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
 
@@ -154,6 +158,8 @@ Marker <- data.frame(City, Lat, Long, Link)
 
 
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
+
+legendvalues<- c(1:200000)
 
 ######################################################
 # Define UI for application
@@ -242,9 +248,9 @@ server <- function(input, output) {
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
       addLegend("bottomright",
                 pal = pal_case,
-                values = ~ cases,
+                values = ~ legendvalues,
                 title = input$stat,
-                opacity = 1)
+                opacity = 5)
   })
 
   output$states <- renderText({input$states})
