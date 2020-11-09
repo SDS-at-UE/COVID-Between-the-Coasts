@@ -157,7 +157,7 @@ server <- function(input, output) {
         addLegend("bottomright",
                   pal = pal_case,
                   values = ~ cases,
-                  title = "COVID Between the Coasts",
+                  title = input$stat,
                   opacity = 1)
     })
 
