@@ -271,7 +271,5 @@ server <- function(input, output) {
   caption = table_caption
 }
 
-}
-  
 # Run the application 
 shinyApp(ui = ui, server = server)
