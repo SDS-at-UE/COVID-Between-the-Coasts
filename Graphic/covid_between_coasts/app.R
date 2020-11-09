@@ -39,14 +39,14 @@ covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-co
 
 cases <- read_csv(covid_html_data[1],
                   col_types = cols(
-                    .default = col_double(),
+                    .default = col_character(),
                     `County Name` = col_character(),
                     State = col_character()
                   )) %>% 
   rename(County.Name = `County Name`)
 deaths <- read_csv(covid_html_data[2],
                    col_types = cols(
-                     .default = col_double(),
+                     .default = col_character(),
                      `County Name` = col_character(),
                      State = col_character()
                    )) %>% 
@@ -82,6 +82,13 @@ cases <- cases %>%
 deaths <- deaths %>% 
   pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
 
+# Converting cases and deaths to numeric. We imported as character because of 
+# potential data entry errors that used a comma as a thousands-separator.
+cases$cases <- str_remove_all(cases$cases, "[:punct:]")
+deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
+cases$cases <- as.numeric(cases$cases)
+deaths$deaths <- as.numeric(deaths$deaths)
+
 # Joining the data
 cases_and_deaths <- merge(cases, deaths)
 cases_deaths_pop <- merge(cases_and_deaths, population)
@@ -113,7 +120,6 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
-covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
