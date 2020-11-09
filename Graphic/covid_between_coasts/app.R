@@ -25,6 +25,91 @@ library(leaflet)
 library(rvest)
 library(DT)
 library(lubridate)
+library(RColorBrewer)
+library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
+
+##### Web Scraping #####
+
+# Getting the csv files
+
+covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/") %>% 
+  html_nodes('a') %>%
+  html_attr('href') %>% 
+  str_subset("\\.csv$")
+
+# Extracting the data from the csv files 
+
+cases <- read_csv(covid_html_data[1],
+                  col_types = cols(
+                    .default = col_character(),
+                    `County Name` = col_character(),
+                    State = col_character()
+                  )) %>% 
+  rename(County.Name = `County Name`)
+deaths <- read_csv(covid_html_data[2],
+                   col_types = cols(
+                     .default = col_character(),
+                     `County Name` = col_character(),
+                     State = col_character()
+                   )) %>% 
+  rename(County.Name = `County Name`)
+population <- read_csv(covid_html_data[3],
+                       col_types = cols(
+                         countyFIPS = col_double(),
+                         `County Name` = col_character(),
+                         State = col_character(),
+                         population = col_double()
+                       )) %>% 
+  rename(County.Name = `County Name`)
+
+##### Data Cleaning #####
+
+# Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
+cases <- cases[,-c(1,4)]
+cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+deaths <- deaths[,-c(1,4)]
+deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+population <- population[,-1]
+population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+# Formatting using the pivot_longer function
+cases <- cases %>% 
+  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
+
+deaths <- deaths %>% 
+  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
+
+# Converting cases and deaths to numeric. We imported as character because of 
+# potential data entry errors that used a comma as a thousands-separator.
+cases$cases <- str_remove_all(cases$cases, "[:punct:]")
+deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
+cases$cases <- as.numeric(cases$cases)
+deaths$deaths <- as.numeric(deaths$deaths)
+
+# Joining the data
+cases_and_deaths <- merge(cases, deaths)
+cases_deaths_pop <- merge(cases_and_deaths, population)
+
+# Making the case rate and death rate columns and renaming variables 
+final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
+                                           death_rate = deaths/population*100000)
+
+final_covid <- final_covid %>% rename(county_name = County.Name,
+                                      state = State)
+
+# Fixing the date
+final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
+
+# creating new_cases and 7 day moving average metric
+final_covid <- final_covid %>% 
+  group_by(county_name, state) %>% 
+  mutate(new_cases = diff(c(0,cases)),
+         moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
 ##### Web Scraping #####
 
@@ -124,7 +209,8 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+color_pal <- rev(brewer.pal(50, name="RdYlGn"))
+pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
 
@@ -148,6 +234,10 @@ Marker <- data.frame(City, Lat, Long, Link)
 
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
+
+legendvalues<- c(1:200000)
+
+
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -155,7 +245,7 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 # choose. 
 ######################################################
 ui <- fluidPage(
-
+  
   # Application title
   titlePanel("COVID Between the Coasts"),
   
@@ -173,6 +263,7 @@ ui <- fluidPage(
               min = min(covid_map_data$date),
               max = max(covid_map_data$date),
               value = max(covid_map_data$date),
+              timeFormat = "%m-%d-%Y",
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
@@ -183,14 +274,19 @@ mainPanel(
   leafletOutput("map_cases"),
   
   helpText("A note on testing data: A case is defined as any individual
+
+      
+      
             who tests positive (via a PCR or antigen test) within a three month window.
             Serological tests do not count toward this total. For more on classifying cases,
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
+
   
   tableOutput("unallocated")
   
 ))  
+
 
 )
 
@@ -205,7 +301,7 @@ mainPanel(
 # include it in the graphic. 
 ##################################################
 server <- function(input, output) {
-    
+
     dates <- reactive({
         covid_map_data %>% 
             filter(date == input$dates)
@@ -251,14 +347,15 @@ server <- function(input, output) {
                   pal = pal_data,
                   values = data,
                   title = str_to_title(str_replace(input$stat, "_", " ")),
-                  opacity = 1)
+                  opacity = 5)
     }
     })
+
 
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
-
+  
   output$swun <- renderDataTable(sw)
   
   filtered_states_unallocated <- reactive({
