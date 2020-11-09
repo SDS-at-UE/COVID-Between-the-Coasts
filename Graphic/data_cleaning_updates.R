@@ -65,10 +65,16 @@ final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
 final_covid <- final_covid %>% rename(county_name = County.Name,
                                       state = State)
 
+# creating new_cases metric
+final_covid <- final_covid %>% 
+  group_by(county_name, state) %>% 
+  mutate(new_cases = diff(c(0,cases)))
+
 # creating 7 day moving average metric
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
-  mutate(moving_avg_7 = rollmean(cases, k = 7, fill = NA, align = "right"))
+  mutate(moving_avg_7 = rollmean(new_cases, k = 7, fill = NA, align = "right"))
 
 # writing out the final csv file 
 write_csv(final_covid, "Data/graphic_covid.csv")
+
