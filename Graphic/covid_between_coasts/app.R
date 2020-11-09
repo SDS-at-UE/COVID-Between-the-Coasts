@@ -25,6 +25,7 @@ library(leaflet)
 library(rvest)
 library(DT)
 library(lubridate)
+library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 
 ##### Web Scraping #####
 
@@ -102,6 +103,12 @@ final_covid <- final_covid %>% rename(county_name = County.Name,
 
 # Fixing the date
 final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
+
+# creating new_cases and 7 day moving average metric
+final_covid <- final_covid %>% 
+  group_by(county_name, state) %>% 
+  mutate(new_cases = diff(c(0,cases)),
+         moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
