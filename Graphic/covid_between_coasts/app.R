@@ -211,7 +211,7 @@ ui <- fluidPage(
 # include it in the graphic. 
 ##################################################
 server <- function(input, output) {
-  
+
   dates <- reactive({
     covid_map_data %>% 
       filter(date == input$dates)
@@ -243,10 +243,10 @@ server <- function(input, output) {
       addLegend("bottomright",
                 pal = pal_case,
                 values = ~ cases,
-                title = "COVID Between the Coasts",
+                title = input$stat,
                 opacity = 1)
   })
-  
+
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
