@@ -23,6 +23,7 @@ library(sf)
 library(tigris)
 library(leaflet)
 library(rvest)
+library(DT)
 library(lubridate)
 
 ##### Web Scraping #####
@@ -96,7 +97,7 @@ final_covid <- final_covid %>% rename(county_name = County.Name,
 final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
-states_map <- read_sf("Data/All_counties.shp", type = 6)
+states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid
@@ -111,11 +112,35 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
 #Joining two datasets
-covid_map_data <- geo_join(states_map, covid_data, by = "NAME")
+covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data$date <- mdy(covid_map_data$date)
+covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
+
+#Putting in new dataset for Statewide Unallocated
+
+state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
+state_unallocated_data$date <- mdy(state_unallocated_data$date)
+
+#table for markers
+
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
+         "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
+         "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
+         "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
+         "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
+         "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
+
+Marker <- data.frame(City, Lat, Long, Link)
+
+
+table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 ######################################################
 # Define UI for application
@@ -128,17 +153,36 @@ ui <- fluidPage(
   # Application title
   titlePanel("COVID Between the Coasts"),
   
-  selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
   
-  radioButtons(inputId = "stat", "Choose a Statistic", c("Total Cases", "Total Deaths", "Case Rate per 100,000", 
+      radioButtons(inputId = "stat", "Choose a Statistic", c("Total Cases", "Total Deaths", "Case Rate per 100,000", 
                                                          "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
   
-  sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = as.Date("01-01-2020","%m-%d-%Y"),
-              max = as.Date("10-31-2020","%m-%d-%Y"),
-              value=as.Date("06-24-2020","%m-%d-%Y")),
+      sliderInput(inputId = "dates", "Timeline of COVID", 
+              min = min(covid_map_data$date),
+              max = max(covid_map_data$date),
+              value = max(covid_map_data$date),
+              animate = TRUE),
   
-  dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy") 
+      dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
+      
+),
+mainPanel(
+  
+  leafletOutput("map_cases"),
+  
+  helpText("A note on testing data: A case is defined as any individual
+            who tests positive (via a PCR or antigen test) within a three month window.
+            Serological tests do not count toward this total. For more on classifying cases,
+           see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
+                        "the CDC COVID Case Classification Page"),"."),
+  
+  tableOutput("unallocated")
+  
+))  
+
 )
 
 
@@ -153,6 +197,12 @@ ui <- fluidPage(
 ##################################################
 server <- function(input, output) {
     
+    dates <- reactive({
+        covid_map_data %>% 
+            filter(date == input$dates)
+    })
+    
+    
     # code in here (inside the server function, but outside of a render function)
     # will run once per user. 
     
@@ -160,31 +210,47 @@ server <- function(input, output) {
 
 
     output$map_cases <- renderLeaflet({
-        covid_map_data %>% 
-            st_transform(crs = "+init=epsg:4326") %>% 
-            leaflet(width = "100%") %>% 
-            addProviderTiles(provider = "CartoDB.Positron") %>% 
-            addPolygons(popup = str_c("<strong>", covid_map_data$county_name, ", ", covid_map_data$state,
-                                      "</strong><br /> Cases: ", covid_map_data$cases,
-                                      "</strong><br /> Deaths: ", covid_map_data$deaths,
-                                      "</strong><br /> Case Rate: ", covid_map_data$case_rate,
-                                      "</strong><br /> Death Rate: ", covid_map_data$death_rate),
-                        stroke = FALSE,
-                        smoothFactor = 0,
-                        fillOpacity = 0.7,
-                        color = ~ pal_case(cases)) %>% 
-            addLegend("bottomright",
-                      pal = pal_case,
-                      values = ~ cases,
-                      title = "COVID Between the Coasts",
-                      opacity = 1)
+      dates() %>% 
+        st_transform(crs = "+init=epsg:4326") %>% 
+        leaflet(width = "100%") %>%
+        addProviderTiles(provider = "CartoDB.Positron") %>% 
+        addPolygons(popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                  "</strong><br /> Cases: ", dates()$cases,
+                                  "</strong><br /> Deaths: ", dates()$deaths,
+                                  "</strong><br /> Case Rate: ", dates()$case_rate,
+                                  "</strong><br /> Death Rate: ", dates()$death_rate),
+                    stroke = FALSE,
+                    smoothFactor = 0,
+                    fillOpacity = 0.7,
+                    color = ~ pal_case(cases)) %>%
+        addMarkers(data = Marker,
+                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
+        addLegend("bottomright",
+                  pal = pal_case,
+                  values = ~ cases,
+                  title = "COVID Between the Coasts",
+                  opacity = 1)
     })
 
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
-  
 
+  output$swun <- renderDataTable(sw)
+  
+  filtered_states_unallocated <- reactive({
+      state_unallocated_data %>% 
+      filter(date == input$dates) %>% 
+      select(state, cases) %>% 
+      rename(Cases = cases,
+             State = state)
+  })
+  
+  output$unallocated <- renderTable(
+      t(filtered_states_unallocated()), options = list(pageLength = 5),
+      rownames = TRUE, colnames = FALSE)
+  # Need this to connect to table
+  caption = table_caption
 }
 
 # Run the application 
