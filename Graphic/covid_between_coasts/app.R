@@ -22,13 +22,92 @@ library(tidyverse)
 library(sf)
 library(tigris)
 library(leaflet)
+library(rvest)
+library(DT)
 library(lubridate)
+
+##### Web Scraping #####
+
+# Getting the csv files
+
+covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/") %>% 
+  html_nodes('a') %>%
+  html_attr('href') %>% 
+  str_subset("\\.csv$")
+
+# Extracting the data from the csv files 
+
+cases <- read_csv(covid_html_data[1],
+                  col_types = cols(
+                    .default = col_character(),
+                    `County Name` = col_character(),
+                    State = col_character()
+                  )) %>% 
+  rename(County.Name = `County Name`)
+deaths <- read_csv(covid_html_data[2],
+                   col_types = cols(
+                     .default = col_character(),
+                     `County Name` = col_character(),
+                     State = col_character()
+                   )) %>% 
+  rename(County.Name = `County Name`)
+population <- read_csv(covid_html_data[3],
+                       col_types = cols(
+                         countyFIPS = col_double(),
+                         `County Name` = col_character(),
+                         State = col_character(),
+                         population = col_double()
+                       )) %>% 
+  rename(County.Name = `County Name`)
+
+##### Data Cleaning #####
+
+# Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
+cases <- cases[,-c(1,4)]
+cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+deaths <- deaths[,-c(1,4)]
+deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+population <- population[,-1]
+population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+
+# Formatting using the pivot_longer function
+cases <- cases %>% 
+  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
+
+deaths <- deaths %>% 
+  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
+
+# Converting cases and deaths to numeric. We imported as character because of 
+# potential data entry errors that used a comma as a thousands-separator.
+cases$cases <- str_remove_all(cases$cases, "[:punct:]")
+deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
+cases$cases <- as.numeric(cases$cases)
+deaths$deaths <- as.numeric(deaths$deaths)
+
+# Joining the data
+cases_and_deaths <- merge(cases, deaths)
+cases_deaths_pop <- merge(cases_and_deaths, population)
+
+# Making the case rate and death rate columns and renaming variables 
+final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
+                                           death_rate = deaths/population*100000)
+
+final_covid <- final_covid %>% rename(county_name = County.Name,
+                                      state = State)
+
+# Fixing the date
+final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
-graphic_covid <- read_csv("Data/graphic_covid.csv")
+graphic_covid <- final_covid
 
 #state and their abbrevations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
@@ -41,7 +120,6 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
-covid_map_data$date <- mdy(covid_map_data$date)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -49,14 +127,16 @@ covid_map_data <- st_as_sf(covid_map_data)
 pal_case <- colorNumeric(palette = "viridis", domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
-sw <- read_csv("Data/statewide_unallocated.csv")
 
-#tablefor markers
+state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
+state_unallocated_data$date <- mdy(state_unallocated_data$date)
 
-City <- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
-Lat <- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
-Long <- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
-Link <- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>", 
+#table for markers
+
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
          "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
          "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
          "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
@@ -65,6 +145,8 @@ Link <- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+
+table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 ######################################################
 # Define UI for application
@@ -81,34 +163,34 @@ ui <- fluidPage(
     sidebarPanel(
       selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
   
-      radioButtons(inputId = "stat", "Choose a Statistic", c("Total Cases", "Total Deaths", "Case Rate per 100,000", 
-                                                         "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
-  
+      radioButtons(inputId = "stat", "Choose a Statistic", 
+                   c("Total Cases" = "cases", 
+                     "Total Deaths" = "deaths", 
+                     "Case Rate per 100,000" = "case_rate",
+                     "Death Rate per 100,000" = "death_rate")),
+      
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = as.Date("01-01-2020","%m-%d-%Y"),
-              max = as.Date("10-31-2020","%m-%d-%Y"),
-              value=as.Date("06-24-2020","%m-%d-%Y"),
+              min = min(covid_map_data$date),
+              max = max(covid_map_data$date),
+              value = max(covid_map_data$date),
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
 ),
 mainPanel(
-
+  
   leafletOutput("map_cases"),
   
   helpText("A note on testing data: A case is defined as any individual
-            who tests positive (via a PCR or antigen test) within a three month window. 
-             Serological tests do not count toward this total. For more on classifying cases,
-
-            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
-                         "the CDC COVID Case Classification Page"),"."),
+            who tests positive (via a PCR or antigen test) within a three month window.
+            Serological tests do not count toward this total. For more on classifying cases,
+           see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
+                        "the CDC COVID Case Classification Page"),"."),
   
-  dataTableOutput("swun")
-
-   
+  tableOutput("unallocated")
   
-  ))  
+))  
 
 )
 
@@ -137,11 +219,24 @@ server <- function(input, output) {
 
 
     output$map_cases <- renderLeaflet({
-      dates() %>% 
-        st_transform(crs = "+init=epsg:4326") %>% 
+        if(input$stat %in% c("cases", "deaths", "case_rate", "death_rate")){
+          stat <- switch(input$stat,
+                         cases = dates()$cases,
+                         deaths = dates()$deaths,
+                         death_rate = dates()$death_rate,
+                         case_rate = dates()$case_rate,
+                         dates()$cases)
+          data <- switch(input$stat,
+                         cases = covid_map_data$cases,
+                         deaths = covid_map_data$deaths,
+                         death_rate = covid_map_data$death_rate,
+                         case_rate = covid_map_data$case_rate,
+                         covid_map_data$cases)
+        pal_data <- colorNumeric(palette = "viridis", domain = data)
         leaflet(width = "100%") %>%
-        addProviderTiles(provider = "CartoDB.Positron") %>% 
-        addPolygons(popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+        addProviderTiles(provider = "CartoDB.Positron") %>%
+        addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                    popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                   "</strong><br /> Cases: ", dates()$cases,
                                   "</strong><br /> Deaths: ", dates()$deaths,
                                   "</strong><br /> Case Rate: ", dates()$case_rate,
@@ -149,14 +244,15 @@ server <- function(input, output) {
                     stroke = FALSE,
                     smoothFactor = 0,
                     fillOpacity = 0.7,
-                    color = ~ pal_case(cases)) %>%
+                    color = ~ pal_data(stat)) %>%
         addMarkers(data = Marker,
-                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>% 
+                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>%
         addLegend("bottomright",
-                  pal = pal_case,
-                  values = ~ cases,
-                  title = "COVID Between the Coasts",
+                  pal = pal_data,
+                  values = data,
+                  title = str_to_title(str_replace(input$stat, "_", " ")),
                   opacity = 1)
+    }
     })
 
   output$states <- renderText({input$states})
@@ -165,6 +261,22 @@ server <- function(input, output) {
 
   output$swun <- renderDataTable(sw)
   
+  filtered_states_unallocated <- reactive({
+      state_unallocated_data %>% 
+      filter(date == input$dates) %>% 
+      select(state, cases) %>% 
+      rename(Cases = cases,
+             State = state)
+  })
+  
+  output$unallocated <- renderTable(
+    pivot_wider(filtered_states_unallocated(), 
+                names_from = "State", 
+                values_from = "Cases"),
+    rownames = TRUE, 
+    colnames = TRUE)
+  # Need this to connect to table
+  caption = table_caption
 }
 
 # Run the application 
