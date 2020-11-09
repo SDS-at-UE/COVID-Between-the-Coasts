@@ -253,8 +253,11 @@ server <- function(input, output) {
   })
   
   output$unallocated <- renderTable(
-      t(filtered_states_unallocated()), options = list(pageLength = 5),
-      rownames = TRUE, colnames = FALSE)
+    pivot_wider(filtered_states_unallocated(), 
+                names_from = "State", 
+                values_from = "Cases"),
+    rownames = TRUE, 
+    colnames = TRUE)
   # Need this to connect to table
   caption = table_caption
 }
