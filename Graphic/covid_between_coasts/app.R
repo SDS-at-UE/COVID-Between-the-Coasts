@@ -174,11 +174,13 @@ ui <- fluidPage(
                                                              "Death Rate per 100,000", "Case Fatality Rate", "7 Day Moving Average")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
+
                   min = min(covid_map_data$date),
                   max = max(covid_map_data$date),
                   value = max(covid_map_data$date),
+                  timeFormat = "%m-%d-%Y",
                   animate = TRUE),
-      
+
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
     ),
@@ -269,5 +271,7 @@ server <- function(input, output) {
   caption = table_caption
 }
 
+}
+  
 # Run the application 
 shinyApp(ui = ui, server = server)
