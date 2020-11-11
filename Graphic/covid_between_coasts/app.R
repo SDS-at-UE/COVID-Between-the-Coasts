@@ -45,14 +45,14 @@ cases <- read_csv(covid_html_data[1],
                     `County Name` = col_character(),
                     State = col_character()
                   )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 deaths <- read_csv(covid_html_data[2],
                    col_types = cols(
                      .default = col_character(),
                      `County Name` = col_character(),
                      State = col_character()
                    )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 population <- read_csv(covid_html_data[3],
                        col_types = cols(
                          countyFIPS = col_double(),
@@ -60,29 +60,29 @@ population <- read_csv(covid_html_data[3],
                          State = col_character(),
                          population = col_double()
                        )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+cases <- cases %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
-population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+population <- population %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases")
 
 deaths <- deaths %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths")
 
 # Converting cases and deaths to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
@@ -99,8 +99,7 @@ cases_deaths_pop <- merge(cases_and_deaths, population)
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
                                            death_rate = deaths/population*100000)
 
-final_covid <- final_covid %>% rename(county_name = County.Name,
-                                      state = State)
+final_covid <- final_covid %>% rename(state = State)
 
 # Fixing the date
 
@@ -132,14 +131,14 @@ cases <- read_csv(covid_html_data[1],
                     `County Name` = col_character(),
                     State = col_character()
                   )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 deaths <- read_csv(covid_html_data[2],
                    col_types = cols(
                      .default = col_character(),
                      `County Name` = col_character(),
                      State = col_character()
                    )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 population <- read_csv(covid_html_data[3],
                        col_types = cols(
                          countyFIPS = col_double(),
@@ -147,29 +146,29 @@ population <- read_csv(covid_html_data[3],
                          State = col_character(),
                          population = col_double()
                        )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+cases <- cases %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
-population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+population <- population %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases")
 
 deaths <- deaths %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths")
 
 # Converting cases and deaths to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
@@ -186,8 +185,7 @@ cases_deaths_pop <- merge(cases_and_deaths, population)
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
                                            death_rate = deaths/population*100000)
 
-final_covid <- final_covid %>% rename(county_name = County.Name,
-                                      state = State)
+final_covid <- final_covid %>% rename(state = State)
 
 # Fixing the date
 final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
