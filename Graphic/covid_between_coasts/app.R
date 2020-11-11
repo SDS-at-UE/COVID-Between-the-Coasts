@@ -45,14 +45,14 @@ cases <- read_csv(covid_html_data[1],
                     `County Name` = col_character(),
                     State = col_character()
                   )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 deaths <- read_csv(covid_html_data[2],
                    col_types = cols(
                      .default = col_character(),
                      `County Name` = col_character(),
                      State = col_character()
                    )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 population <- read_csv(covid_html_data[3],
                        col_types = cols(
                          countyFIPS = col_double(),
@@ -60,29 +60,29 @@ population <- read_csv(covid_html_data[3],
                          State = col_character(),
                          population = col_double()
                        )) %>% 
-  rename(County.Name = `County Name`)
+  rename(county_name = `County Name`)
 
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+cases <- cases %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
-population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
+population <- population %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases")
 
 deaths <- deaths %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths")
 
 # Converting cases and deaths to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
@@ -99,20 +99,20 @@ cases_deaths_pop <- merge(cases_and_deaths, population)
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
                                            death_rate = deaths/population*100000)
 
-final_covid <- final_covid %>% rename(county_name = County.Name,
-                                      state = State)
+final_covid <- final_covid %>% rename(state = State)
 
 # Fixing the date
-final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
+
+final_covid$date <- as_date(final_covid$date, 
+                            tz = "America/Chicago", 
+                            format = "%m/%d/%y")
+
 
 # creating new_cases and 7 day moving average metric
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
-
-# Fixing the date
-final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
@@ -167,7 +167,6 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker <- data.frame(City, Lat, Long, Link)
 
-
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 
@@ -203,23 +202,22 @@ ui <- fluidPage(
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
+
       
 ),
+
 mainPanel(
   
   leafletOutput("map_cases"),
   
   helpText("A note on testing data: A case is defined as any individual
-
-      
-      
             who tests positive (via a PCR or antigen test) within a three month window.
             Serological tests do not count toward this total. For more on classifying cases,
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
 
-  
-  tableOutput("unallocated")
+tableOutput("unallocated")
+
   
 ))  
 
@@ -264,15 +262,15 @@ server <- function(input, output) {
                          death_rate = covid_map_data$death_rate,
                          case_rate = covid_map_data$case_rate,
                          covid_map_data$cases)
-        pal_data <- colorNumeric(palette = "viridis", domain = data)
+        pal_data <- colorNumeric(palette = color_pal, domain = data)
         leaflet(width = "100%") %>%
         addProviderTiles(provider = "CartoDB.Positron") %>%
         addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
                     popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                   "</strong><br /> Cases: ", dates()$cases,
                                   "</strong><br /> Deaths: ", dates()$deaths,
-                                  "</strong><br /> Case Rate: ", dates()$case_rate,
-                                  "</strong><br /> Death Rate: ", dates()$death_rate),
+                                  "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+                                  "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
                     stroke = FALSE,
                     smoothFactor = 0,
                     fillOpacity = 0.7,
@@ -299,15 +297,18 @@ server <- function(input, output) {
       filter(Date == input$dates) %>% 
       select(State, cases) 
   })
+
   
   output$unallocated <- renderTable(
     pivot_wider(filtered_states_unallocated(), 
-                names_from = "State", 
-                values_from = "cases"),
-    rownames = TRUE, 
-    colnames = TRUE)
-  # Need this to connect to table
-  caption = table_caption
+                names_from = "State",
+                values_from = "Cases"),
+    rownames = FALSE,
+    colnames = TRUE,
+    digits = 0,
+    caption = table_caption,
+    caption.placement = "top")
+
 }
 
 # Run the application 
