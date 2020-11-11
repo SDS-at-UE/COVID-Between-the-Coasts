@@ -104,7 +104,9 @@ final_covid <- final_covid %>% rename(county_name = County.Name,
 
 # Fixing the date
 
-final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y", tz = "America/Chicago")
+final_covid$date <- as_date(final_covid$date, 
+                            tz = "America/Chicago", 
+                            format = "%m/%d/%y")
 
 
 # creating new_cases and 7 day moving average metric
