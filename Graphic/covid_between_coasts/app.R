@@ -111,80 +111,6 @@ final_covid <- final_covid %>%
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
-##### Web Scraping #####
-
-# Getting the csv files
-
-covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/") %>% 
-  html_nodes('a') %>%
-  html_attr('href') %>% 
-  str_subset("\\.csv$")
-
-# Extracting the data from the csv files 
-
-cases <- read_csv(covid_html_data[1],
-                  col_types = cols(
-                    .default = col_character(),
-                    `County Name` = col_character(),
-                    State = col_character()
-                  )) %>% 
-  rename(County.Name = `County Name`)
-deaths <- read_csv(covid_html_data[2],
-                   col_types = cols(
-                     .default = col_character(),
-                     `County Name` = col_character(),
-                     State = col_character()
-                   )) %>% 
-  rename(County.Name = `County Name`)
-population <- read_csv(covid_html_data[3],
-                       col_types = cols(
-                         countyFIPS = col_double(),
-                         `County Name` = col_character(),
-                         State = col_character(),
-                         population = col_double()
-                       )) %>% 
-  rename(County.Name = `County Name`)
-
-##### Data Cleaning #####
-
-# Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
-cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
-cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-
-deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
-deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-
-population <- population[,-1]
-population <- population %>% filter(!str_detect(`County.Name`, "Statewide Unallocated"))
-population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-
-# Formatting using the pivot_longer function
-cases <- cases %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "cases")
-
-deaths <- deaths %>% 
-  pivot_longer(!c(County.Name, State), names_to = "date", values_to = "deaths")
-
-# Converting cases and deaths to numeric. We imported as character because of 
-# potential data entry errors that used a comma as a thousands-separator.
-cases$cases <- str_remove_all(cases$cases, "[:punct:]")
-deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
-cases$cases <- as.numeric(cases$cases)
-deaths$deaths <- as.numeric(deaths$deaths)
-
-# Joining the data
-cases_and_deaths <- merge(cases, deaths)
-cases_deaths_pop <- merge(cases_and_deaths, population)
-
-# Making the case rate and death rate columns and renaming variables 
-final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
-                                           death_rate = deaths/population*100000)
-
-final_covid <- final_covid %>% rename(county_name = County.Name,
-                                      state = State)
-
 # Fixing the date
 final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
 
@@ -212,10 +138,28 @@ covid_map_data <- st_as_sf(covid_map_data)
 color_pal <- rev(brewer.pal(50, name="RdYlGn"))
 pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
+### Web scraping for statewide unallocating ###
+
 #Putting in new dataset for Statewide Unallocated
 
-state_unallocated_data <- read_csv("Data/statewide_unallocated.csv")
-state_unallocated_data$date <- mdy(state_unallocated_data$date)
+unalloc_cases <- read_csv(covid_html_data[1],
+                  col_types = cols(
+                    .default = col_character(),
+                    `County Name` = col_character(),
+                    State = col_character()
+                  )) %>% 
+  rename(County.Name = `County Name`)
+
+unalloc_cases <- unalloc_cases[,-c(1,4)]
+unalloc_cases <- unalloc_cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+unalloc_cases <- unalloc_cases %>% filter(str_detect(`County.Name`, "Statewide Unallocated"))
+
+statewide_unallocated <- unalloc_cases %>% 
+  pivot_longer(!c(County.Name, State), names_to = "Date", values_to = "cases")
+
+state_unallocated_data <- statewide_unallocated %>% rename(county_name = County.Name)
+state_unallocated_data$Date <- mdy(state_unallocated_data$Date)
+state_unallocated_data$cases <- as.numeric(state_unallocated_data$cases)
 
 #table for markers
 
@@ -360,16 +304,15 @@ server <- function(input, output) {
   
   filtered_states_unallocated <- reactive({
       state_unallocated_data %>% 
-      filter(date == input$dates) %>% 
-      select(state, cases) %>% 
-      rename(Cases = cases,
-             State = state)
+      filter(Date == input$dates) %>% 
+      select(State, cases) %>% 
+      rename(State = state)
   })
   
   output$unallocated <- renderTable(
     pivot_wider(filtered_states_unallocated(), 
                 names_from = "State", 
-                values_from = "Cases"),
+                values_from = "cases"),
     rownames = TRUE, 
     colnames = TRUE)
   # Need this to connect to table
