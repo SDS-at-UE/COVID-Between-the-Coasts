@@ -328,7 +328,7 @@ server <- function(input, output) {
                          death_rate = covid_map_data$death_rate,
                          case_rate = covid_map_data$case_rate,
                          covid_map_data$cases)
-        pal_data <- colorNumeric(palette = "viridis", domain = data)
+        pal_data <- colorNumeric(palette = color_pal, domain = data)
         leaflet(width = "100%") %>%
         addProviderTiles(provider = "CartoDB.Positron") %>%
         addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
