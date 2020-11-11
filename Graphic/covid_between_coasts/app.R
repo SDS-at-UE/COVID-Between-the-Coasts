@@ -264,7 +264,8 @@ ui <- fluidPage(
               max = max(covid_map_data$date),
               value = max(covid_map_data$date),
               timeFormat = "%m-%d-%Y",
-              animate = TRUE),
+              animate = TRUE,
+              interval = 100),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
