@@ -235,6 +235,8 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
+
 
 legendvalues<- c(1:200000)
 
@@ -285,9 +287,7 @@ mainPanel(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
 
-  h5(textOutput("title_unallocated")),
-
-  tableOutput("unallocated")
+tableOutput("unallocated")
 
   
 ))  
@@ -370,14 +370,12 @@ server <- function(input, output) {
       rename(Cases = cases,
              State = state)
   })
-  
-  output$title_unallocated <- renderText({"Statewide Unallocated Cases:"})
+
   
   output$unallocated <- renderTable(
     pivot_wider(filtered_states_unallocated(), 
                 names_from = "State",
                 values_from = "Cases"),
-
     rownames = FALSE,
     colnames = TRUE,
     digits = 0,
