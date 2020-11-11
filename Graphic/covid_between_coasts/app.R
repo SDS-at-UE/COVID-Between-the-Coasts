@@ -66,15 +66,15 @@ population <- read_csv(covid_html_data[3],
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+cases <- cases %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
-population <- population %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+population <- population %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
@@ -152,15 +152,15 @@ population <- read_csv(covid_html_data[3],
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
 cases <- cases[,-c(1,4)]
-cases <- cases %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+cases <- cases %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 deaths <- deaths[,-c(1,4)]
-deaths <- deaths %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+deaths <- deaths %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 population <- population[,-1]
-population <- population %>% filter(!str_detect(`county_name`, "Statewide Unallocated"))
+population <- population %>% filter(!str_detect(county_name, "Statewide Unallocated"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
@@ -277,9 +277,6 @@ mainPanel(
   leafletOutput("map_cases"),
   
   helpText("A note on testing data: A case is defined as any individual
-
-      
-      
             who tests positive (via a PCR or antigen test) within a three month window.
             Serological tests do not count toward this total. For more on classifying cases,
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
