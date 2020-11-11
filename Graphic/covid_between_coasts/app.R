@@ -103,7 +103,9 @@ final_covid <- final_covid %>% rename(county_name = County.Name,
                                       state = State)
 
 # Fixing the date
-final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y")
+
+final_covid$date <- as_date(final_covid$date, format = "%m/%d/%y", tz = "America/Chicago")
+
 
 # creating new_cases and 7 day moving average metric
 final_covid <- final_covid %>% 
@@ -373,9 +375,13 @@ server <- function(input, output) {
     pivot_wider(filtered_states_unallocated(), 
                 names_from = "State",
                 values_from = "Cases"),
-    rownames = FALSE, 
-    colnames = TRUE)
-  
+
+    rownames = FALSE,
+    colnames = TRUE,
+    digits = 0,
+    caption = table_caption,
+    caption.placement = "top")
+
 }
 
 # Run the application 
