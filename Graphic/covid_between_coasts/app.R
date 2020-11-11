@@ -234,9 +234,6 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 Marker <- data.frame(City, Lat, Long, Link)
 
 
-table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
-
-
 legendvalues<- c(1:200000)
 
 
@@ -269,8 +266,10 @@ ui <- fluidPage(
               animate = TRUE),
   
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
+
       
 ),
+
 mainPanel(
   
   leafletOutput("map_cases"),
@@ -284,8 +283,10 @@ mainPanel(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
 
-  
+  h5(textOutput("title_unallocated")),
+
   tableOutput("unallocated")
+
   
 ))  
 
@@ -368,18 +369,19 @@ server <- function(input, output) {
              State = state)
   })
   
+  output$title_unallocated <- renderText({"Statewide Unallocated Cases:"})
+  
   output$unallocated <- renderTable(
     pivot_wider(filtered_states_unallocated(), 
-                names_from = "State", 
+                names_from = "State",
                 values_from = "Cases"),
+
     rownames = FALSE,
     colnames = TRUE,
     digits = 0,
     caption = table_caption,
     caption.placement = "top")
-  
-  # Need to connect to table
-    caption = table_caption
+
 }
 
 # Run the application 
