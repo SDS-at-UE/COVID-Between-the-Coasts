@@ -142,24 +142,16 @@ pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
 #Putting in new dataset for Statewide Unallocated
 
-unalloc_cases <- read_csv(covid_html_data[1],
-                  col_types = cols(
-                    .default = col_character(),
-                    `County Name` = col_character(),
-                    State = col_character()
-                  )) %>% 
-  rename(County.Name = `County Name`)
+unalloc_cases <- read_csv(covid_html_data[1])
 
 unalloc_cases <- unalloc_cases[,-c(1,4)]
 unalloc_cases <- unalloc_cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-unalloc_cases <- unalloc_cases %>% filter(str_detect(`County.Name`, "Statewide Unallocated"))
+unalloc_cases <- unalloc_cases %>% filter(str_detect(`County Name`, "Statewide Unallocated"))
 
-statewide_unallocated <- unalloc_cases %>% 
-  pivot_longer(!c(County.Name, State), names_to = "Date", values_to = "cases")
-
-state_unallocated_data <- statewide_unallocated %>% rename(county_name = County.Name)
-state_unallocated_data$Date <- mdy(state_unallocated_data$Date)
-state_unallocated_data$cases <- as.numeric(state_unallocated_data$cases)
+state_unallocated_data <- unalloc_cases %>% 
+  pivot_longer(!c(`County Name`, State), names_to = "Date", values_to = "cases")
+state_unallocated_data$Date <- as_date(state_unallocated_data$Date, format = "%m/%d/%y")
+state_unallocated_data <- state_unallocated_data %>% rename(`County.Name` = `County Name`)
 
 #table for markers
 
@@ -305,8 +297,7 @@ server <- function(input, output) {
   filtered_states_unallocated <- reactive({
       state_unallocated_data %>% 
       filter(Date == input$dates) %>% 
-      select(State, cases) %>% 
-      rename(State = state)
+      select(State, cases) 
   })
   
   output$unallocated <- renderTable(
