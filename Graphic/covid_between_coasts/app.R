@@ -372,10 +372,14 @@ server <- function(input, output) {
     pivot_wider(filtered_states_unallocated(), 
                 names_from = "State", 
                 values_from = "Cases"),
-    rownames = TRUE, 
-    colnames = TRUE)
-  # Need this to connect to table
-  caption = table_caption
+    rownames = FALSE,
+    colnames = TRUE,
+    digits = 0,
+    caption = table_caption,
+    caption.placement = "top")
+  
+  # Need to connect to table
+    caption = table_caption
 }
 
 # Run the application 
