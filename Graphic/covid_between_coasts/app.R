@@ -229,11 +229,13 @@ server <- function(input, output) {
       filter(date == input$dates)
   })
   
-  reactive_stat <- reactive(covid_map_data %>% 
-                              filter(date == max(date)) %>% 
-                              select(cases))
-  
-  reactive_data <- reactive(covid_map_data$cases)
+  # reactive_stat <- reactive({
+  #   covid_map_data %>% 
+  #     filter(date == max(date)) %>% 
+  #     select(cases)
+  # })
+  # 
+  # reactive_data <- reactive(covid_map_data$cases)
   
   # reactive_stat <- reactiveValues(
   #   stat = covid_map_data %>% 
@@ -243,23 +245,23 @@ server <- function(input, output) {
   # )
   
   
-  observe({
-    reactive_stat <-  switch(input$stat,
-                             cases = dates()$cases,
-                             deaths = dates()$deaths,
-                             death_rate = dates()$death_rate,
-                             case_rate = dates()$case_rate,
-                             dates()$cases)
-  })
-  
-  observe({
-    reactive_data <-  switch(input$stat,
-                             cases = covid_map_data$cases,
-                             deaths = covid_map_data$deaths,
-                             death_rate = covid_map_data$death_rate,
-                             case_rate = covid_map_data$case_rate,
-                             covid_map_data$cases)
-  })
+  # observe({
+  #   reactive_stat <-  switch(input$stat,
+  #                            cases = dates()$cases,
+  #                            deaths = dates()$deaths,
+  #                            death_rate = dates()$death_rate,
+  #                            case_rate = dates()$case_rate,
+  #                            dates()$cases)
+  # })
+  # 
+  # observe({
+  #   reactive_data <-  switch(input$stat,
+  #                            cases = covid_map_data$cases,
+  #                            deaths = covid_map_data$deaths,
+  #                            death_rate = covid_map_data$death_rate,
+  #                            case_rate = covid_map_data$case_rate,
+  #                            covid_map_data$cases)
+  # })
   
   
   output$map_cases <- renderLeaflet({
@@ -270,9 +272,22 @@ server <- function(input, output) {
   })
   
   observe({
-    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
-    leafletProxy("map_cases") %>%
-      clearShapes() %>% 
+    stat <- switch(input$stat,
+                   cases = dates()$cases,
+                   deaths = dates()$deaths,
+                   death_rate = dates()$death_rate,
+                   case_rate = dates()$case_rate,
+                   dates()$cases)
+    data <- switch(input$stat,
+                   cases = covid_map_data$cases,
+                   deaths = covid_map_data$deaths,
+                   death_rate = covid_map_data$death_rate,
+                   case_rate = covid_map_data$case_rate,
+                   covid_map_data$cases)
+    pal_data <- colorNumeric(palette = color_pal, domain = data)
+    leafletProxy("map_cases", data = dates()) %>% 
+      clearShapes() %>%
+      clearControls() %>% 
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
@@ -282,19 +297,40 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data(reactive_stat()))
-  })
-  
-  observe({
-    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
-    leafletProxy("map_cases") %>% 
-      clearControls() %>% 
+                  color = ~ pal_data(stat)) %>% 
       addLegend("bottomright",
                 pal = pal_data,
-                values = reactive_data(),
+                values = data,
                 title = str_to_title(str_replace(input$stat, "_", " ")),
                 opacity = 5)
   })
+  
+  # observe({
+  #   pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
+  #   leafletProxy("map_cases") %>%
+  #     clearShapes() %>% 
+  #     addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+  #                 popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+  #                               "</strong><br /> Cases: ", dates()$cases,
+  #                               "</strong><br /> Deaths: ", dates()$deaths,
+  #                               "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+  #                               "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+  #                 stroke = FALSE,
+  #                 smoothFactor = 0,
+  #                 fillOpacity = 0.7,
+  #                 color = ~ pal_data(reactive_stat()))
+  # })
+  # 
+  # observe({
+  #   pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
+  #   leafletProxy("map_cases") %>% 
+  #     clearControls() %>% 
+  #     addLegend("bottomright",
+  #               pal = pal_data,
+  #               values = reactive_data(),
+  #               title = str_to_title(str_replace(input$stat, "_", " ")),
+  #               opacity = 5)
+  # })
   
   
   filtered_states_unallocated <- reactive({
