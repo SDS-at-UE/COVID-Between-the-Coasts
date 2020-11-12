@@ -137,8 +137,8 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-color_pal <- rev(brewer.pal(11, name="RdYlGn"))
-pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
+color_pal <- rev(brewer.pal(11, name = "RdYlGn"))
+#pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
 #table for markers
 
@@ -182,12 +182,12 @@ ui <- fluidPage(
                      "Death Rate per 100,000" = "death_rate")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = min(covid_map_data$date),
-              max = max(covid_map_data$date),
-              value = max(covid_map_data$date),
-              timeFormat = "%m-%d-%Y",
-              animate = 
-                animationOptions(interval = 250)),
+                  min = min(covid_map_data$date),
+                  max = max(covid_map_data$date),
+                  value = max(covid_map_data$date),
+                  timeFormat = "%m-%d-%Y",
+                  animate = 
+                    animationOptions(interval = 250)),
       
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
@@ -229,61 +229,73 @@ server <- function(input, output) {
       filter(date == input$dates)
   })
   
+  reactive_stat <- reactive(covid_map_data %>% 
+                              filter(date == max(date)) %>% 
+                              select(cases))
   
-  # code in here (inside the server function, but outside of a render function)
-  # will run once per user. 
+  reactive_data <- reactive(covid_map_data$cases)
   
-  # included Cases, Deaths, Case Rate, and Death Rate to leaflet
+  # reactive_stat <- reactiveValues(
+  #   stat = covid_map_data %>% 
+  #     filter(date == max(date)) %>% 
+  #     select(cases),
+  #   data = covid_map_data$cases
+  # )
+  
+  
+  observe({
+    reactive_stat <-  switch(input$stat,
+                             cases = dates()$cases,
+                             deaths = dates()$deaths,
+                             death_rate = dates()$death_rate,
+                             case_rate = dates()$case_rate,
+                             dates()$cases)
+  })
+  
+  observe({
+    reactive_data <-  switch(input$stat,
+                             cases = covid_map_data$cases,
+                             deaths = covid_map_data$deaths,
+                             death_rate = covid_map_data$death_rate,
+                             case_rate = covid_map_data$case_rate,
+                             covid_map_data$cases)
+  })
   
   
   output$map_cases <- renderLeaflet({
-    if(input$stat %in% c("cases", "deaths", "case_rate", "death_rate")){
-      stat <- switch(input$stat,
-                     cases = dates()$cases,
-                     deaths = dates()$deaths,
-                     death_rate = dates()$death_rate,
-                     case_rate = dates()$case_rate,
-                     dates()$cases)
-      data <- switch(input$stat,
-                     cases = covid_map_data$cases,
-                     deaths = covid_map_data$deaths,
-                     death_rate = covid_map_data$death_rate,
-                     case_rate = covid_map_data$case_rate,
-                     covid_map_data$cases)
-      pal_data <- colorNumeric(palette = color_pal, domain = data)
-      leaflet(width = "100%") %>%
-        addProviderTiles(provider = "CartoDB.Positron") %>%
-        addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                    popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
-                                  "</strong><br /> Cases: ", dates()$cases,
-                                  "</strong><br /> Deaths: ", dates()$deaths,
-                                  "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                  "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
-                    stroke = FALSE,
-                    smoothFactor = 0,
-                    fillOpacity = 0.7,
-                    color = ~ pal_data(stat)) %>%
-        addMarkers(data = Marker,
-                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>%
-        addLegend("bottomright",
-                  pal = pal_data,
-                  values = data,
-                  title = str_to_title(str_replace(input$stat, "_", " ")),
-                  opacity = 5)
-    }
+    leaflet(width = "100%") %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>%
+      addMarkers(data = Marker,
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
   })
   
-      observeEvent(input$map_cases, {
-      leafletProxy("map_cases", session) %>%
-        clearControls()
-    })
+  observe({
+    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
+    leafletProxy("map_cases") %>%
+      clearShapes() %>% 
+      addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                  popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                "</strong><br /> Cases: ", dates()$cases,
+                                "</strong><br /> Deaths: ", dates()$deaths,
+                                "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7,
+                  color = ~ pal_data(reactive_stat()))
+  })
   
-
-  output$states <- renderText({input$states})
+  observe({
+    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
+    leafletProxy("map_cases") %>% 
+      clearControls() %>% 
+      addLegend("bottomright",
+                pal = pal_data,
+                values = reactive_data(),
+                title = str_to_title(str_replace(input$stat, "_", " ")),
+                opacity = 5)
+  })
   
-  output$stat <- renderText({input$stat})
-  
-  output$swun <- renderDataTable(sw)
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
