@@ -287,7 +287,6 @@ server <- function(input, output) {
     pal_data <- colorNumeric(palette = color_pal, domain = data)
     leafletProxy("map_cases", data = dates()) %>% 
       clearShapes() %>%
-      clearControls() %>% 
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
@@ -297,7 +296,19 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data(stat)) %>% 
+                  color = ~ pal_data(stat))
+  })
+  
+  observe({
+    data <- switch(input$stat,
+                   cases = covid_map_data$cases,
+                   deaths = covid_map_data$deaths,
+                   death_rate = covid_map_data$death_rate,
+                   case_rate = covid_map_data$case_rate,
+                   covid_map_data$cases)
+    pal_data <- colorNumeric(palette = color_pal, domain = data)
+    leafletProxy("map_cases") %>% 
+      clearControls() %>% 
       addLegend("bottomright",
                 pal = pal_data,
                 values = data,
