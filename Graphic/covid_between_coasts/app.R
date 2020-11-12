@@ -89,8 +89,8 @@ cases$cases <- as.numeric(cases$cases)
 deaths$deaths <- as.numeric(deaths$deaths)
 
 # Joining the data
-cases_and_deaths <- merge(cases, deaths)
-cases_deaths_pop <- merge(cases_and_deaths, population)
+cases_and_deaths <- left_join(cases, deaths)
+cases_deaths_pop <- left_join(cases_and_deaths, population)
 
 # Making the case rate and death rate columns and renaming variables 
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
