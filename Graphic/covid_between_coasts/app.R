@@ -184,12 +184,12 @@ ui <- fluidPage(
                      "Death Rate per 100,000" = "death_rate")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = min(covid_map_data$date),
-              max = max(covid_map_data$date),
-              value = max(covid_map_data$date),
-              timeFormat = "%m-%d-%Y",
-              animate = 
-                animationOptions(interval = 250)),
+                  min = min(covid_map_data$date),
+                  max = max(covid_map_data$date),
+                  value = max(covid_map_data$date),
+                  timeFormat = "%m-%d-%Y",
+                  animate = 
+                    animationOptions(interval = 250)),
       
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
@@ -206,7 +206,15 @@ ui <- fluidPage(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
       
-      tableOutput("unallocated")
+      tableOutput("unallocated"),
+      
+      h5(helpText("Data Sources:")),
+      
+      helpText("COVID-19 data was obtained from",
+               tags$a(href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/", "USA Facts."),
+               "County lines information was taken from the Census Bureau."),
+      
+      helpText("COVID Between the Coasts interactive map is powered by", tags$a(href="https://rstudio.com/", "RStudio."))
       
       
     ))  
@@ -275,12 +283,12 @@ server <- function(input, output) {
     }
   })
   
-      observeEvent(input$map_cases, {
-      leafletProxy("map_cases", session) %>%
-        clearControls()
-    })
+  observeEvent(input$map_cases, {
+    leafletProxy("map_cases", session) %>%
+      clearControls()
+  })
   
-
+  
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
