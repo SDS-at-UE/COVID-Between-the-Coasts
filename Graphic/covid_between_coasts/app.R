@@ -273,7 +273,12 @@ server <- function(input, output) {
     }
   })
   
+      observeEvent(input$map_cases, {
+      leafletProxy("map_cases", session) %>%
+        clearControls()
+    })
   
+
   output$states <- renderText({input$states})
   
   output$stat <- renderText({input$stat})
