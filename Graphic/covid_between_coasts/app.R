@@ -252,16 +252,6 @@ ui <- fluidPage(
 ##################################################
 server <- function(input, output) {
   
-  layer <- reactiveValues(counter = 0)
-  
-  observeEvent(input$dates,{
-    layer$counter <- layer$counter + 1
-  })
-  
-  output$layer_counter <- renderPrint(layer$counter)
-  output$layer_counter2 <- renderPrint(str_c("layer", layer$counter))
-  output$layer_counter3 <- renderPrint(str_c("layer", layer$counter - 1))
-  
   dates <- reactive({
     covid_map_data %>% 
       filter(date == input$dates)
@@ -298,9 +288,9 @@ server <- function(input, output) {
   })
   
   observe({
-    leafletProxy("map_cases", data = dates()) %>%
+    leafletProxy("map_cases", data = dates()) %>% 
+      clearShapes() %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                  layerId = str_c("layer", layer$counter),
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
@@ -309,8 +299,7 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat())) %>% 
-      removeShape(layerId = str_c("layer", layer$counter - 1))
+                  color = ~ pal_data()(reactive_stat())) 
   })
   
   observe({
