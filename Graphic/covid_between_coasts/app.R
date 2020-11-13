@@ -88,6 +88,11 @@ deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
 cases$cases <- as.numeric(cases$cases)
 deaths$deaths <- as.numeric(deaths$deaths)
 
+# Fixing Lac qui Parle County in Minnesota
+cases$county_name <- str_replace_all(cases$county_name, "Lac Qui Parle", "Lac qui Parle")
+population$county_name <- str_replace_all(population$county_name, "Lac Qui Parle", "Lac qui Parle")
+
+
 # Joining the data
 cases_and_deaths <- left_join(cases, deaths, 
                               by = c("county_name", "State", "date"))
