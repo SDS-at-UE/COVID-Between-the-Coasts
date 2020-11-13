@@ -27,8 +27,7 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
-library(rgeos)
-library(rgdal)
+library(rmapshaper)
 
 ##### Web Scraping #####
 
@@ -123,21 +122,9 @@ final_covid <- final_covid %>%
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
 
-shapes_map_simp <- readOGR(dsn = file.path("Data/All_counties.shp"),
-                           stringsAsFactors = FALSE)
+shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
 
-# size is 4.3 Mb
-format(object.size(shapes_map_simp), units = "Mb")
-
-# can change tol argument
-# higher the tolerance the more the shape will be allowed to vary (and faster)
-small_counties <- gSimplify(shapes_map_simp, tol = 0.02)
-simplified <- SpatialPolygonsDataFrame(small_counties, data = shapes_map_simp@data)
-
-# size is now 2.4 Mb
-format(object.size(simplified), units = "Mb")
-
-states_map <- simplified
+states_map <- shapes_map_simp
 
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
