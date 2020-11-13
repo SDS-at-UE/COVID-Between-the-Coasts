@@ -28,6 +28,7 @@ library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 
+
 ##### Web Scraping #####
 
 # Getting the csv files
@@ -166,6 +167,17 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
+#states data 
+map_data2 <- get_acs(geography = "state",
+                     variables = "B25077_001",
+                     state = c("IN", "IL", "KY", "OH", "MI", "MN", "WI"),
+                     year = 2018,
+                     geometry = TRUE)
+
+geometry_export <- select(map_data2, NAME, geometry)
+write_sf(geometry_export, "Data/All_states.shp")
+states_map2 <- st_read("Data/All_states.shp", type = 6)
+states_map2 <- st_as_sf(states_map2)
 
 ######################################################
 # Define UI for application
@@ -271,7 +283,7 @@ server <- function(input, output) {
       addMarkers(data = Marker,
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
   })
-  
+
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
       clearShapes() %>%
@@ -284,7 +296,10 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat()))
+                  color = ~ pal_data()(reactive_stat())) %>% 
+      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
+                  color = "black",
+                  weight = 3) 
   })
   
   observe({
@@ -296,7 +311,6 @@ server <- function(input, output) {
                 title = str_to_title(str_replace(input$stat, "_", " ")),
                 opacity = 5)
   })
-  
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
