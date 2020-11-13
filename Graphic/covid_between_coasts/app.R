@@ -312,6 +312,29 @@ server <- function(input, output) {
     caption = table_caption,
     caption.placement = "top")
   
+  reactdelay <- 1
+  change_slider <- reactiveVal(Sys.time())
+  change_date <- reactiveVal(Sys.time())
+  
+  
+  observeEvent(input$dates, {
+    if (difftime(Sys.time(), change_slider()) > reactdelay) {
+      change_date(Sys.time())
+      updateDateInput(session,
+                        "date_input",
+                        start = input$dates[[min]],
+                        end = input$dates[[max]])
+    }
+  })
+  observeEvent(input$date_input, {
+    if (difftime(Sys.time(), change_date()) > reactdelay) {
+      change_slider(Sys.time())
+      updateSliderInput(session,
+                        "dates",
+                        value = c(input$date_input[[min]], input$date_input[[max]]))
+    }
+  })
+  
 }
 
 # Run the application 
