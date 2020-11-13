@@ -89,8 +89,9 @@ cases$cases <- as.numeric(cases$cases)
 deaths$deaths <- as.numeric(deaths$deaths)
 
 # Fixing Lac qui Parle County in Minnesota
-cases <- mutate_if(tibble::as_tibble(cases), is.character, stringr::str_replace_all, pattern = "Lac Qui Parle", replacement = "Lac qui Parle")
-population <- mutate_if(tibble::as_tibble(population), is.character, stringr::str_replace_all, pattern = "Lac Qui Parle", replacement = "Lac qui Parle")
+cases$county_name <- str_replace_all(cases$county_name, "Lac Qui Parle", "Lac qui Parle")
+population$county_name <- str_replace_all(population$county_name, "Lac Qui Parle", "Lac qui Parle")
+
 
 # Joining the data
 cases_and_deaths <- merge(cases, deaths)
