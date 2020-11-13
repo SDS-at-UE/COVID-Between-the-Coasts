@@ -89,8 +89,10 @@ cases$cases <- as.numeric(cases$cases)
 deaths$deaths <- as.numeric(deaths$deaths)
 
 # Joining the data
-cases_and_deaths <- merge(cases, deaths)
-cases_deaths_pop <- merge(cases_and_deaths, population)
+cases_and_deaths <- left_join(cases, deaths, 
+                              by = c("county_name", "State", "date"))
+cases_deaths_pop <- left_join(cases_and_deaths, population,
+                              by = c("county_name", "State"))
 
 # Making the case rate and death rate columns and renaming variables 
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
@@ -204,7 +206,15 @@ ui <- fluidPage(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
       
-      tableOutput("unallocated")
+      tableOutput("unallocated"),
+      
+      h5(helpText("Data Sources:")),
+      
+      helpText("COVID-19 data was obtained from",
+               tags$a(href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/", "USA Facts."),
+               "County lines information was taken from the Census Bureau."),
+      
+      helpText("COVID Between the Coasts interactive map is powered by", tags$a(href="https://rstudio.com/", "RStudio."))
       
       
     ))  
