@@ -208,7 +208,9 @@ ui <- fluidPage(
       
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
       
-      verbatimTextOutput("layer_counter")
+      verbatimTextOutput("layer_counter"),
+      verbatimTextOutput("layer_counter2"),
+      verbatimTextOutput("layer_counter3")
       
     ),
     
@@ -257,6 +259,8 @@ server <- function(input, output) {
   })
   
   output$layer_counter <- renderPrint(layer$counter)
+  output$layer_counter2 <- renderPrint(str_c("layer", layer$counter))
+  output$layer_counter3 <- renderPrint(str_c("layer", layer$counter - 1))
   
   dates <- reactive({
     covid_map_data %>% 
