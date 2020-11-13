@@ -247,6 +247,10 @@ server <- function(input, output) {
            dates()$cases)
   })
   
+  pal_data <- reactive({
+    colorNumeric(palette = color_pal, domain = reactive_data())
+  })
+  
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
@@ -256,7 +260,6 @@ server <- function(input, output) {
   })
   
   observe({
-    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
     leafletProxy("map_cases", data = dates()) %>% 
       clearShapes() %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
@@ -268,15 +271,14 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data(reactive_stat()))
+                  color = ~ pal_data()(reactive_stat()))
   })
   
   observe({
-    pal_data <- colorNumeric(palette = color_pal, domain = reactive_data())
     leafletProxy("map_cases") %>% 
       clearControls() %>% 
       addLegend("bottomright",
-                pal = pal_data,
+                pal = pal_data(),
                 values = reactive_data(),
                 title = str_to_title(str_replace(input$stat, "_", " ")),
                 opacity = 5)
