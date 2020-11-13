@@ -133,9 +133,6 @@ states_map2 <- st_read("Data/All_states.shp", type = 6)
 states_map2 <- st_as_sf(states_map2)
 
 
-## states_map gives NAME in format of "Vanderburgh County, Indiana"
-#states_map <- st_read("Data/All_counties.shp", type = 6)
-
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
   filter(!str_detect(county_name, "Statewide Unallocated"))
