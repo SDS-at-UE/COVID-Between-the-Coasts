@@ -90,9 +90,16 @@ deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
 cases$cases <- as.numeric(cases$cases)
 deaths$deaths <- as.numeric(deaths$deaths)
 
+# Fixing Lac qui Parle County in Minnesota
+cases$county_name <- str_replace_all(cases$county_name, "Lac Qui Parle", "Lac qui Parle")
+population$county_name <- str_replace_all(population$county_name, "Lac Qui Parle", "Lac qui Parle")
+
+
 # Joining the data
-cases_and_deaths <- merge(cases, deaths)
-cases_deaths_pop <- merge(cases_and_deaths, population)
+cases_and_deaths <- left_join(cases, deaths, 
+                              by = c("county_name", "State", "date"))
+cases_deaths_pop <- left_join(cases_and_deaths, population,
+                              by = c("county_name", "State"))
 
 # Making the case rate and death rate columns and renaming variables 
 final_covid <- cases_deaths_pop %>% mutate(case_rate = cases/population*100000,
@@ -160,8 +167,8 @@ covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
 #In package RColorBrewer, RdYlGn goes from dark red to dark green
-color_pal <- rev(brewer.pal(11, name="RdYlGn"))
-pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
+color_pal <- rev(brewer.pal(11, name = "RdYlGn"))
+#pal_case <- colorNumeric(palette = color_pal, domain = covid_map_data$cases)
 
 #table for markers
 
@@ -205,12 +212,12 @@ ui <- fluidPage(
                      "Death Rate per 100,000" = "death_rate")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
-              min = min(covid_map_data$date),
-              max = max(covid_map_data$date),
-              value = max(covid_map_data$date),
-              timeFormat = "%m-%d-%Y",
-              animate = 
-                animationOptions(interval = 250)),
+                  min = min(covid_map_data$date),
+                  max = max(covid_map_data$date),
+                  value = max(covid_map_data$date),
+                  timeFormat = "%m-%d-%Y",
+                  animate = 
+                    animationOptions(interval = 250)),
       
       dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy")
       
@@ -227,7 +234,15 @@ ui <- fluidPage(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
       
-      tableOutput("unallocated")
+      tableOutput("unallocated"),
+      
+      h5(helpText("Data Sources:")),
+      
+      helpText("COVID-19 data was obtained from",
+               tags$a(href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/", "USA Facts."),
+               "County lines information was taken from the Census Bureau."),
+      
+      helpText("COVID Between the Coasts interactive map is powered by", tags$a(href="https://rstudio.com/", "RStudio."))
       
       
     ))  
@@ -252,61 +267,61 @@ server <- function(input, output) {
       filter(date == input$dates)
   })
   
+  reactive_data <-  reactive({
+    switch(input$stat,
+           cases = covid_map_data$cases,
+           deaths = covid_map_data$deaths,
+           death_rate = covid_map_data$death_rate,
+           case_rate = covid_map_data$case_rate,
+           covid_map_data$cases)
+  })
   
-  # code in here (inside the server function, but outside of a render function)
-  # will run once per user. 
+  reactive_stat <- reactive({
+    switch(input$stat,
+           cases = dates()$cases,
+           deaths = dates()$deaths,
+           death_rate = dates()$death_rate,
+           case_rate = dates()$case_rate,
+           dates()$cases)
+  })
   
-  # included Cases, Deaths, Case Rate, and Death Rate to leaflet
+  pal_data <- reactive({
+    colorNumeric(palette = color_pal, domain = reactive_data())
+  })
   
   
   output$map_cases <- renderLeaflet({
-    if(input$stat %in% c("cases", "deaths", "case_rate", "death_rate")){
-      stat <- switch(input$stat,
-                     cases = dates()$cases,
-                     deaths = dates()$deaths,
-                     death_rate = dates()$death_rate,
-                     case_rate = dates()$case_rate,
-                     dates()$cases)
-      data <- switch(input$stat,
-                     cases = covid_map_data$cases,
-                     deaths = covid_map_data$deaths,
-                     death_rate = covid_map_data$death_rate,
-                     case_rate = covid_map_data$case_rate,
-                     covid_map_data$cases)
-      pal_data <- colorNumeric(palette = color_pal, domain = data)
-      leaflet(width = "100%") %>%
-        addProviderTiles(provider = "CartoDB.Positron") %>%
-        addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                    popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
-                                  "</strong><br /> Cases: ", dates()$cases,
-                                  "</strong><br /> Deaths: ", dates()$deaths,
-                                  "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                  "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
-                    stroke = FALSE,
-                    smoothFactor = 0,
-                    fillOpacity = 0.7,
-                    color = ~ pal_data(stat)) %>%
-        addMarkers(data = Marker,
-                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>%
-        addLegend("bottomright",
-                  pal = pal_data,
-                  values = data,
-                  title = str_to_title(str_replace(input$stat, "_", " ")),
-                  opacity = 5)
-    }
+    leaflet(width = "100%") %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>%
+      addMarkers(data = Marker,
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
   })
   
-      observeEvent(input$map_cases, {
-      leafletProxy("map_cases", session) %>%
-        clearControls()
-    })
+  observe({
+    leafletProxy("map_cases", data = dates()) %>% 
+      clearShapes() %>%
+      addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                  popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                "</strong><br /> Cases: ", dates()$cases,
+                                "</strong><br /> Deaths: ", dates()$deaths,
+                                "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7,
+                  color = ~ pal_data()(reactive_stat()))
+  })
   
-
-  output$states <- renderText({input$states})
+  observe({
+    leafletProxy("map_cases") %>% 
+      clearControls() %>% 
+      addLegend("bottomright",
+                pal = pal_data(),
+                values = reactive_data(),
+                title = str_to_title(str_replace(input$stat, "_", " ")),
+                opacity = 5)
+  })
   
-  output$stat <- renderText({input$stat})
-  
-  output$swun <- renderDataTable(sw)
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
