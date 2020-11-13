@@ -117,6 +117,7 @@ final_covid <- final_covid %>%
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
+final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
@@ -186,7 +187,9 @@ ui <- fluidPage(
                    c("Total Cases" = "cases", 
                      "Total Deaths" = "deaths", 
                      "Case Rate per 100,000" = "case_rate",
-                     "Death Rate per 100,000" = "death_rate")),
+                     "Death Rate per 100,000" = "death_rate",
+                     "New Cases (Per Day)" = "new_cases",
+                     "7 Day Average" = "moving_avg_7")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
                   min = min(covid_map_data$date),
@@ -248,6 +251,8 @@ server <- function(input, output) {
            deaths = covid_map_data$deaths,
            death_rate = covid_map_data$death_rate,
            case_rate = covid_map_data$case_rate,
+           new_cases = covid_map_data$new_cases,
+           moving_avg_7 = covid_map_data$moving_avg_7,
            covid_map_data$cases)
   })
   
@@ -257,6 +262,8 @@ server <- function(input, output) {
            deaths = dates()$deaths,
            death_rate = dates()$death_rate,
            case_rate = dates()$case_rate,
+           new_cases = dates()$new_cases,
+           moving_avg_7 = dates()$moving_avg_7,
            dates()$cases)
   })
   
@@ -280,7 +287,9 @@ server <- function(input, output) {
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
                                 "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2),
+                                "</strong><br /> New Cases: ", dates()$new_cases,
+                                "</strong><br /> 7 Day Average: ", round(dates()$moving_avg_7, 2)),
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
