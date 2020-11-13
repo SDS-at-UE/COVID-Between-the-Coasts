@@ -286,15 +286,21 @@ server <- function(input, output) {
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
-      addProviderTiles(provider = "CartoDB.Positron") %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>% 
+      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
+                  group = "state",
+                  color = "black",
+                  fill = FALSE,
+                  weight = 3) %>%
       addMarkers(data = Marker,
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
   })
 
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      clearShapes() %>%
+      clearGroup(group = "county") %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                  group = "county",
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
@@ -305,10 +311,7 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat())) %>% 
-      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
-                  color = "black",
-                  weight = 3) 
+                  color = ~ pal_data()(reactive_stat()))
   })
   
   observe({
