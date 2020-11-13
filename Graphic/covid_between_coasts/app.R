@@ -128,6 +128,10 @@ shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
 
 states_map <- shapes_map_simp
 
+## Getting states shape file data 
+states_map2 <- st_read("Data/All_states.shp", type = 6)
+states_map2 <- st_as_sf(states_map2)
+
 
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 #states_map <- st_read("Data/All_counties.shp", type = 6)
@@ -177,18 +181,6 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 
 legendvalues<- c(1:200000)
-
-#states data 
-map_data2 <- get_acs(geography = "state",
-                     variables = "B25077_001",
-                     state = c("IN", "IL", "KY", "OH", "MI", "MN", "WI"),
-                     year = 2018,
-                     geometry = TRUE)
-
-geometry_export <- select(map_data2, NAME, geometry)
-write_sf(geometry_export, "Data/All_states.shp")
-states_map2 <- st_read("Data/All_states.shp", type = 6)
-states_map2 <- st_as_sf(states_map2)
 
 ######################################################
 # Define UI for application
