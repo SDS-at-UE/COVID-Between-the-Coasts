@@ -27,6 +27,7 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
+library(rmapshaper)
 
 ##### Web Scraping #####
 
@@ -119,8 +120,16 @@ final_covid <- final_covid %>%
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
+## simplifying county lines
+all_counties <- st_read("Data/All_counties.shp", type = 6)
+
+shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
+
+states_map <- shapes_map_simp
+
+
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
-states_map <- st_read("Data/All_counties.shp", type = 6)
+#states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -140,7 +149,8 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
 #Joining two datasets
-covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
+#%>% auto_copy(covid_data, states_map, copy = TRUE)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -196,9 +206,7 @@ ui <- fluidPage(
                   max = max(covid_map_data$date),
                   value = max(covid_map_data$date),
                   timeFormat = "%m-%d-%Y",
-                  animate = 
-                    animationOptions(interval = 250))
-      
+                  animate = animationOptions(interval = 500))
       
     ),
     
@@ -293,7 +301,7 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat()))
+                  color = ~ pal_data()(reactive_stat())) 
   })
   
   observe({
