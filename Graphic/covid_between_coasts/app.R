@@ -123,10 +123,7 @@ final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_
 
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
-
-shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
-
-states_map <- shapes_map_simp
+states_map <- ms_simplify(all_counties, keep = 0.02)
 
 ## Getting states shape file data 
 states_map2 <- st_read("Data/All_states.shp", type = 6)
