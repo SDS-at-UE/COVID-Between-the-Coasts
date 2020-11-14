@@ -393,7 +393,7 @@ server <- function(input, output) {
   
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      setShapeStyle(layerId = layer_county, color = pal_data()(reactive_stat()))
+      setShapeStyle(layerId = layer_county, fillColor = ~ pal_data()(reactive_stat()))
   })
   
   observe({
