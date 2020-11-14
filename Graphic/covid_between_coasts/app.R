@@ -289,24 +289,6 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
-test_popup <- str_c("<strong>", "Test County", ", ", "Test State",
-                    "</strong><br /> Cases: ", "test cases",
-                    "</strong><br /> Deaths: ", "test deaths",
-                    "</strong><br /> Case Rate: ", "test case rate",
-                    "</strong><br /> Death Rate: ", "test death rate",
-                    "</strong><br /> New Cases: ", "test new cases",
-                    "</strong><br /> 7 Day Average: ", "test 7 day")
-
-test_popup2 <- rep(test_popup, 644)
-
-# str_c("<strong>", dates()$county_name, ", ", dates()$state,
-#       "</strong><br /> Cases: ", dates()$cases,
-#       "</strong><br /> Deaths: ", dates()$deaths,
-#       "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-#       "</strong><br /> Death Rate: ", round(dates()$death_rate, 2),
-#       "</strong><br /> New Cases: ", dates()$new_cases,
-#       "</strong><br /> 7 Day Average: ", round(dates()$moving_avg_7, 2))
-
 
 ######################################################
 # Define UI for application
@@ -421,6 +403,17 @@ server <- function(input, output) {
     colorNumeric(palette = color_pal, domain = reactive_data())
   })
   
+  popup_msg <- reactive({
+    str_c("<strong>", dates()$county_name, ", ", dates()$state,
+          "</strong><br /><strong>", dates()$date, "</strong>",
+          "<br /> Cases: ", dates()$cases,
+          "<br /> Deaths: ", dates()$deaths,
+          "<br /> Case Rate: ", round(dates()$case_rate, 2),
+          "<br /> Death Rate: ", round(dates()$death_rate, 2),
+          "<br /> New Cases: ", dates()$new_cases,
+          "<br /> 7 Day Average: ", round(dates()$moving_avg_7, 2))
+  })
+  
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
@@ -443,7 +436,7 @@ server <- function(input, output) {
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
       setShapeLabel(layerId = layer_county,
-                    label = test_popup2)
+                    label = popup_msg())
   })
   
   observe({
