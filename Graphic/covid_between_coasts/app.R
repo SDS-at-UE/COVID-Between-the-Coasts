@@ -29,6 +29,91 @@ library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 library(rmapshaper)
 
+#########################################
+# The following chunk of code is designed
+# to allow the map to respond quicker
+# to changes in the date, i.e., a faster
+# way to color the counties for each date.
+###
+# It comes from https://github.com/rstudio/leaflet/issues/496
+# developed by @edwindj on https://github.com/rstudio/leaflet/pull/598
+# and reworked by @timelyportfolio for use without the pull request
+#########################################
+
+setShapeStyle <- function(map, data = getMapData(map), layerId,
+                          stroke = NULL, color = NULL,
+                          weight = NULL, opacity = NULL,
+                          fill = NULL, fillColor = NULL,
+                          fillOpacity = NULL, dashArray = NULL,
+                          smoothFactor = NULL, noClip = NULL,
+                          options = NULL){
+  options <- c(list(layerId = layerId),
+               options,
+               filterNULL(list(stroke = stroke, color = color,
+                               weight = weight, opacity = opacity,
+                               fill = fill, fillColor = fillColor,
+                               fillOpacity = fillOpacity, dashArray = dashArray,
+                               smoothFactor = smoothFactor, noClip = noClip)))
+  # evaluate all options
+  options <- evalFormula(options, data = data)
+  # make them the same length (by building a data.frame)
+  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
+  
+  layerId <- options[[1]]
+  style <- options[-1] # drop layer column
+  
+  #print(list(style=style))
+  leaflet::invokeMethod(map, data, "setStyle", "shape", layerId, style);
+}
+
+### JS methods
+leafletjs <-  tags$head(
+  # add in methods from https://github.com/rstudio/leaflet/pull/598
+  tags$script(HTML('
+  window.LeafletWidget.methods.setStyle = function(category, layerId, style){
+  var map = this;
+  if (!layerId){
+    return;
+  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
+    layerId = [layerId];
+  }
+
+  //convert columnstore to row store
+  style = HTMLWidgets.dataframeToD3(style);
+  //console.log(style);
+
+  layerId.forEach(function(d,i){
+    var layer = map.layerManager.getLayer(category, d);
+    if (layer){ // or should this raise an error?
+      layer.setStyle(style[i]);
+    }
+  });
+};
+
+window.LeafletWidget.methods.setRadius = function(layerId, radius){
+  var map = this;
+  if (!layerId){
+    return;
+  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
+    layerId = [layerId];
+    radius = [radius];
+  }
+
+  layerId.forEach(function(d,i){
+    var layer = map.layerManager.getLayer("marker", d);
+    if (layer){ // or should this raise an error?
+      layer.setRadius(radius[i]);
+    }
+  });
+};
+'
+  ))
+)
+
+#########################################
+# End of https://github.com/rstudio/leaflet/pull/598 code
+#########################################
+
 ##### Web Scraping #####
 
 # Getting the csv files
@@ -184,6 +269,7 @@ legendvalues<- c(1:200000)
 # choose. 
 ######################################################
 ui <- fluidPage(
+  leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
   # Application title
   titlePanel("COVID Between the Coasts"),
@@ -300,7 +386,7 @@ server <- function(input, output) {
   observe({
     leafletProxy("map_cases", data = dates()) %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                  layerId = str_c("layer", layer$counter),
+                  group = "county",#str_c("layer", layer$counter),
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
@@ -309,8 +395,8 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat())) %>% 
-      removeShape(layerId = str_c("layer", layer$counter - 1))
+                  color = ~ pal_data()(reactive_stat())) #%>% 
+   #   clearGroup(group = str_c("layer", layer$counter - 1))
   })
   
   observe({
