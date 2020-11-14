@@ -383,22 +383,17 @@ server <- function(input, output) {
     leaflet(width = "100%") %>%
       addProviderTiles(provider = "CartoDB.Positron") %>%
       addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>%
+      addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
+                  layerId = layer_county,
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7) 
   })
   
   observe({
-    leafletProxy("map_cases", data = dates()) %>%
-      addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                  layerId = layer_county,
-                  popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
-                                "</strong><br /> Cases: ", dates()$cases,
-                                "</strong><br /> Deaths: ", dates()$deaths,
-                                "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
-                  stroke = FALSE,
-                  smoothFactor = 0,
-                  fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat()))
+    leafletProxy("map_cases", data = dates()) %>% 
+      setShapeStyle(layerId = layer_county, color = pal_data()(reactive_stat()))
   })
   
   observe({
