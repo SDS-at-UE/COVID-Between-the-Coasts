@@ -232,6 +232,9 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 #Combine county_name and new state column with a comma between them to match format of states_map
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
+#Creating character vector for layerID
+layer_county <- unique(covid_data$NAME)
+
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
 #%>% auto_copy(covid_data, states_map, copy = TRUE)
@@ -386,7 +389,7 @@ server <- function(input, output) {
   observe({
     leafletProxy("map_cases", data = dates()) %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                  group = "county",#str_c("layer", layer$counter),
+                  layerId = layer_county,
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
@@ -395,8 +398,7 @@ server <- function(input, output) {
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat())) #%>% 
-   #   clearGroup(group = str_c("layer", layer$counter - 1))
+                  color = ~ pal_data()(reactive_stat()))
   })
   
   observe({
