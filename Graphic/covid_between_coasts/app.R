@@ -126,8 +126,8 @@ window.LeafletWidget.methods.setLabel = function(category, layerId, label){
     var layer = map.layerManager.getLayer(category, d);
     if (layer){ // or should this raise an error?
       // layer.setStyle(style[i]);
-      layer.unbindTooltip();
-      layer.bindTooltip(label[i])
+      layer.unbindPopup();
+      layer.bindPopup(label[i])
     }
   });
 };
