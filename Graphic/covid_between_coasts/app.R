@@ -37,7 +37,8 @@ library(rmapshaper)
 ###
 # It comes from https://github.com/rstudio/leaflet/issues/496
 # developed by @edwindj on https://github.com/rstudio/leaflet/pull/598
-# and reworked by @timelyportfolio for use without the pull request
+# and reworked by @timelyportfolio for use without the pull request.
+# The label addition was done by @martinzuba
 #########################################
 
 setShapeStyle <- function(map, data = getMapData(map), layerId,
@@ -66,6 +67,26 @@ setShapeStyle <- function(map, data = getMapData(map), layerId,
   leaflet::invokeMethod(map, data, "setStyle", "shape", layerId, style);
 }
 
+setShapeLabel <- function(map, data = getMapData(map), 
+                          layerId,
+                          label = NULL,
+                          options = NULL){
+  options <- c(list(layerId = layerId),
+               options,
+               filterNULL(list(label = label
+               )))
+  # evaluate all options
+  options <- evalFormula(options, data = data)
+  # make them the same length (by building a data.frame)
+  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
+  
+  layerId <- options[[1]]
+  style <- options[-1] # drop layer column
+  
+  #print(list(style=style))
+  leaflet::invokeMethod(map, data, "setLabel", "shape", layerId, label);
+}
+
 ### JS methods
 leafletjs <-  tags$head(
   # add in methods from https://github.com/rstudio/leaflet/pull/598
@@ -89,7 +110,27 @@ leafletjs <-  tags$head(
     }
   });
 };
+window.LeafletWidget.methods.setLabel = function(category, layerId, label){
+  var map = this;
+  if (!layerId){
+    return;
+  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
+    layerId = [layerId];
+  }
 
+  //convert columnstore to row store
+  //label = HTMLWidgets.dataframeToD3(label);
+  //console.log(label);
+
+  layerId.forEach(function(d,i){
+    var layer = map.layerManager.getLayer(category, d);
+    if (layer){ // or should this raise an error?
+      // layer.setStyle(style[i]);
+      layer.unbindTooltip();
+      layer.bindTooltip(label[i])
+    }
+  });
+};
 '
   ))
 )
@@ -256,6 +297,8 @@ test_popup <- str_c("<strong>", "Test County", ", ", "Test State",
                     "</strong><br /> New Cases: ", "test new cases",
                     "</strong><br /> 7 Day Average: ", "test 7 day")
 
+test_popup2 <- rep(test_popup, 644)
+
 # str_c("<strong>", dates()$county_name, ", ", dates()$state,
 #       "</strong><br /> Cases: ", dates()$cases,
 #       "</strong><br /> Deaths: ", dates()$deaths,
@@ -395,6 +438,12 @@ server <- function(input, output) {
     leafletProxy("map_cases", data = dates()) %>% 
       setShapeStyle(layerId = layer_county, 
                     fillColor = ~ pal_data()(reactive_stat()))
+  })
+  
+  observe({
+    leafletProxy("map_cases", data = dates()) %>% 
+      setShapeLabel(layerId = layer_county,
+                    label = test_popup2)
   })
   
   observe({
