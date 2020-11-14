@@ -27,6 +27,8 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
+library(rmapshaper)
+
 
 ##### Web Scraping #####
 
@@ -116,10 +118,17 @@ final_covid$date <- as_date(final_covid$date,
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
-         moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
+         moving_7_day_avg = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
+final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
-## states_map gives NAME in format of "Vanderburgh County, Indiana"
-states_map <- st_read("Data/All_counties.shp", type = 6)
+## simplifying county lines
+all_counties <- st_read("Data/All_counties.shp", type = 6)
+states_map <- ms_simplify(all_counties, keep = 0.02)
+
+## Getting states shape file data 
+states_map2 <- st_read("Data/All_states.shp", type = 6)
+states_map2 <- st_as_sf(states_map2)
+
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -139,7 +148,8 @@ covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb")
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
 #Joining two datasets
-covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
+#%>% auto_copy(covid_data, states_map, copy = TRUE)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -166,7 +176,6 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
-
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -186,16 +195,16 @@ ui <- fluidPage(
                    c("Total Cases" = "cases", 
                      "Total Deaths" = "deaths", 
                      "Case Rate per 100,000" = "case_rate",
-                     "Death Rate per 100,000" = "death_rate")),
+                     "Death Rate per 100,000" = "death_rate",
+                     "New Cases (Per Day)" = "new_cases",
+                     "7 Day Average" = "moving_7_day_avg")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
                   min = min(covid_map_data$date),
                   max = max(covid_map_data$date),
                   value = max(covid_map_data$date),
                   timeFormat = "%m-%d-%Y",
-                  animate = 
-                    animationOptions(interval = 250))
-      
+                  animate = animationOptions(interval = 500))
       
     ),
     
@@ -248,6 +257,8 @@ server <- function(input, output) {
            deaths = covid_map_data$deaths,
            death_rate = covid_map_data$death_rate,
            case_rate = covid_map_data$case_rate,
+           new_cases = covid_map_data$new_cases,
+           moving_7_day_avg = covid_map_data$moving_7_day_avg,
            covid_map_data$cases)
   })
   
@@ -257,6 +268,8 @@ server <- function(input, output) {
            deaths = dates()$deaths,
            death_rate = dates()$death_rate,
            case_rate = dates()$case_rate,
+           new_cases = dates()$new_cases,
+           moving_7_day_avg = dates()$moving_7_day_avg,
            dates()$cases)
   })
   
@@ -267,20 +280,28 @@ server <- function(input, output) {
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
-      addProviderTiles(provider = "CartoDB.Positron") %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>% 
+      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
+                  group = "state",
+                  color = "black",
+                  fill = FALSE,
+                  weight = 3) %>%
       addMarkers(data = Marker,
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
   })
-  
+
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      clearShapes() %>%
+      clearGroup(group = "county") %>%
       addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                  group = "county",
                   popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
                                 "</strong><br /> Cases: ", dates()$cases,
                                 "</strong><br /> Deaths: ", dates()$deaths,
                                 "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2),
+                                "</strong><br /> New Cases: ", dates()$new_cases,
+                                "</strong><br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2)),
                   stroke = FALSE,
                   smoothFactor = 0,
                   fillOpacity = 0.7,
@@ -293,10 +314,9 @@ server <- function(input, output) {
       addLegend("bottomright",
                 pal = pal_data(),
                 values = reactive_data(),
-                title = str_to_title(str_replace(input$stat, "_", " ")),
+                title = str_to_title(str_replace_all(input$stat, "_", " ")),
                 opacity = 5)
   })
-  
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
