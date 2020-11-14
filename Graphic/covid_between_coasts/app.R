@@ -90,22 +90,6 @@ leafletjs <-  tags$head(
   });
 };
 
-window.LeafletWidget.methods.setRadius = function(layerId, radius){
-  var map = this;
-  if (!layerId){
-    return;
-  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
-    layerId = [layerId];
-    radius = [radius];
-  }
-
-  layerId.forEach(function(d,i){
-    var layer = map.layerManager.getLayer("marker", d);
-    if (layer){ // or should this raise an error?
-      layer.setRadius(radius[i]);
-    }
-  });
-};
 '
   ))
 )
@@ -264,6 +248,22 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
+test_popup <- str_c("<strong>", "Test County", ", ", "Test State",
+                    "</strong><br /> Cases: ", "test cases",
+                    "</strong><br /> Deaths: ", "test deaths",
+                    "</strong><br /> Case Rate: ", "test case rate",
+                    "</strong><br /> Death Rate: ", "test death rate",
+                    "</strong><br /> New Cases: ", "test new cases",
+                    "</strong><br /> 7 Day Average: ", "test 7 day")
+
+# str_c("<strong>", dates()$county_name, ", ", dates()$state,
+#       "</strong><br /> Cases: ", dates()$cases,
+#       "</strong><br /> Deaths: ", dates()$deaths,
+#       "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+#       "</strong><br /> Death Rate: ", round(dates()$death_rate, 2),
+#       "</strong><br /> New Cases: ", dates()$new_cases,
+#       "</strong><br /> 7 Day Average: ", round(dates()$moving_avg_7, 2))
+
 
 ######################################################
 # Define UI for application
@@ -393,7 +393,8 @@ server <- function(input, output) {
   
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      setShapeStyle(layerId = layer_county, fillColor = ~ pal_data()(reactive_stat()))
+      setShapeStyle(layerId = layer_county, 
+                    fillColor = ~ pal_data()(reactive_stat()))
   })
   
   observe({
