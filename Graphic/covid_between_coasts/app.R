@@ -29,6 +29,7 @@ library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 library(rmapshaper)
 
+
 #########################################
 # The following chunk of code is designed
 # to allow the map to respond quicker
@@ -223,7 +224,7 @@ final_covid$date <- as_date(final_covid$date,
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
-         moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
+         moving_7_day_avg = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
 ## simplifying county lines
@@ -232,6 +233,8 @@ states_map <- ms_simplify(all_counties, keep = 0.02)
 
 ## Getting states shape file data 
 states_map2 <- st_read("Data/All_states.shp", type = 6)
+
+
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -254,7 +257,8 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 layer_county <- unique(covid_data$NAME)
 
 #Joining two datasets
-covid_map_data <- left_join(covid_data, states_map, by = "NAME")
+covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
+#%>% auto_copy(covid_data, states_map, copy = TRUE)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -281,7 +285,6 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
-
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -304,7 +307,7 @@ ui <- fluidPage(
                      "Case Rate per 100,000" = "case_rate",
                      "Death Rate per 100,000" = "death_rate",
                      "New Cases (Per Day)" = "new_cases",
-                     "7 Day Average" = "moving_avg_7")),
+                     "7 Day Average" = "moving_7_day_avg")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
                   min = min(covid_map_data$date),
@@ -314,8 +317,7 @@ ui <- fluidPage(
                   animate = animationOptions(interval = 350))#,
       
       #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
-      
-      
+
       
     ),
     
@@ -369,7 +371,7 @@ server <- function(input, output) {
            death_rate = covid_map_data$death_rate,
            case_rate = covid_map_data$case_rate,
            new_cases = covid_map_data$new_cases,
-           moving_avg_7 = covid_map_data$moving_avg_7,
+           moving_7_day_avg = covid_map_data$moving_7_day_avg,
            covid_map_data$cases)
   })
   
@@ -380,7 +382,7 @@ server <- function(input, output) {
            death_rate = dates()$death_rate,
            case_rate = dates()$case_rate,
            new_cases = dates()$new_cases,
-           moving_avg_7 = dates()$moving_avg_7,
+           moving_7_day_avg = dates()$moving_7_day_avg,
            dates()$cases)
   })
   
@@ -416,7 +418,7 @@ server <- function(input, output) {
       addMarkers(data = Marker,
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
   })
-  
+
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
       setShapeStyle(layerId = layer_county, 
@@ -435,10 +437,9 @@ server <- function(input, output) {
       addLegend("bottomright",
                 pal = pal_data(),
                 values = reactive_data(),
-                title = str_to_title(str_replace(input$stat, "_", " ")),
+                title = str_to_title(str_replace_all(input$stat, "_", " ")),
                 opacity = 5)
   })
-  
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
