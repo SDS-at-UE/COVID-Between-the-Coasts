@@ -294,46 +294,37 @@ legendvalues<- c(1:200000)
 ui <- fluidPage(
   leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
-  # Application title
-  titlePanel("COVID Between the Coasts"),
   
-  sidebarLayout(
-    sidebarPanel(
-      #    selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
-      
-      radioButtons(inputId = "stat", "Choose a Statistic", 
-                   c("Total Cases" = "cases", 
-                     "Total Deaths" = "deaths", 
-                     "Case Rate per 100,000" = "case_rate",
-                     "Death Rate per 100,000" = "death_rate",
-                     "New Cases (Per Day)" = "new_cases",
-                     "7 Day Average" = "moving_7_day_avg")),
-      
-      sliderInput(inputId = "dates", "Timeline of COVID", 
-                  min = min(covid_map_data$date),
-                  max = max(covid_map_data$date),
-                  value = max(covid_map_data$date),
-                  timeFormat = "%m-%d-%Y",
-                  animate = animationOptions(interval = 350))#,
-      
-      #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
-      
-      
-    ),
-    
-    mainPanel(
-      
-      leafletOutput("map_cases"),
-      
-      helpText("A note on testing data: A case is defined as any individual
+  wellPanel(
+    fluidRow(
+      column(width = 3, 
+             selectInput(inputId = "stat", "Choose a Statistic", 
+                         c("Total Cases" = "cases", 
+                           "Total Deaths" = "deaths", 
+                           "Case Rate per 100,000" = "case_rate",
+                           "Death Rate per 100,000" = "death_rate",
+                           "New Cases (Per Day)" = "new_cases",
+                           "7 Day Average" = "moving_7_day_avg"))),
+      column(width = 5,
+             sliderInput(inputId = "dates", "Timeline of COVID", 
+                         min = min(covid_map_data$date),
+                         max = max(covid_map_data$date),
+                         value = max(covid_map_data$date),
+                         timeFormat = "%m-%d-%Y",
+                         animate = animationOptions(interval = 350))
+      ),
+      column(width = 4, align = "center", tags$img(src = "CovidBetweentheCoastsLogo.png", height = "125"))
+    )),
+  
+  leafletOutput("map_cases", height = 500),
+  
+  helpText("A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window.
             Serological tests do not count toward this total. For more on classifying cases,
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
-      
-      tableOutput("unallocated")
-      
-    )),
+  
+  tableOutput("unallocated"),
   
   div(align = "center",
       class = "footer",
@@ -344,9 +335,8 @@ ui <- fluidPage(
              <a href="https://www.shinyapps.io/">shinyapps.io</a>.'))
       )
   )
-  
-  
 )
+
 
 
 ##################################################

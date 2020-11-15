@@ -5,8 +5,8 @@ account: darrinweber
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3136259
-bundleId: 3862451
+bundleId: 3864363
 url: https://darrinweber.shinyapps.io/covid_between_coasts/
-when: 1605428427.77755
+when: 1605481328.23032
 asMultiple: FALSE
 asStatic: FALSE
