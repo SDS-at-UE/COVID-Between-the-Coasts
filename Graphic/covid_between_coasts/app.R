@@ -297,26 +297,25 @@ ui <- fluidPage(
   
   wellPanel(
     fluidRow(
-      column(width = 3, 
-             selectInput(inputId = "stat", "Choose a Statistic", 
-                         c("Total Cases" = "cases", 
-                           "Total Deaths" = "deaths", 
-                           "Case Rate per 100,000" = "case_rate",
-                           "Death Rate per 100,000" = "death_rate",
-                           "New Cases (Per Day)" = "new_cases",
-                           "7 Day Average" = "moving_7_day_avg"))),
-      column(width = 5,
+      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo.png", height = "125")),
+      column(width = 6,
              sliderInput(inputId = "dates", "Timeline of COVID", 
                          min = min(covid_map_data$date),
                          max = max(covid_map_data$date),
                          value = max(covid_map_data$date),
                          timeFormat = "%m-%d-%Y",
                          animate = animationOptions(interval = 350))
-      ),
-      column(width = 4, align = "center", tags$img(src = "CovidBetweentheCoastsLogo.png", height = "125"))
+      ),column(width = 3, 
+               selectInput(inputId = "stat", "Choose a Statistic", 
+                           c("Total Cases" = "cases", 
+                             "Total Deaths" = "deaths", 
+                             "Case Rate per 100,000" = "case_rate",
+                             "Death Rate per 100,000" = "death_rate",
+                             "New Cases (Per Day)" = "new_cases",
+                             "7 Day Average" = "moving_7_day_avg")))
     )),
   
-  leafletOutput("map_cases", height = 500),
+  leafletOutput("map_cases", height = 650),
   
   helpText("A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window.
@@ -394,8 +393,11 @@ server <- function(input, output) {
   
   
   output$map_cases <- renderLeaflet({
-    leaflet(width = "100%") %>%
+    leaflet(width = "100%",
+            options = leafletOptions(zoomSnap = 0,
+                                     zoomDelta = 0.25)) %>%
       addProviderTiles(provider = "CartoDB.Positron") %>% 
+      setView(lat = 43.0445, lng = -87.9109, zoom = 5.7) %>%
       addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
                   group = "state",
                   color = "black",
