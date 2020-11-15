@@ -299,7 +299,7 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
+  #    selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
       
       radioButtons(inputId = "stat", "Choose a Statistic", 
                    c("Total Cases" = "cases", 
