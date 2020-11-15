@@ -30,6 +30,112 @@ library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 library(rmapshaper)
 
 
+#########################################
+# The following chunk of code is designed
+# to allow the map to respond quicker
+# to changes in the date, i.e., a faster
+# way to color the counties for each date.
+###
+# It comes from https://github.com/rstudio/leaflet/issues/496
+# developed by @edwindj on https://github.com/rstudio/leaflet/pull/598
+# and reworked by @timelyportfolio for use without the pull request.
+# The label addition is an alteration of the one done by @martinzuba
+#########################################
+
+setShapeStyle <- function(map, data = getMapData(map), layerId,
+                          stroke = NULL, color = NULL,
+                          weight = NULL, opacity = NULL,
+                          fill = NULL, fillColor = NULL,
+                          fillOpacity = NULL, dashArray = NULL,
+                          smoothFactor = NULL, noClip = NULL,
+                          options = NULL){
+  options <- c(list(layerId = layerId),
+               options,
+               filterNULL(list(stroke = stroke, color = color,
+                               weight = weight, opacity = opacity,
+                               fill = fill, fillColor = fillColor,
+                               fillOpacity = fillOpacity, dashArray = dashArray,
+                               smoothFactor = smoothFactor, noClip = noClip)))
+  # evaluate all options
+  options <- evalFormula(options, data = data)
+  # make them the same length (by building a data.frame)
+  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
+  
+  layerId <- options[[1]]
+  style <- options[-1] # drop layer column
+  
+  leaflet::invokeMethod(map, data, "setStyle", "shape", layerId, style);
+}
+
+setShapeLabel <- function(map, data = getMapData(map), 
+                          layerId,
+                          label = NULL,
+                          options = NULL){
+  options <- c(list(layerId = layerId),
+               options,
+               filterNULL(list(label = label
+               )))
+  # evaluate all options
+  options <- evalFormula(options, data = data)
+  # make them the same length (by building a data.frame)
+  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
+  
+  layerId <- options[[1]]
+  style <- options[-1] # drop layer column
+  
+  leaflet::invokeMethod(map, data, "setLabel", "shape", layerId, label);
+}
+
+### JS methods
+leafletjs <-  tags$head(
+  # add in methods from https://github.com/rstudio/leaflet/pull/598
+  tags$script(HTML('
+  window.LeafletWidget.methods.setStyle = function(category, layerId, style){
+  var map = this;
+  if (!layerId){
+    return;
+  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
+    layerId = [layerId];
+  }
+
+  //convert columnstore to row store
+  style = HTMLWidgets.dataframeToD3(style);
+
+  layerId.forEach(function(d,i){
+    var layer = map.layerManager.getLayer(category, d);
+    if (layer){
+      layer.setStyle(style[i]);
+    }
+  });
+};
+window.LeafletWidget.methods.setLabel = function(category, layerId, label){
+  var map = this;
+  if (!layerId){
+    return;
+  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
+    layerId = [layerId];
+  }
+
+  //convert columnstore to row store
+  //label = HTMLWidgets.dataframeToD3(label);
+
+  layerId.forEach(function(d,i){
+    var layer = map.layerManager.getLayer(category, d);
+    if (layer){
+      // layer.setStyle(style[i]);
+      layer.unbindPopup();
+      layer.bindPopup(label[i])
+    }
+  });
+};
+'
+  ))
+)
+
+#########################################
+# End of https://github.com/rstudio/leaflet/pull/598 code
+#########################################
+
 ##### Web Scraping #####
 
 # Getting the csv files
@@ -127,7 +233,7 @@ states_map <- ms_simplify(all_counties, keep = 0.02)
 
 ## Getting states shape file data 
 states_map2 <- st_read("Data/All_states.shp", type = 6)
-states_map2 <- st_as_sf(states_map2)
+
 
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
@@ -138,14 +244,17 @@ state_unallocated_data <- final_covid %>%
   filter(str_detect(county_name, "Statewide Unallocated")) %>% 
   ungroup()
 
-#state and their abbrevations
+#state and their abbreviations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
-#Left joining covid and state names by their abbrevations
+#Left joining covid and state names by their abbreviations
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
+
+#Creating character vector for layerID in leaflet
+layer_county <- unique(covid_data$NAME)
 
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
@@ -183,6 +292,7 @@ legendvalues<- c(1:200000)
 # choose. 
 ######################################################
 ui <- fluidPage(
+  leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
   # Application title
   titlePanel("COVID Between the Coasts"),
@@ -204,7 +314,10 @@ ui <- fluidPage(
                   max = max(covid_map_data$date),
                   value = max(covid_map_data$date),
                   timeFormat = "%m-%d-%Y",
-                  animate = animationOptions(interval = 500))
+                  animate = animationOptions(interval = 350))#,
+      
+      #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
+
       
     ),
     
@@ -277,6 +390,17 @@ server <- function(input, output) {
     colorNumeric(palette = color_pal, domain = reactive_data())
   })
   
+  popup_msg <- reactive({
+    str_c("<strong>", dates()$county_name, ", ", dates()$state,
+          "</strong><br /><strong>", format(dates()$date, "%m/%d/%Y"), "</strong>",
+          "<br /> Cases: ", dates()$cases,
+          "<br /> Deaths: ", dates()$deaths,
+          "<br /> Case Rate: ", round(dates()$case_rate, 2),
+          "<br /> Death Rate: ", round(dates()$death_rate, 2),
+          "<br /> New Cases: ", dates()$new_cases,
+          "<br /> 7 Day Average: ", round(dates()$moving_avg_7, 2))
+  })
+  
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
@@ -286,26 +410,25 @@ server <- function(input, output) {
                   color = "black",
                   fill = FALSE,
                   weight = 3) %>%
+      addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
+                  layerId = layer_county,
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7) %>%
       addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
   })
 
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      clearGroup(group = "county") %>%
-      addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
-                  group = "county",
-                  popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
-                                "</strong><br /> Cases: ", dates()$cases,
-                                "</strong><br /> Deaths: ", dates()$deaths,
-                                "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
-                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2),
-                                "</strong><br /> New Cases: ", dates()$new_cases,
-                                "</strong><br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2)),
-                  stroke = FALSE,
-                  smoothFactor = 0,
-                  fillOpacity = 0.7,
-                  color = ~ pal_data()(reactive_stat()))
+      setShapeStyle(layerId = layer_county, 
+                    fillColor = ~ pal_data()(reactive_stat()))
+  })
+  
+  observe({
+    leafletProxy("map_cases", data = dates()) %>% 
+      setShapeLabel(layerId = layer_county,
+                    label = popup_msg())
   })
   
   observe({
