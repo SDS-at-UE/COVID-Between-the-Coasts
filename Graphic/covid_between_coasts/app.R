@@ -38,7 +38,7 @@ library(rmapshaper)
 # It comes from https://github.com/rstudio/leaflet/issues/496
 # developed by @edwindj on https://github.com/rstudio/leaflet/pull/598
 # and reworked by @timelyportfolio for use without the pull request.
-# The label addition was done by @martinzuba
+# The label addition is an alteration of the one done by @martinzuba
 #########################################
 
 setShapeStyle <- function(map, data = getMapData(map), layerId,
@@ -63,7 +63,6 @@ setShapeStyle <- function(map, data = getMapData(map), layerId,
   layerId <- options[[1]]
   style <- options[-1] # drop layer column
   
-  #print(list(style=style))
   leaflet::invokeMethod(map, data, "setStyle", "shape", layerId, style);
 }
 
@@ -83,7 +82,6 @@ setShapeLabel <- function(map, data = getMapData(map),
   layerId <- options[[1]]
   style <- options[-1] # drop layer column
   
-  #print(list(style=style))
   leaflet::invokeMethod(map, data, "setLabel", "shape", layerId, label);
 }
 
@@ -101,11 +99,10 @@ leafletjs <-  tags$head(
 
   //convert columnstore to row store
   style = HTMLWidgets.dataframeToD3(style);
-  //console.log(style);
 
   layerId.forEach(function(d,i){
     var layer = map.layerManager.getLayer(category, d);
-    if (layer){ // or should this raise an error?
+    if (layer){
       layer.setStyle(style[i]);
     }
   });
@@ -120,11 +117,10 @@ window.LeafletWidget.methods.setLabel = function(category, layerId, label){
 
   //convert columnstore to row store
   //label = HTMLWidgets.dataframeToD3(label);
-  //console.log(label);
 
   layerId.forEach(function(d,i){
     var layer = map.layerManager.getLayer(category, d);
-    if (layer){ // or should this raise an error?
+    if (layer){
       // layer.setStyle(style[i]);
       layer.unbindPopup();
       layer.bindPopup(label[i])
@@ -237,9 +233,6 @@ shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
 states_map <- shapes_map_simp
 
 
-## states_map gives NAME in format of "Vanderburgh County, Indiana"
-#states_map <- st_read("Data/All_counties.shp", type = 6)
-
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
   filter(!str_detect(county_name, "Statewide Unallocated"))
@@ -248,16 +241,16 @@ state_unallocated_data <- final_covid %>%
   filter(str_detect(county_name, "Statewide Unallocated")) %>% 
   ungroup()
 
-#state and their abbrevations
+#state and their abbreviations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
-#Left joining covid and state names by their abbrevations
+#Left joining covid and state names by their abbreviations
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
-#Creating character vector for layerID
+#Creating character vector for layerID in leaflet
 layer_county <- unique(covid_data$NAME)
 
 #Joining two datasets
@@ -405,7 +398,7 @@ server <- function(input, output) {
   
   popup_msg <- reactive({
     str_c("<strong>", dates()$county_name, ", ", dates()$state,
-          "</strong><br /><strong>", dates()$date, "</strong>",
+          "</strong><br /><strong>", format(dates()$date, "%m/%d/%Y"), "</strong>",
           "<br /> Cases: ", dates()$cases,
           "<br /> Deaths: ", dates()$deaths,
           "<br /> Case Rate: ", round(dates()$case_rate, 2),
