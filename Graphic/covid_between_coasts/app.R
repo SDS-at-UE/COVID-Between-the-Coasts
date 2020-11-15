@@ -299,7 +299,7 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-  #    selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
+      #    selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
       
       radioButtons(inputId = "stat", "Choose a Statistic", 
                    c("Total Cases" = "cases", 
@@ -317,7 +317,7 @@ ui <- fluidPage(
                   animate = animationOptions(interval = 350))#,
       
       #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
-
+      
       
     ),
     
@@ -331,18 +331,19 @@ ui <- fluidPage(
            see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
                         "the CDC COVID Case Classification Page"),"."),
       
-      tableOutput("unallocated"),
+      tableOutput("unallocated")
       
-      h5(helpText("Data Sources:")),
-      
-      helpText("COVID-19 data was obtained from",
-               tags$a(href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/", "USA Facts."),
-               "County lines information was taken from the Census Bureau."),
-      
-      helpText("COVID Between the Coasts interactive map is powered by", tags$a(href="https://rstudio.com/", "RStudio."))
-      
-      
-    ))  
+    )),
+  
+  div(align = "center",
+      class = "footer",
+      wellPanel(
+        helpText(HTML('Data Sources:</br> COVID-19 data was obtained from 
+             <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
+             County lines information was taken from the Census Bureau.</br>COVID Between the Coasts interactive map is powered by
+             <a href="https://www.shinyapps.io/">shinyapps.io</a>.'))
+      )
+  )
   
   
 )
@@ -418,7 +419,7 @@ server <- function(input, output) {
       addMarkers(data = Marker,
                  ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
   })
-
+  
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
       setShapeStyle(layerId = layer_county, 
