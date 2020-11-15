@@ -27,6 +27,7 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
+library(rmapshaper)
 
 #########################################
 # The following chunk of code is designed
@@ -223,11 +224,14 @@ final_covid <- final_covid %>%
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
-
+final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
 states_map <- ms_simplify(all_counties, keep = 0.02)
+
+## Getting states shape file data 
+states_map2 <- st_read("Data/All_states.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -298,7 +302,9 @@ ui <- fluidPage(
                    c("Total Cases" = "cases", 
                      "Total Deaths" = "deaths", 
                      "Case Rate per 100,000" = "case_rate",
-                     "Death Rate per 100,000" = "death_rate")),
+                     "Death Rate per 100,000" = "death_rate",
+                     "New Cases (Per Day)" = "new_cases",
+                     "7 Day Average" = "moving_avg_7")),
       
       sliderInput(inputId = "dates", "Timeline of COVID", 
                   min = min(covid_map_data$date),
@@ -307,8 +313,8 @@ ui <- fluidPage(
                   timeFormat = "%m-%d-%Y",
                   animate = animationOptions(interval = 350))#,
       
-  #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
-
+      #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
+      
       
       
     ),
@@ -362,6 +368,8 @@ server <- function(input, output) {
            deaths = covid_map_data$deaths,
            death_rate = covid_map_data$death_rate,
            case_rate = covid_map_data$case_rate,
+           new_cases = covid_map_data$new_cases,
+           moving_avg_7 = covid_map_data$moving_avg_7,
            covid_map_data$cases)
   })
   
@@ -371,6 +379,8 @@ server <- function(input, output) {
            deaths = dates()$deaths,
            death_rate = dates()$death_rate,
            case_rate = dates()$case_rate,
+           new_cases = dates()$new_cases,
+           moving_avg_7 = dates()$moving_avg_7,
            dates()$cases)
   })
   
@@ -392,14 +402,19 @@ server <- function(input, output) {
   
   output$map_cases <- renderLeaflet({
     leaflet(width = "100%") %>%
-      addProviderTiles(provider = "CartoDB.Positron") %>%
-      addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>% 
+      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
+                  group = "state",
+                  color = "black",
+                  fill = FALSE,
+                  weight = 3) %>%
       addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
                   layerId = layer_county,
                   stroke = FALSE,
                   smoothFactor = 0,
-                  fillOpacity = 0.7) 
+                  fillOpacity = 0.7) %>%
+      addMarkers(data = Marker,
+                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
   })
   
   observe({
