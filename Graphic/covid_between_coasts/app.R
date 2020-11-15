@@ -398,7 +398,7 @@ server <- function(input, output) {
           "<br /> Case Rate: ", round(dates()$case_rate, 2),
           "<br /> Death Rate: ", round(dates()$death_rate, 2),
           "<br /> New Cases: ", dates()$new_cases,
-          "<br /> 7 Day Average: ", round(dates()$moving_avg_7, 2))
+          "<br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2))
   })
   
   
