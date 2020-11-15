@@ -27,7 +27,6 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
-library(rmapshaper)
 
 #########################################
 # The following chunk of code is designed
@@ -225,13 +224,10 @@ final_covid <- final_covid %>%
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
+
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
-
-shapes_map_simp <- ms_simplify(all_counties, keep = 0.02)
-
-states_map <- shapes_map_simp
-
+states_map <- ms_simplify(all_counties, keep = 0.02)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -254,8 +250,7 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 layer_county <- unique(covid_data$NAME)
 
 #Joining two datasets
-covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
-#%>% auto_copy(covid_data, states_map, copy = TRUE)
+covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -310,14 +305,11 @@ ui <- fluidPage(
                   max = max(covid_map_data$date),
                   value = max(covid_map_data$date),
                   timeFormat = "%m-%d-%Y",
-                  animate = 
-                    animationOptions(interval = 350)),
+                  animate = animationOptions(interval = 350))#,
       
-      dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
+  #    dateInput(inputId = "date_input", "Type in date you want to see", value = as.Date("06-24-2020","%m-%d-%Y"), format = "mm-dd-yyyy"),
+
       
-      verbatimTextOutput("layer_counter"),
-      verbatimTextOutput("layer_counter2"),
-      verbatimTextOutput("layer_counter3")
       
     ),
     
@@ -358,16 +350,6 @@ ui <- fluidPage(
 # include it in the graphic. 
 ##################################################
 server <- function(input, output) {
-  
-  layer <- reactiveValues(counter = 0)
-  
-  observeEvent(input$dates,{
-    layer$counter <- layer$counter + 1
-  })
-  
-  output$layer_counter <- renderPrint(layer$counter)
-  output$layer_counter2 <- renderPrint(str_c("layer", layer$counter))
-  output$layer_counter3 <- renderPrint(str_c("layer", layer$counter - 1))
   
   dates <- reactive({
     covid_map_data %>% 
@@ -459,6 +441,7 @@ server <- function(input, output) {
     digits = 0,
     caption = table_caption,
     caption.placement = "top")
+  
   
 }
 
