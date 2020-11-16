@@ -421,7 +421,8 @@ server <- function(input, output) {
                   weight = 3) %>%
       addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
                   layerId = layer_county,
-                  stroke = FALSE,
+                  color = "white",
+                  weight = 1,
                   smoothFactor = 0,
                   fillOpacity = 0.7)
   })
