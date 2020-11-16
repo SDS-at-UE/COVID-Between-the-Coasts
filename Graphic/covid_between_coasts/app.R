@@ -143,11 +143,10 @@ covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
-#In package RColorBrewer, RdYlGn goes from dark red to dark green
-## Make vector of colors for values smaller than 0 (20 colors)
+## Make vector of colors for values smaller than 0 (10 colors)
 color_pal1 <- colorRampPalette(colors = c("green4", "yellow3"), space = "Lab")(10)
 
-## Make vector of colors for values larger than 0 (180 colors)
+## Make vector of colors for values larger than 0 (90 colors)
 color_pal2 <- colorRampPalette(colors = c("yellow3", "red3"), space = "Lab")(90)
 
 ## Combine the two color palettes
