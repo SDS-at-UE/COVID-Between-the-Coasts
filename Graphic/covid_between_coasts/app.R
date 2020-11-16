@@ -268,15 +268,17 @@ color_pal <- rev(brewer.pal(11, name = "RdYlGn"))
 
 #table for markers
 
-City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
-Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
-Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
-Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
-         "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
-         "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
-         "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
-         "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
-         "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
+City <- c("Champaign", "Minneapolis", "Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat <- c(40.1164, 44.9778, 41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long <- c(-88.2434, -93.2650, -87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link <- c("<a href='https://news.wnin.org/post/cbc-s1-e8-covid-casts-long-shadow-over-sports-scholarships'> Ep. 8 COVID Interrupts Athletes' Dreams </a>",
+          "<a href='https://news.wnin.org/post/cbc-s1-e4-minneapolis-supply-chain'> Ep. 4 The Supply Chain </a>",
+          "<a href='https://news.wnin.org/post/cbc-s1-e3-chicago-tribute-essential-workers'> Ep. 3 A Tribute to Essential Workers </a>",
+          "<a href='https://news.wnin.org/post/cbc-s1-e6-covid-countryside#stream/0'> Ep. 6 COVID in the Countryside </a>", 
+          "<a href='https://news.wnin.org/post/cbc-s1-e2-detroit-day-district-five'> Ep. 2 A Day in District 5 </a>",
+          "<a href='https://news.wnin.org/post/cbc-s1-e7-borders#stream/0'> Ep. 7 Borders </a>",
+          "<a href='https://news.wnin.org/post/cbc-s1-e5-covid-numbers'> Ep. 5 COVID By the Numbers </a",
+          "<a href='https://news.wnin.org/post/cbc-s1-e1-survivor-stories'> Ep. 1 Survivor Stories </a")
 
 Marker <- data.frame(City, Lat, Long, Link)
 
@@ -317,7 +319,8 @@ ui <- fluidPage(
     ),
     fluidRow(
       h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
-          Click on any county to see COVID-19 information for the date selected.")
+          Click on any county to see COVID-19 information for the date selected. Click on the pin to 
+          take you to one of our episodes.")
     )),
   
   leafletOutput("map_cases", height = 650),
@@ -427,7 +430,9 @@ server <- function(input, output) {
     if(input$marker == TRUE){
       leafletProxy("map_cases")  %>%
         addMarkers(data = Marker,
-                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
+                   ~Long, ~Lat, 
+                   popup = ~as.character(Link), 
+                   label = ~as.character(City))
     } else{
       leafletProxy("map_cases") %>% 
         clearMarkers()
