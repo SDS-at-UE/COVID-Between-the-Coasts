@@ -27,114 +27,6 @@ library(DT)
 library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
-library(rmapshaper)
-
-
-#########################################
-# The following chunk of code is designed
-# to allow the map to respond quicker
-# to changes in the date, i.e., a faster
-# way to color the counties for each date.
-###
-# It comes from https://github.com/rstudio/leaflet/issues/496
-# developed by @edwindj on https://github.com/rstudio/leaflet/pull/598
-# and reworked by @timelyportfolio for use without the pull request.
-# The label addition is an alteration of the one done by @martinzuba
-#########################################
-
-setShapeStyle <- function(map, data = getMapData(map), layerId,
-                          stroke = NULL, color = NULL,
-                          weight = NULL, opacity = NULL,
-                          fill = NULL, fillColor = NULL,
-                          fillOpacity = NULL, dashArray = NULL,
-                          smoothFactor = NULL, noClip = NULL,
-                          options = NULL){
-  options <- c(list(layerId = layerId),
-               options,
-               filterNULL(list(stroke = stroke, color = color,
-                               weight = weight, opacity = opacity,
-                               fill = fill, fillColor = fillColor,
-                               fillOpacity = fillOpacity, dashArray = dashArray,
-                               smoothFactor = smoothFactor, noClip = noClip)))
-  # evaluate all options
-  options <- evalFormula(options, data = data)
-  # make them the same length (by building a data.frame)
-  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
-  
-  layerId <- options[[1]]
-  style <- options[-1] # drop layer column
-  
-  leaflet::invokeMethod(map, data, "setStyle", "shape", layerId, style);
-}
-
-setShapeLabel <- function(map, data = getMapData(map), 
-                          layerId,
-                          label = NULL,
-                          options = NULL){
-  options <- c(list(layerId = layerId),
-               options,
-               filterNULL(list(label = label
-               )))
-  # evaluate all options
-  options <- evalFormula(options, data = data)
-  # make them the same length (by building a data.frame)
-  options <- do.call(data.frame, c(options, list(stringsAsFactors = FALSE)))
-  
-  layerId <- options[[1]]
-  style <- options[-1] # drop layer column
-  
-  leaflet::invokeMethod(map, data, "setLabel", "shape", layerId, label);
-}
-
-### JS methods
-leafletjs <-  tags$head(
-  # add in methods from https://github.com/rstudio/leaflet/pull/598
-  tags$script(HTML('
-  window.LeafletWidget.methods.setStyle = function(category, layerId, style){
-  var map = this;
-  if (!layerId){
-    return;
-  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
-    layerId = [layerId];
-  }
-
-  //convert columnstore to row store
-  style = HTMLWidgets.dataframeToD3(style);
-
-  layerId.forEach(function(d,i){
-    var layer = map.layerManager.getLayer(category, d);
-    if (layer){
-      layer.setStyle(style[i]);
-    }
-  });
-};
-window.LeafletWidget.methods.setLabel = function(category, layerId, label){
-  var map = this;
-  if (!layerId){
-    return;
-  } else if (!(typeof(layerId) === "object" && layerId.length)){ // in case a single layerid is given
-    layerId = [layerId];
-  }
-
-  //convert columnstore to row store
-  //label = HTMLWidgets.dataframeToD3(label);
-
-  layerId.forEach(function(d,i){
-    var layer = map.layerManager.getLayer(category, d);
-    if (layer){
-      // layer.setStyle(style[i]);
-      layer.unbindPopup();
-      layer.bindPopup(label[i])
-    }
-  });
-};
-'
-  ))
-)
-
-#########################################
-# End of https://github.com/rstudio/leaflet/pull/598 code
-#########################################
 
 ##### Web Scraping #####
 
@@ -224,17 +116,10 @@ final_covid$date <- as_date(final_covid$date,
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
-         moving_7_day_avg = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
-final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
+         moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
-## simplifying county lines
-all_counties <- st_read("Data/All_counties.shp", type = 6)
-states_map <- ms_simplify(all_counties, keep = 0.02)
-
-## Getting states shape file data 
-states_map2 <- st_read("Data/All_states.shp", type = 6)
-
-
+## states_map gives NAME in format of "Vanderburgh County, Indiana"
+states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -244,21 +129,17 @@ state_unallocated_data <- final_covid %>%
   filter(str_detect(county_name, "Statewide Unallocated")) %>% 
   ungroup()
 
-#state and their abbreviations
+#state and their abbrevations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
-#Left joining covid and state names by their abbreviations
+#Left joining covid and state names by their abbrevations
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
 covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
 
-#Creating character vector for layerID in leaflet
-layer_county <- unique(covid_data$NAME)
-
 #Joining two datasets
-covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
-#%>% auto_copy(covid_data, states_map, copy = TRUE)
+covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
@@ -268,17 +149,15 @@ color_pal <- rev(brewer.pal(11, name = "RdYlGn"))
 
 #table for markers
 
-City <- c("Champaign", "Minneapolis", "Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
-Lat <- c(40.1164, 44.9778, 41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
-Long <- c(-88.2434, -93.2650, -87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
-Link <- c("<a href='https://news.wnin.org/post/cbc-s1-e8-covid-casts-long-shadow-over-sports-scholarships'> Ep. 8 COVID Interrupts Athletes' Dreams </a>",
-          "<a href='https://news.wnin.org/post/cbc-s1-e4-minneapolis-supply-chain'> Ep. 4 The Supply Chain </a>",
-          "<a href='https://news.wnin.org/post/cbc-s1-e3-chicago-tribute-essential-workers'> Ep. 3 A Tribute to Essential Workers </a>",
-          "<a href='https://news.wnin.org/post/cbc-s1-e6-covid-countryside#stream/0'> Ep. 6 COVID in the Countryside </a>", 
-          "<a href='https://news.wnin.org/post/cbc-s1-e2-detroit-day-district-five'> Ep. 2 A Day in District 5 </a>",
-          "<a href='https://news.wnin.org/post/cbc-s1-e7-borders#stream/0'> Ep. 7 Borders </a>",
-          "<a href='https://news.wnin.org/post/cbc-s1-e5-covid-numbers'> Ep. 5 COVID By the Numbers </a",
-          "<a href='https://news.wnin.org/post/cbc-s1-e1-survivor-stories'> Ep. 1 Survivor Stories </a")
+City<- c("Chicago", "Indianapolis", "Detroit", "Louisville", "Milwaukee", "Columbus")
+Lat<- c(41.8985, 39.7688, 42.3410, 38.2731, 43.0445, 39.9661)
+Long<- c(-87.6341, -86.1649, -83.0630, -85.7627, -87.9109, -83.0029)
+Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
+         "<a href='https://en.wikipedia.org/wiki/Indianapolis'> Indianapolis </a>", 
+         "<a href='https://en.wikipedia.org/wiki/Detroit'> Detroit </a>",
+         "<a href='https://en.wikipedia.org/wiki/Louisville,_Kentucky'> Louisville </a>",
+         "<a href='https://en.wikipedia.org/wiki/Milwaukee'> Milwaukee </a",
+         "<a href='https://en.wikipedia.org/wiki/Columbus,_Ohio'> Columbus </a")
 
 Marker <- data.frame(City, Lat, Long, Link)
 
@@ -310,6 +189,7 @@ table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 legendvalues<- c(1:200000)
 
+
 ######################################################
 # Define UI for application
 # This is where you get to choose how the user sees
@@ -317,6 +197,7 @@ legendvalues<- c(1:200000)
 # choose. 
 ######################################################
 ui <- fluidPage(
+
   leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
   wellPanel(
@@ -345,35 +226,57 @@ ui <- fluidPage(
           Click on any county to see COVID-19 information for the date selected. Click on the pin to 
           take you to one of our episodes.")
     )),
-  
-  leafletOutput("map_cases", height = 650),
-  
-  helpText(HTML('A note on testing data: A case is defined as any individual
-                who tests positive (via a PCR or antigen test) within a three month window.
-                Serological tests do not count toward this total. For more on classifying cases,
-                see the 
-                <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
-                CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. 
-                These are given in the table below.')),
-  
-  tableOutput("unallocated"),
-  
-  div(align = "center",
-      class = "footer",
-      wellPanel(
-        helpText(HTML('COVID-19 data was obtained from 
-                      <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
-                      County boundaries were taken from the Census Bureau and simplified for better rendering. 
-                      COVID Between the Coasts interactive map is powered by
-                      <a href="https://www.shinyapps.io/">shinyapps.io</a>.
-                      </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, 
-                      Ethan Morlock, and Pearl Muensterman, students at the
-                      <a href="https://www.evansville.edu/">University of Evansville</a> 
-                      led by Dr. Darrin Weber.'))
-      )
-  )
-)
 
+  
+  # Application title
+  titlePanel("COVID Between the Coasts"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId = "states", "Choose a State", c("All", "Kentucky", "Illinois", "Indiana", "Michigan", "Minnesota", "Ohio", "Wisconsin")),
+      
+      radioButtons(inputId = "stat", "Choose a Statistic", 
+                   c("Total Cases" = "cases", 
+                     "Total Deaths" = "deaths", 
+                     "Case Rate per 100,000" = "case_rate",
+                     "Death Rate per 100,000" = "death_rate")),
+      
+      sliderInput(inputId = "dates", "Timeline of COVID", 
+                  min = min(covid_map_data$date),
+                  max = max(covid_map_data$date),
+                  value = max(covid_map_data$date),
+                  timeFormat = "%m-%d-%Y",
+                  animate = 
+                    animationOptions(interval = 250))
+      
+      
+    ),
+    
+    mainPanel(
+      
+      leafletOutput("map_cases"),
+      
+      helpText("A note on testing data: A case is defined as any individual
+            who tests positive (via a PCR or antigen test) within a three month window.
+            Serological tests do not count toward this total. For more on classifying cases,
+           see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
+                        "the CDC COVID Case Classification Page"),"."),
+      
+      tableOutput("unallocated"),
+      
+      h5(helpText("Data Sources:")),
+      
+      helpText("COVID-19 data was obtained from",
+               tags$a(href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/", "USA Facts."),
+               "County lines information was taken from the Census Bureau."),
+      
+      helpText("COVID Between the Coasts interactive map is powered by", tags$a(href="https://rstudio.com/", "RStudio."))
+      
+      
+    ))  
+  
+  
+)
 
 
 ##################################################
@@ -398,8 +301,6 @@ server <- function(input, output) {
            deaths = covid_map_data$deaths,
            death_rate = covid_map_data$death_rate,
            case_rate = covid_map_data$case_rate,
-           new_cases = covid_map_data$new_cases,
-           moving_7_day_avg = covid_map_data$moving_7_day_avg,
            covid_map_data$cases)
   })
   
@@ -409,25 +310,11 @@ server <- function(input, output) {
            deaths = dates()$deaths,
            death_rate = dates()$death_rate,
            case_rate = dates()$case_rate,
-           new_cases = dates()$new_cases,
-           moving_7_day_avg = dates()$moving_7_day_avg,
            dates()$cases)
   })
   
   pal_data <- reactive({
-    colorNumeric(palette = color_pal, domain = 0.001:(max(reactive_data(), na.rm = TRUE)+1))
-    # colorNumeric(palette = color_pal, domain = reactive_data())
-  })
-  
-  popup_msg <- reactive({
-    str_c("<strong>", dates()$county_name, ", ", dates()$state,
-          "</strong><br /><strong>", format(dates()$date, "%m/%d/%Y"), "</strong>",
-          "<br /> Cases: ", dates()$cases,
-          "<br /> Deaths: ", dates()$deaths,
-          "<br /> Case Rate: ", round(dates()$case_rate, 2),
-          "<br /> Death Rate: ", round(dates()$death_rate, 2),
-          "<br /> New Cases: ", dates()$new_cases,
-          "<br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2))
+    colorNumeric(palette = color_pal, domain = reactive_data())
   })
   
   
@@ -471,20 +358,29 @@ server <- function(input, output) {
   
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
-      setShapeLabel(layerId = layer_county,
-                    label = popup_msg())
+      clearShapes() %>%
+      addPolygons(data = st_transform(dates(), crs = "+init=epsg:4326"),
+                  popup = str_c("<strong>", dates()$county_name, ", ", dates()$state,
+                                "</strong><br /> Cases: ", dates()$cases,
+                                "</strong><br /> Deaths: ", dates()$deaths,
+                                "</strong><br /> Case Rate: ", round(dates()$case_rate, 2),
+                                "</strong><br /> Death Rate: ", round(dates()$death_rate, 2)),
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7,
+                  color = ~ pal_data()(reactive_stat()))
   })
   
   observe({
     leafletProxy("map_cases") %>% 
       clearControls() %>% 
-      addLegend("bottomleft",
+      addLegend("bottomright",
                 pal = pal_data(),
-                values = na.omit(reactive_data()),
-                title = str_to_title(str_replace_all(input$stat, "_", " ")),
-                na.label = "",
+                values = reactive_data(),
+                title = str_to_title(str_replace(input$stat, "_", " ")),
                 opacity = 5)
   })
+  
   
   filtered_states_unallocated <- reactive({
     state_unallocated_data %>% 
