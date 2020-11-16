@@ -377,7 +377,8 @@ server <- function(input, output) {
   })
   
   pal_data <- reactive({
-    colorNumeric(palette = color_pal, domain = reactive_data())
+    colorNumeric(palette = color_pal, domain = 0.001:(max(reactive_data(), na.rm = TRUE)+1))
+    # colorNumeric(palette = color_pal, domain = reactive_data())
   })
   
   popup_msg <- reactive({
@@ -415,7 +416,7 @@ server <- function(input, output) {
   observe({
     leafletProxy("map_cases", data = dates()) %>% 
       setShapeStyle(layerId = layer_county, 
-                    fillColor = ~ pal_data()(reactive_stat()))
+                    fillColor = ~ suppressWarnings(pal_data()(reactive_stat())))
   })
   
   observe({
@@ -429,8 +430,9 @@ server <- function(input, output) {
       clearControls() %>% 
       addLegend("bottomright",
                 pal = pal_data(),
-                values = reactive_data(),
+                values = na.omit(reactive_data()),
                 title = str_to_title(str_replace_all(input$stat, "_", " ")),
+                na.label = "",
                 opacity = 5)
   })
   
