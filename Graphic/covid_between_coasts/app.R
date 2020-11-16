@@ -294,7 +294,6 @@ legendvalues<- c(1:200000)
 ui <- fluidPage(
   leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
-  
   wellPanel(
     fluidRow(
       column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo.png", height = "125")),
@@ -313,25 +312,32 @@ ui <- fluidPage(
                              "Death Rate per 100,000" = "death_rate",
                              "New Cases (Per Day)" = "new_cases",
                              "7 Day Average" = "moving_7_day_avg")))
+    ),
+    fluidRow(
+      h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
+          Click on any county to see COVID-19 information for the date selected.")
     )),
   
   leafletOutput("map_cases", height = 650),
   
-  helpText("A note on testing data: A case is defined as any individual
+  helpText(HTML('A note on testing data: A case is defined as any individual
             who tests positive (via a PCR or antigen test) within a three month window.
             Serological tests do not count toward this total. For more on classifying cases,
-           see", tags$a(href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/", 
-                        "the CDC COVID Case Classification Page"),"."),
+           see the <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
+                CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. These are given in the table below.')),
   
   tableOutput("unallocated"),
   
   div(align = "center",
       class = "footer",
       wellPanel(
-        helpText(HTML('Data Sources:</br> COVID-19 data was obtained from 
+        helpText(HTML('COVID-19 data was obtained from 
              <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
-             County lines information was taken from the Census Bureau.</br>COVID Between the Coasts interactive map is powered by
-             <a href="https://www.shinyapps.io/">shinyapps.io</a>.'))
+             County boundaries were taken from the Census Bureau and simplified for better rendering. COVID Between the Coasts interactive map is powered by
+             <a href="https://www.shinyapps.io/">shinyapps.io</a>. 
+             </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, Ethan Morlock, 
+             and Pearl Muensterman, students at the 
+             <a href="https://www.evansville.edu/">University of Evansville</a> led by Dr. Darrin Weber.'))
       )
   )
 )
@@ -428,7 +434,7 @@ server <- function(input, output) {
   observe({
     leafletProxy("map_cases") %>% 
       clearControls() %>% 
-      addLegend("bottomright",
+      addLegend("bottomleft",
                 pal = pal_data(),
                 values = na.omit(reactive_data()),
                 title = str_to_title(str_replace_all(input$stat, "_", " ")),
