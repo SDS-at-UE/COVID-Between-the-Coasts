@@ -220,12 +220,14 @@ final_covid$date <- as_date(final_covid$date,
                             format = "%m/%d/%y")
 
 
-# creating new_cases and 7 day moving average metric
+# creating new_cases, 7 day moving average, and 7 day average per 100K metric
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
   mutate(new_cases = diff(c(0,cases)),
          moving_7_day_avg = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
-final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
+final_covid <- final_covid %>% 
+  mutate(new_cases = if_else(new_cases < 0, 0, new_cases),
+         avg_7_day_rate = moving_7_day_avg/population*100000)
 
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
@@ -246,7 +248,7 @@ state_unallocated_data <- final_covid %>%
 #state and their abbreviations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
-#Left joining covid and state names by their abbrevations
+#Left joining covid and state names by their abbreviations
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
@@ -257,24 +259,26 @@ layer_county <- unique(covid_data$NAME)
 
 #Joining two datasets
 covid_map_data <- left_join(covid_data, states_map, by = "NAME", copy = TRUE) 
-#%>% auto_copy(covid_data, states_map, copy = TRUE)
 covid_map_data <- st_as_sf(covid_map_data)
 
 #Palette for leaflet
-## Make vector of colors for values smaller than 0 (10 colors)
-color_pal1 <- colorRampPalette(colors = c("springgreen4", "yellow3"), space = "Lab")(0.24)
+## Make vector of colors for first bin
+color_pal1 <- colorRampPalette(colors = c("springgreen4", "yellow3"), space = "Lab")(3)
 
-## Make vector of colors for values smaller than 0 (10 colors)
-color_pal2 <- colorRampPalette(colors = c("yellow3", "orange"), space = "Lab")(2.1)
+## Make vector of colors for second bin
+color_pal2 <- colorRampPalette(colors = c("yellow3", "orange"), space = "Lab")(9)
 
-## Make vector of colors for values larger than 0 (90 colors)
-color_pal3 <- colorRampPalette(colors = c("orange", "red3"), space = "Lab")(2.5)
+## Make vector of colors for third bin
+color_pal3 <- colorRampPalette(colors = c("orange", "red3"), space = "Lab")(8)
 
-## Make vector of colors for values larger than 0 (90 colors)
-color_pal4 <- colorRampPalette(colors = c("red3", "black"), space = "Lab")(95)
+## Make vector of colors for fourth bin
+color_pal4 <- colorRampPalette(colors = c("red3", "darkred"), space = "Lab")(175)
 
-## Combine the two color palettes
-color_pal <- c(color_pal1, color_pal2, color_pal3, color_pal4)
+## Make vector of colors for last bin
+color_pal5 <- colorRampPalette(colors = c("darkred", "black"), space = "Lab")(5)
+
+## Combine the five color palettes
+color_pal <- c(color_pal1, color_pal2, color_pal3, color_pal4, color_pal5)
 
 #table for markers
 
@@ -348,7 +352,8 @@ ui <- fluidPage(
                              "Case Rate per 100,000" = "case_rate",
                              "Death Rate per 100,000" = "death_rate",
                              "New Cases (Per Day)" = "new_cases",
-                             "7 Day Average" = "moving_7_day_avg")),
+                             "7 Day Average" = "moving_7_day_avg",
+                             "7 Day Avg Rate" = "avg_7_day_rate")),
                checkboxInput(inputId = "marker", "Show stories?",
                              TRUE))
     ),
@@ -412,6 +417,7 @@ server <- function(input, output) {
            case_rate = covid_map_data$case_rate,
            new_cases = covid_map_data$new_cases,
            moving_7_day_avg = covid_map_data$moving_7_day_avg,
+           avg_7_day_rate = covid_map_data$avg_7_day_rate,
            covid_map_data$cases)
   })
   
@@ -423,6 +429,7 @@ server <- function(input, output) {
            case_rate = dates()$case_rate,
            new_cases = dates()$new_cases,
            moving_7_day_avg = dates()$moving_7_day_avg,
+           avg_7_day_rate = dates()$avg_7_day_rate,
            dates()$cases)
   })
   
@@ -439,7 +446,8 @@ server <- function(input, output) {
           "<br /> Case Rate: ", round(dates()$case_rate, 2),
           "<br /> Death Rate: ", round(dates()$death_rate, 2),
           "<br /> New Cases: ", dates()$new_cases,
-          "<br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2))
+          "<br /> 7 Day Average: ", round(dates()$moving_7_day_avg, 2),
+          "<br /> 7 Day Avg Rate: ", round(dates()$avg_7_day_rate, 2))
   })
   
   

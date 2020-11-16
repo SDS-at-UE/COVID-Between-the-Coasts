@@ -99,11 +99,20 @@ final_covid <- final_covid %>%
   mutate(new_cases = diff(c(0,cases)),
          moving_avg_7 = roll_mean(new_cases, n = 7, fill = NA, align = "right"))
 
+#Calulations to create new_eqn variable
+final_covid2 <- final_covid %>%
+  mutate(new_eqn = ((moving_avg_7*7)/population)*100000)
+final_covid2 <- final_covid2 %>%
+  filter(county_name != "Statewide Unallocated")
+
+final_covid2 <- final_covid2 %>% 
+  mutate(avg_daily_rate = moving_avg_7/population*100000)
+
 ## states_map gives NAME in format of "Vanderburgh County, Indiana"
 states_map <- st_read("Data/All_counties.shp", type = 6)
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
-graphic_covid <- final_covid %>% 
+graphic_covid <- final_covid2 %>% 
   filter(!str_detect(county_name, "Statewide Unallocated"))
 
 state_unallocated_data <- final_covid %>% 
@@ -123,10 +132,35 @@ covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', ')
 covid_map_data <- left_join(covid_data, states_map, by = "NAME")
 covid_map_data <- st_as_sf(covid_map_data)
 
-#Calulations to create new_eqn variable
-final_covid2 <- final_covid %>%
-  mutate(new_eqn = ((moving_avg_7*7)/population)*100000)
-View(final_covid2)
-final_covid2 <- final_covid2 %>%
-  filter(county_name != "Statewide Unallocated")
-View(final_covid2)
+#Palette for leaflet
+## Make vector of colors for first bin
+color_pal1 <- colorRampPalette(colors = c("springgreen4", "yellow3"), space = "Lab")(1)
+
+## Make vector of colors for second bin
+color_pal2 <- colorRampPalette(colors = c("yellow3", "orange"), space = "Lab")(1)
+
+## Make vector of colors for third bin
+color_pal3 <- colorRampPalette(colors = c("orange", "red3"), space = "Lab")(1)
+
+## Make vector of colors for fourth bin
+color_pal4 <- colorRampPalette(colors = c("red3", "darkred"), space = "Lab")(175)
+
+## Make vector of colors for last bin
+color_pal5 <- colorRampPalette(colors = c("darkred", "black"), space = "Lab")(5)
+
+## Combine the five color palettes
+color_pal <- c(color_pal1, color_pal2, color_pal3, color_pal4, color_pal5)
+
+pal_data <- colorNumeric(palette = color_pal, domain = 0.001:(max(covid_map_data$new_eqn, na.rm = TRUE)+1))
+
+
+leaflet(width = "100%",
+        options = leafletOptions(zoomSnap = 0,
+                                 zoomDelta = 0.25)) %>%
+  addProviderTiles(provider = "CartoDB.Positron") %>% 
+  setView(lat = 43.0445, lng = -87.9109, zoom = 5.7) %>%
+  addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
+              color = ~pal_data(avg_daily_rate),
+              weight = 1,
+              smoothFactor = 0,
+              fillOpacity = 0.7)
