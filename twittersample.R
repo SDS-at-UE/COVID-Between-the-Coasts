@@ -14,7 +14,7 @@ updateStatus(tweetfinal)
 ####new cases for 2020-11-01
 
 graphic_covid$date<- graphic_covid$date %>% as.character()
-new_cases_for_tweet<- filter(graphic_covid, date=="2020-11-01")
+new_cases_for_tweet<- filter(graphic_covid, date=="2020-11-02")
 new_cases_for_tweet<- new_cases_for_tweet %>% select(date, state, new_cases)
 new_cases_for_tweet<- new_cases_for_tweet %>% group_by(state) %>% summarize(sum(new_cases))
 new_cases_for_tweet$`sum(new_cases)`<- new_cases_for_tweet$`sum(new_cases)` %>%
@@ -23,3 +23,4 @@ dailycases<-str_c(new_cases_for_tweet$`sum(new_cases)`, sep=",")
 states<- str_c(new_cases_for_tweet$state, sep=",")
 tweet<- paste(states, dailycases, sep=":")
 tweetfinal<- str_c(tweet, collapse=", ")
+updateStatus(tweetfinal)
