@@ -282,8 +282,10 @@ Link <- c("<a href='https://news.wnin.org/post/cbc-s1-e8-covid-casts-long-shadow
 
 Marker <- data.frame(City, Lat, Long, Link)
 
-marker_icons <- makeIcon(
-  iconUrl = "www/ep1.jpg",
+marker_icons <- icons(
+  iconUrl = if_else(Marker$City == "Champaign",
+  "www/ep1.jpg",
+  "www/ep2.jpg"),
   iconWidth = 38, iconHeight = 38,
   iconAnchorX = 0.1, iconAnchorY = 38,
 )
