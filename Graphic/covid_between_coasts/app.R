@@ -282,6 +282,12 @@ Link <- c("<a href='https://news.wnin.org/post/cbc-s1-e8-covid-casts-long-shadow
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+marker_icons <- makeIcon(
+  iconUrl = "www/ep1.jpg",
+  iconWidth = 38, iconHeight = 38,
+  iconAnchorX = 0.1, iconAnchorY = 38,
+)
+
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 
@@ -298,7 +304,7 @@ ui <- fluidPage(
   
   wellPanel(
     fluidRow(
-      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo.png", height = "125")),
+      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
       column(width = 6,
              sliderInput(inputId = "dates", "Timeline of COVID", 
                          min = min(covid_map_data$date),
@@ -432,7 +438,8 @@ server <- function(input, output) {
         addMarkers(data = Marker,
                    ~Long, ~Lat, 
                    popup = ~as.character(Link), 
-                   label = ~as.character(City))
+                   label = ~as.character(City),
+                   icon = marker_icons)
     } else{
       leafletProxy("map_cases") %>% 
         clearMarkers()
