@@ -311,7 +311,9 @@ ui <- fluidPage(
                              "Case Rate per 100,000" = "case_rate",
                              "Death Rate per 100,000" = "death_rate",
                              "New Cases (Per Day)" = "new_cases",
-                             "7 Day Average" = "moving_7_day_avg")))
+                             "7 Day Average" = "moving_7_day_avg")),
+               checkboxInput(inputId = "marker", "Show stories?",
+                             TRUE))
     ),
     fluidRow(
       h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
@@ -321,10 +323,12 @@ ui <- fluidPage(
   leafletOutput("map_cases", height = 650),
   
   helpText(HTML('A note on testing data: A case is defined as any individual
-            who tests positive (via a PCR or antigen test) within a three month window.
-            Serological tests do not count toward this total. For more on classifying cases,
-           see the <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
-                CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. These are given in the table below.')),
+                who tests positive (via a PCR or antigen test) within a three month window.
+                Serological tests do not count toward this total. For more on classifying cases,
+                see the 
+                <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
+                CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. 
+                These are given in the table below.')),
   
   tableOutput("unallocated"),
   
@@ -332,12 +336,14 @@ ui <- fluidPage(
       class = "footer",
       wellPanel(
         helpText(HTML('COVID-19 data was obtained from 
-             <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
-             County boundaries were taken from the Census Bureau and simplified for better rendering. COVID Between the Coasts interactive map is powered by
-             <a href="https://www.shinyapps.io/">shinyapps.io</a>. 
-             </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, Ethan Morlock, 
-             and Pearl Muensterman, students at the 
-             <a href="https://www.evansville.edu/">University of Evansville</a> led by Dr. Darrin Weber.'))
+                      <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
+                      County boundaries were taken from the Census Bureau and simplified for better rendering. 
+                      COVID Between the Coasts interactive map is powered by
+                      <a href="https://www.shinyapps.io/">shinyapps.io</a>.
+                      </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, 
+                      Ethan Morlock, and Pearl Muensterman, students at the
+                      <a href="https://www.evansville.edu/">University of Evansville</a> 
+                      led by Dr. Darrin Weber.'))
       )
   )
 )
@@ -414,9 +420,18 @@ server <- function(input, output) {
                   layerId = layer_county,
                   stroke = FALSE,
                   smoothFactor = 0,
-                  fillOpacity = 0.7) %>%
-      addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
+                  fillOpacity = 0.7)
+  })
+  
+  observe({
+    if(input$marker == TRUE){
+      leafletProxy("map_cases")  %>%
+        addMarkers(data = Marker,
+                   ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City))
+    } else{
+      leafletProxy("map_cases") %>% 
+        clearMarkers()
+    }
   })
   
   observe({
