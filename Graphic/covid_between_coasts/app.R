@@ -305,7 +305,8 @@ ui <- fluidPage(
                          max = max(covid_map_data$date),
                          value = max(covid_map_data$date),
                          timeFormat = "%m-%d-%Y",
-                         animate = animationOptions(interval = 350))
+                         step = 3,
+                         animate = animationOptions(interval = 650))
       ),column(width = 3, 
                selectInput(inputId = "stat", "Choose a Statistic", 
                            c("Total Cases" = "cases", 
@@ -323,7 +324,7 @@ ui <- fluidPage(
           take you to one of our episodes.")
     )),
   
-  leafletOutput("map_cases", height = 650),
+  leafletOutput("map_cases", height = 550),
   
   helpText(HTML('A note on testing data: A case is defined as any individual
                 who tests positive (via a PCR or antigen test) within a three month window.
