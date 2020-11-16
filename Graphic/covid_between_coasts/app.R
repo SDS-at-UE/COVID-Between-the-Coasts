@@ -161,6 +161,29 @@ Link<- c("<a href='https://en.wikipedia.org/wiki/Chicago'> Chicago </a>",
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+# Make the icons based on episode order from Marker object
+marker_icons <- icons(
+  iconUrl = if_else(Marker$City == "Champaign",
+                    "www/ep8.jpg",
+                    if_else(Marker$City == "Minneapolis",
+                            "www/ep4.jpg",
+                            if_else(Marker$City == "Chicago",
+                                    "www/ep3.jpg",
+                                    if_else(Marker$City == "Indianapolis",
+                                            "www/ep6.jpg",
+                                            if_else(Marker$City == "Detroit",
+                                                    "www/ep2.jpg",
+                                                    if_else(Marker$City == "Louisville",
+                                                            "www/ep7.jpg",
+                                                            if_else(Marker$City == "Milwaukee",
+                                                                    "www/ep5.png",
+                                                                    "www/ep1.jpg"))))
+                            )
+                    )),
+  iconWidth = 38, iconHeight = 38,
+  iconAnchorX = 0.1, iconAnchorY = 38,
+)
+
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
 
 
@@ -174,6 +197,36 @@ legendvalues<- c(1:200000)
 # choose. 
 ######################################################
 ui <- fluidPage(
+
+  leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
+  
+  wellPanel(
+    fluidRow(
+      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
+      column(width = 6,
+             sliderInput(inputId = "dates", "Timeline of COVID", 
+                         min = min(covid_map_data$date),
+                         max = max(covid_map_data$date),
+                         value = max(covid_map_data$date),
+                         timeFormat = "%m-%d-%Y",
+                         animate = animationOptions(interval = 350))
+      ),column(width = 3, 
+               selectInput(inputId = "stat", "Choose a Statistic", 
+                           c("Total Cases" = "cases", 
+                             "Total Deaths" = "deaths", 
+                             "Case Rate per 100,000" = "case_rate",
+                             "Death Rate per 100,000" = "death_rate",
+                             "New Cases (Per Day)" = "new_cases",
+                             "7 Day Average" = "moving_7_day_avg")),
+               checkboxInput(inputId = "marker", "Show stories?",
+                             TRUE))
+    ),
+    fluidRow(
+      h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
+          Click on any county to see COVID-19 information for the date selected. Click on the pin to 
+          take you to one of our episodes.")
+    )),
+
   
   # Application title
   titlePanel("COVID Between the Coasts"),
@@ -266,10 +319,41 @@ server <- function(input, output) {
   
   
   output$map_cases <- renderLeaflet({
-    leaflet(width = "100%") %>%
-      addProviderTiles(provider = "CartoDB.Positron") %>%
-      addMarkers(data = Marker,
-                 ~Long, ~Lat, popup = ~as.character(Link), label = ~as.character(City)) 
+    leaflet(width = "100%",
+            options = leafletOptions(zoomSnap = 0,
+                                     zoomDelta = 0.25)) %>%
+      addProviderTiles(provider = "CartoDB.Positron") %>% 
+      setView(lat = 43.0445, lng = -87.9109, zoom = 5.7) %>%
+      addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
+                  group = "state",
+                  color = "black",
+                  fill = FALSE,
+                  weight = 3) %>%
+      addPolygons(data = st_transform(filter(covid_map_data, date == max(date)), crs = "+init=epsg:4326"),
+                  layerId = layer_county,
+                  stroke = FALSE,
+                  smoothFactor = 0,
+                  fillOpacity = 0.7)
+  })
+  
+  observe({
+    if(input$marker == TRUE){
+      leafletProxy("map_cases")  %>%
+        addMarkers(data = Marker,
+                   ~Long, ~Lat, 
+                   popup = ~as.character(Link), 
+                   label = ~as.character(City),
+                   icon = marker_icons)
+    } else{
+      leafletProxy("map_cases") %>% 
+        clearMarkers()
+    }
+  })
+  
+  observe({
+    leafletProxy("map_cases", data = dates()) %>% 
+      setShapeStyle(layerId = layer_county, 
+                    fillColor = ~ suppressWarnings(pal_data()(reactive_stat())))
   })
   
   observe({
