@@ -282,10 +282,25 @@ Link <- c("<a href='https://news.wnin.org/post/cbc-s1-e8-covid-casts-long-shadow
 
 Marker <- data.frame(City, Lat, Long, Link)
 
+# Make the icons based on episode order from Marker object
 marker_icons <- icons(
   iconUrl = if_else(Marker$City == "Champaign",
-  "www/ep1.jpg",
-  "www/ep2.jpg"),
+                    "www/ep8.jpg",
+                    if_else(Marker$City == "Minneapolis",
+                            "www/ep4.jpg",
+                            if_else(Marker$City == "Chicago",
+                                    "www/ep3.jpg",
+                                    if_else(Marker$City == "Indianapolis",
+                                            "www/ep6.jpg",
+                                            if_else(Marker$City == "Detroit",
+                                                    "www/ep2.jpg",
+                                                    if_else(Marker$City == "Louisville",
+                                                            "www/ep7.jpg",
+                                                            if_else(Marker$City == "Milwaukee",
+                                                                    "www/ep5.png",
+                                                                    "www/ep1.jpg"))))
+                            )
+                    )),
   iconWidth = 38, iconHeight = 38,
   iconAnchorX = 0.1, iconAnchorY = 38,
 )
