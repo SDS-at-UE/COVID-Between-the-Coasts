@@ -24,3 +24,6 @@ map_data2 <- get_acs(geography = "state",
 
 geometry_export <- select(map_data2, NAME, geometry)
 write_sf(geometry_export, "Graphic/covid_between_coasts/Data/All_states.shp")
+
+
+
