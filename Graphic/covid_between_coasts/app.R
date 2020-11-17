@@ -334,51 +334,53 @@ legendvalues<- c(1:200000)
 ui <- fluidPage(
   leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
-  wellPanel(
-    fluidRow(
-      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
-      column(width = 6,
-             sliderInput(inputId = "dates", "Timeline of COVID", 
-                         min = min(covid_map_data$date),
-                         max = max(covid_map_data$date),
-                         value = max(covid_map_data$date),
-                         timeFormat = "%m-%d-%Y",
-                         step = 3,
-                         animate = animationOptions(interval = 650))
-      ),column(width = 3, 
-               selectInput(inputId = "stat", "Choose a Statistic", 
-                           c("Total Cases" = "cases", 
-                             "Total Deaths" = "deaths", 
-                             "Case Rate per 100,000" = "case_rate",
-                             "Death Rate per 100,000" = "death_rate",
-                             "New Cases (Per Day)" = "new_cases",
-                             "7 Day Average" = "moving_7_day_avg",
-                             "7 Day Avg Rate" = "avg_7_day_rate")),
-               checkboxInput(inputId = "marker", "Show stories?",
-                             TRUE))
-    ),
-    fluidRow(
-      h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
+  tabsetPanel(
+    tabPanel("COVID Timeline",
+             wellPanel(
+               fluidRow(
+                 column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
+                 column(width = 6,
+                        sliderInput(inputId = "dates", "Timeline of COVID", 
+                                    min = min(covid_map_data$date),
+                                    max = max(covid_map_data$date),
+                                    value = max(covid_map_data$date),
+                                    timeFormat = "%m-%d-%Y",
+                                    step = 3,
+                                    animate = animationOptions(interval = 650))
+                 ),column(width = 3, 
+                          selectInput(inputId = "stat", "Choose a Statistic", 
+                                      c("Total Cases" = "cases", 
+                                        "Total Deaths" = "deaths", 
+                                        "Case Rate per 100,000" = "case_rate",
+                                        "Death Rate per 100,000" = "death_rate",
+                                        "New Cases (Per Day)" = "new_cases",
+                                        "7 Day Average" = "moving_7_day_avg",
+                                        "7 Day Avg Rate" = "avg_7_day_rate")),
+                          checkboxInput(inputId = "marker", "Show stories?",
+                                        TRUE))
+               ),
+               fluidRow(
+                 h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
           Click on any county to see COVID-19 information for the date selected. Click on the pin to 
           take you to one of our episodes.")
-    )),
-  
-  leafletOutput("map_cases", height = 550),
-  
-  helpText(HTML('A note on testing data: A case is defined as any individual
+               )),
+             
+             leafletOutput("map_cases", height = 550),
+             
+             helpText(HTML('A note on testing data: A case is defined as any individual
                 who tests positive (via a PCR or antigen test) within a three month window.
                 Serological tests do not count toward this total. For more on classifying cases,
                 see the 
                 <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
                 CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. 
                 These are given in the table below.')),
-  
-  tableOutput("unallocated"),
-  
-  div(align = "center",
-      class = "footer",
-      wellPanel(
-        helpText(HTML('COVID-19 data was obtained from 
+             
+             tableOutput("unallocated"),
+             
+             div(align = "center",
+                 class = "footer",
+                 wellPanel(
+                   helpText(HTML('COVID-19 data was obtained from 
                       <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
                       County boundaries were taken from the Census Bureau and simplified for better rendering. 
                       COVID Between the Coasts interactive map is powered by
@@ -387,7 +389,37 @@ ui <- fluidPage(
                       Ethan Morlock, and Pearl Muensterman, students at the
                       <a href="https://www.evansville.edu/">University of Evansville</a> 
                       led by Dr. Darrin Weber.'))
-      )
+                 )
+             )    
+    ),
+    tabPanel("COVID by County",
+             wellPanel(
+               fluidRow(
+                 column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
+                 column(width = 3,
+                        selectInput("state1",
+                                    "Select State 1",
+                                    choices = c("Choose one" = "", unique(covid_data$State))),
+                        uiOutput("county1"),
+                 ),column(width = 3, 
+                          selectInput(inputId = "stat2", "Choose a Statistic", 
+                                      c("Total Cases" = "cases", 
+                                        "Total Deaths" = "deaths", 
+                                        "Case Rate per 100,000" = "case_rate",
+                                        "Death Rate per 100,000" = "death_rate",
+                                        "New Cases (Per Day)" = "new_cases",
+                                        "7 Day Average" = "moving_7_day_avg",
+                                        "7 Day Avg Rate" = "avg_7_day_rate")),
+                          checkboxInput(inputId = "marker2", "Show stories?",
+                                        TRUE))
+               ),
+               fluidRow(
+                 h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
+          Click on any county to see COVID-19 information for the date selected. Click on the pin to 
+          take you to one of our episodes.")
+               ))
+    )
+    
   )
 )
 
@@ -431,6 +463,19 @@ server <- function(input, output) {
            moving_7_day_avg = dates()$moving_7_day_avg,
            avg_7_day_rate = dates()$avg_7_day_rate,
            dates()$cases)
+  })
+  
+  output$county1 <- renderUI({
+    county1 <- filter(covid_data, State == input$state1) %>% 
+      ungroup() %>% 
+      select(county_name) %>% 
+      distinct() %>%
+      arrange(county_name) %>%  
+      pull()
+    selectInput("county1",
+                "Select County 1",
+                choices = county1,
+                selected = NULL)
   })
   
   pal_data <- reactive({
