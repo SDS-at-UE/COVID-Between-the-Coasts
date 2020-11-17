@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 ######################################################
 # Everything in this section is run only once for the 
 # whole application. Multiple users will take advantage
@@ -252,7 +243,8 @@ state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
-covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
+covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ", "),
+                                    name = str_c(county_name, state, sep = ", "))
 
 #Creating character vector for layerID in leaflet
 layer_county <- unique(covid_data$NAME)
@@ -510,6 +502,28 @@ server <- function(input, output) {
                          str_c(input$county2, input$state2, sep = ", ")))
   })
   
+  reactive_title_for_county1 <- reactive({
+    switch(input$state1,
+           Illinois = "IL",
+           Indiana = "IN",
+           Kentucky = "KY",
+           Michigan = "MI",
+           Minnesota = "MN",
+           Ohio = "OH",
+           Wisconsin = "WI")
+  })
+  
+  reactive_title_for_county2 <- reactive({
+    switch(input$state2,
+           Illinois = "IL",
+           Indiana = "IN",
+           Kentucky = "KY",
+           Michigan = "MI",
+           Minnesota = "MN",
+           Ohio = "OH",
+           Wisconsin = "WI")
+  })
+  
   reactive_data2_titles <-  reactive({
     switch(input$stat2,
            cases = "Total Number of Cases",
@@ -524,10 +538,10 @@ server <- function(input, output) {
   
   plot_county_title <- reactive({
     if(input$county2 == ""){
-      str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "))
+      str_c("COVID in ", str_c(input$county1, reactive_title_for_county1(), sep = ", "))
     } else{
-      str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "),
-            " and ", str_c(input$county2, input$state2, sep = ", "))
+      str_c("COVID in ", str_c(input$county1, reactive_title_for_county1(), sep = ", "),
+            " and ", str_c(input$county2, reactive_title_for_county2(), sep = ", "))
     }
   })
   
@@ -624,7 +638,7 @@ server <- function(input, output) {
     caption.placement = "top")
   
   output$plot <- renderPlot({
-    ggplot(counties(), aes(x = date, color = NAME)) +
+    ggplot(counties(), aes(x = date, color = name)) +
       geom_point(aes_string(y = input$stat2)) +
       geom_smooth(aes_string(y = input$stat2),
                   se = FALSE, 
@@ -643,7 +657,8 @@ server <- function(input, output) {
             axis.text = element_text(size = 12),
             axis.title = element_text(size = 14),
             plot.title = element_text(size = 18),
-            plot.subtitle = element_text(size = 16))
+            plot.subtitle = element_text(size = 16),
+            legend.text = element_text(size = 10))
   })
   
   
