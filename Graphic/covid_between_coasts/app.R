@@ -426,8 +426,11 @@ ui <- fluidPage(
           take you to one of our episodes.")
                )
              ),
+             conditionalPanel(
+               condition = "input.county1",
+               plotOutput("plot")
+             )
              
-             plotOutput("plot")
     )
   )
   
@@ -518,6 +521,15 @@ server <- function(input, output) {
            moving_7_day_avg = "Seven Day Average of New Cases",
            avg_7_day_rate = "Seven Day Average of New Cases per 100,000",
            "Total Number of Cases")
+  })
+  
+  plot_county_title <- reactive({
+    if(is.null(input$county2)){
+      str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "))
+    } else{
+      str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "),
+            " and ", str_c(input$county2, input$state2, sep = ", "))
+    }
   })
   
   pal_data <- reactive({
@@ -623,8 +635,7 @@ server <- function(input, output) {
       scale_y_continuous(n.breaks = 8) +
       labs(x = "Date", 
            y = reactive_data2_titles(),
-           title = str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "),
-                         " and ", str_c(input$county2, input$state2, sep = ", ")),
+           title = plot_county_title(),
            subtitle = reactive_data2_titles(),
            color = "Selected Counties") +
       theme(legend.position = "bottom",
