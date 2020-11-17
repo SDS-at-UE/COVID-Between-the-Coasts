@@ -628,13 +628,17 @@ server <- function(input, output) {
       geom_smooth(aes_string(y = input$stat2),
                   se = FALSE, method = "gam", 
                   formula = y ~ s(x, bs = "cs")) +
+      scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
+      scale_y_continuous(n.breaks = 8) +
       labs(x = "Date", 
            y = str_to_title(str_replace_all(input$stat2, "_", " ")),
            title = str_c(str_to_title(str_replace_all(input$stat2, "_", " ")),
                          " of ", str_c(input$county1, input$state1, sep = ", "),
                          " and ", str_c(input$county2, input$state2, sep = ", ")),
            color = "Selected Counties") +
-      theme(legend.position = "bottom")
+      theme(legend.position = "bottom",
+            axis.text.x = element_text(angle = 45,
+                                       hjust = 1))
   })
   
   
