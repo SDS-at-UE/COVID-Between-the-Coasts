@@ -417,19 +417,22 @@ ui <- fluidPage(
                                       "Death Rate per 100,000" = "death_rate",
                                       "New Cases (Per Day)" = "new_cases",
                                       "7 Day Average" = "moving_7_day_avg",
-                                      "7 Day Avg Rate" = "avg_7_day_rate")),
-                        checkboxInput(inputId = "marker2", "Show stories?",
-                                      TRUE))
+                                      "7 Day Avg Rate" = "avg_7_day_rate"))
+                 )
                ),
                fluidRow(
                  h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
           Click on any county to see COVID-19 information for the date selected. Click on the pin to 
           take you to one of our episodes.")
-               ))
+               )
+             ),
+             
+             plotOutput("plot")
     )
-    
   )
+  
 )
+
 
 
 
@@ -497,6 +500,24 @@ server <- function(input, output) {
                 "Select County 2",
                 choices = county2,
                 selected = NULL)
+  })
+  
+  counties <- reactive({
+    covid_data %>% 
+      filter(NAME %in% c(str_c(input$county1, input$state1, sep = ", "),
+                         str_c(input$county2, input$state2, sep = ", ")))
+  })
+  
+  reactive_data2 <-  reactive({
+    switch(input$stat2,
+           cases = covid_data$cases,
+           deaths = covid_data$deaths,
+           death_rate = covid_data$death_rate,
+           case_rate = covid_data$case_rate,
+           new_cases = covid_map_data$new_cases,
+           moving_7_day_avg = covid_data$moving_7_day_avg,
+           avg_7_day_rate = covid_data$avg_7_day_rate,
+           covid_data$cases)
   })
   
   pal_data <- reactive({
@@ -590,6 +611,31 @@ server <- function(input, output) {
     digits = 0,
     caption = table_caption,
     caption.placement = "top")
+  
+  
+  # ggplot(test, aes(date, avg_7_day_rate, color = NAME)) +
+  #   geom_point() +
+  #   geom_smooth(se = FALSE, method = "gam", formula = y ~ s(x, bs = "cs")) +
+  #   labs(x = "Date", y = str_to_title(str_replace_all("avg_7_day_rate", "_", " ")),
+  #        title = str_c(str_to_title(str_replace_all("avg_7_day_rate", "_", " ")),
+  #                      " of ", str_c("Vanderburgh County", "Indiana", sep = ", "),
+  #                      " and ", str_c("Cook County", "Illinois", sep = ", ")),
+  #        color = "Selected Counties")
+  
+  output$plot <- renderPlot({
+    ggplot(counties(), aes(x = date, color = NAME)) +
+      geom_point(aes_string(y = input$stat2)) +
+      geom_smooth(aes_string(y = input$stat2),
+                  se = FALSE, method = "gam", 
+                  formula = y ~ s(x, bs = "cs")) +
+      labs(x = "Date", 
+           y = str_to_title(str_replace_all(input$stat2, "_", " ")),
+           title = str_c(str_to_title(str_replace_all(input$stat2, "_", " ")),
+                         " of ", str_c(input$county1, input$state1, sep = ", "),
+                         " and ", str_c(input$county2, input$state2, sep = ", ")),
+           color = "Selected Counties") +
+      theme(legend.position = "bottom")
+  })
   
   
 }
