@@ -524,7 +524,7 @@ server <- function(input, output) {
   })
   
   plot_county_title <- reactive({
-    if(is.null(input$county2)){
+    if(input$county2 == ""){
       str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "))
     } else{
       str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "),
