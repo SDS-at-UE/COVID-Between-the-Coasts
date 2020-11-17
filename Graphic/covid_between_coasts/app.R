@@ -401,17 +401,25 @@ ui <- fluidPage(
                                     "Select State 1",
                                     choices = c("Choose one" = "", unique(covid_data$State))),
                         uiOutput("county1"),
-                 ),column(width = 3, 
-                          selectInput(inputId = "stat2", "Choose a Statistic", 
-                                      c("Total Cases" = "cases", 
-                                        "Total Deaths" = "deaths", 
-                                        "Case Rate per 100,000" = "case_rate",
-                                        "Death Rate per 100,000" = "death_rate",
-                                        "New Cases (Per Day)" = "new_cases",
-                                        "7 Day Average" = "moving_7_day_avg",
-                                        "7 Day Avg Rate" = "avg_7_day_rate")),
-                          checkboxInput(inputId = "marker2", "Show stories?",
-                                        TRUE))
+                 ),
+                 column(width = 3,
+                        selectInput("state2",
+                                    "Select State 2",
+                                    choices = c("Optional" = "", unique(covid_data$State)),
+                                    selectize = FALSE),
+                        uiOutput("county2"),
+                 ),
+                 column(width = 3, 
+                        selectInput(inputId = "stat2", "Choose a Statistic", 
+                                    c("Total Cases" = "cases", 
+                                      "Total Deaths" = "deaths", 
+                                      "Case Rate per 100,000" = "case_rate",
+                                      "Death Rate per 100,000" = "death_rate",
+                                      "New Cases (Per Day)" = "new_cases",
+                                      "7 Day Average" = "moving_7_day_avg",
+                                      "7 Day Avg Rate" = "avg_7_day_rate")),
+                        checkboxInput(inputId = "marker2", "Show stories?",
+                                      TRUE))
                ),
                fluidRow(
                  h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
@@ -475,6 +483,19 @@ server <- function(input, output) {
     selectInput("county1",
                 "Select County 1",
                 choices = county1,
+                selected = NULL)
+  })
+  
+  output$county2 <- renderUI({
+    county2 <- filter(covid_data, State == input$state2) %>% 
+      ungroup() %>% 
+      select(county_name) %>% 
+      distinct() %>%
+      arrange(county_name) %>%  
+      pull()
+    selectInput("county2",
+                "Select County 2",
+                choices = county2,
                 selected = NULL)
   })
   
