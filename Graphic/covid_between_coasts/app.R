@@ -626,8 +626,9 @@ server <- function(input, output) {
     ggplot(counties(), aes(x = date, color = NAME)) +
       geom_point(aes_string(y = input$stat2)) +
       geom_smooth(aes_string(y = input$stat2),
-                  se = FALSE, method = "gam", 
-                  formula = y ~ s(x, bs = "cs")) +
+                  se = FALSE, 
+                  method = "gam", 
+                  formula = y ~ s(x, bs = "cs", k = 30)) +
       scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
       scale_y_continuous(n.breaks = 8) +
       labs(x = "Date", 
