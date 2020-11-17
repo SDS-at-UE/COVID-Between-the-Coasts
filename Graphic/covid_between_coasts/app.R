@@ -28,6 +28,7 @@ library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 library(rmapshaper)
+library(housingData) # to get longitude and latitude for US counties
 
 
 #########################################
@@ -237,6 +238,15 @@ final_covid$is_hotspot <- as.integer(as.character(final_covid$is_hotspot) == "Ye
 final_covid$is_hotspot <- as.logical(final_covid$is_hotspot)
 final_covid <- final_covid %>% mutate(new_cases = if_else(new_cases < 0, 0, new_cases))
 
+## Getting county latitude and longitude 
+geo_county <- geoCounty
+geo_county <- geo_county %>% filter(state %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+geo_county <- geo_county[,-c(1,6,7)]
+geo_county <- geo_county %>% rename(county_name = county)
+
+## Joining county geo data to final_covid
+final_covid <- merge(final_covid, geo_county, by = c("county_name","state"), all = TRUE)
+
 ## simplifying county lines
 all_counties <- st_read("Data/All_counties.shp", type = 6)
 states_map <- ms_simplify(all_counties, keep = 0.02)
@@ -244,7 +254,10 @@ states_map <- ms_simplify(all_counties, keep = 0.02)
 ## Getting states shape file data 
 states_map2 <- st_read("Data/All_states.shp", type = 6)
 
-
+## Getting county latitude and longitude 
+geo_county <- geoCounty
+geo_county <- geo_county %>% filter(state %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+geo_county <- geo_county[,-c(1,6,7)]
 
 #graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
 graphic_covid <- final_covid %>% 
@@ -438,21 +451,18 @@ server <- function(input, output) {
                   fillOpacity = 0.7) 
   })
   
-  # observe({
-  #   for (i in seq_along(covid_map_data$is_hotspot)) {
-  #     if(covid_map_data$is_hotspot[i] == TRUE){
-  #       leafletProxy("map_cases")  %>%
-  #         addCircles(data = covid_map_data,
-  #                    color = "black",
-  #                    weight = 3,
-  #                    opacity = .5,
-  #                    radius = 5)
-  #     } else{
-  #       leafletProxy("map_cases") %>% 
-  #         clearMarkers()
-  #     }
-  #   }
-  # })
+  observe({
+    while(covid_map_data$is_hotspot == TRUE){
+      leafletProxy("map_cases") %>% 
+        addCircles(covid_map_data,
+                   lat = ~lat,
+                   lng = ~lon,
+                   radius = 4,
+                   color = "black",
+                   opacity = .5,
+                   group = "hotspot")
+    }
+  })
   
   observe({
     if(input$marker == TRUE){
