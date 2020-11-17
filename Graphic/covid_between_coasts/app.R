@@ -375,22 +375,7 @@ ui <- fluidPage(
                 CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. 
                 These are given in the table below.')),
              
-             tableOutput("unallocated"),
-             
-             div(align = "center",
-                 class = "footer",
-                 wellPanel(
-                   helpText(HTML('COVID-19 data was obtained from 
-                      <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
-                      County boundaries were taken from the Census Bureau and simplified for better rendering. 
-                      COVID Between the Coasts interactive map is powered by
-                      <a href="https://www.shinyapps.io/">shinyapps.io</a>.
-                      </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, 
-                      Ethan Morlock, and Pearl Muensterman, students at the
-                      <a href="https://www.evansville.edu/">University of Evansville</a> 
-                      led by Dr. Darrin Weber.'))
-                 )
-             )    
+             tableOutput("unallocated")   
     ),
     tabPanel("COVID by County",
              wellPanel(
@@ -421,9 +406,8 @@ ui <- fluidPage(
                  )
                ),
                fluidRow(
-                 h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
-          Click on any county to see COVID-19 information for the date selected. Click on the pin to 
-          take you to one of our episodes.")
+                 h5("Select a state, a county, and a statistic to see its progression since the beginning of
+                    the pandemic. Want to compare two counties? Use the State 2 and County 2 dropdown menus.")
                )
              ),
              conditionalPanel(
@@ -431,7 +415,22 @@ ui <- fluidPage(
                plotOutput("plot")
              )
              
-    )
+    ),
+    
+    div(align = "center",
+        class = "footer",
+        wellPanel(
+          helpText(HTML('COVID-19 data was obtained from 
+                      <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
+                      County boundaries were taken from the Census Bureau and simplified for better rendering. 
+                      COVID Between the Coasts interactive app is powered by
+                      <a href="https://www.shinyapps.io/">shinyapps.io</a>.
+                      </br></br>This interactive app was developed by Maya Frederick, Timmy Miller, 
+                      Ethan Morlock, and Pearl Muensterman, students at the
+                      <a href="https://www.evansville.edu/">University of Evansville</a> 
+                      led by Dr. Darrin Weber.'))
+        )
+    ) 
   )
   
 )
