@@ -508,16 +508,16 @@ server <- function(input, output) {
                          str_c(input$county2, input$state2, sep = ", ")))
   })
   
-  reactive_data2 <-  reactive({
+  reactive_data2_titles <-  reactive({
     switch(input$stat2,
-           cases = covid_data$cases,
-           deaths = covid_data$deaths,
-           death_rate = covid_data$death_rate,
-           case_rate = covid_data$case_rate,
-           new_cases = covid_map_data$new_cases,
-           moving_7_day_avg = covid_data$moving_7_day_avg,
-           avg_7_day_rate = covid_data$avg_7_day_rate,
-           covid_data$cases)
+           cases = "Total Number of Cases",
+           deaths = "Total Number of Deaths",
+           death_rate = "Number of Deaths per 100,000",
+           case_rate = "Number of Cases per 100,000",
+           new_cases = "Number of New Cases (by day)",
+           moving_7_day_avg = "Seven Day Average of New Cases",
+           avg_7_day_rate = "Seven Day Average of New Cases per 100,000",
+           "Total Number of Cases")
   })
   
   pal_data <- reactive({
@@ -612,16 +612,6 @@ server <- function(input, output) {
     caption = table_caption,
     caption.placement = "top")
   
-  
-  # ggplot(test, aes(date, avg_7_day_rate, color = NAME)) +
-  #   geom_point() +
-  #   geom_smooth(se = FALSE, method = "gam", formula = y ~ s(x, bs = "cs")) +
-  #   labs(x = "Date", y = str_to_title(str_replace_all("avg_7_day_rate", "_", " ")),
-  #        title = str_c(str_to_title(str_replace_all("avg_7_day_rate", "_", " ")),
-  #                      " of ", str_c("Vanderburgh County", "Indiana", sep = ", "),
-  #                      " and ", str_c("Cook County", "Illinois", sep = ", ")),
-  #        color = "Selected Counties")
-  
   output$plot <- renderPlot({
     ggplot(counties(), aes(x = date, color = NAME)) +
       geom_point(aes_string(y = input$stat2)) +
@@ -632,14 +622,18 @@ server <- function(input, output) {
       scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
       scale_y_continuous(n.breaks = 8) +
       labs(x = "Date", 
-           y = str_to_title(str_replace_all(input$stat2, "_", " ")),
-           title = str_c(str_to_title(str_replace_all(input$stat2, "_", " ")),
-                         " of ", str_c(input$county1, input$state1, sep = ", "),
+           y = reactive_data2_titles(),
+           title = str_c("COVID in ", str_c(input$county1, input$state1, sep = ", "),
                          " and ", str_c(input$county2, input$state2, sep = ", ")),
+           subtitle = reactive_data2_titles(),
            color = "Selected Counties") +
       theme(legend.position = "bottom",
             axis.text.x = element_text(angle = 45,
-                                       hjust = 1))
+                                       hjust = 1),
+            axis.text = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            plot.title = element_text(size = 18),
+            plot.subtitle = element_text(size = 16))
   })
   
   
