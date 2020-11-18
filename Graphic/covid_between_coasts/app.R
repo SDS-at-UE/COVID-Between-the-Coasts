@@ -357,7 +357,7 @@ ui <- fluidPage(
           take you to one of our episodes.")
                )),
              
-             leafletOutput("map_cases", height = 550),
+             leafletOutput("map_cases", height = 525),
              
              helpText(HTML('A note on testing data: A case is defined as any individual
                 who tests positive (via a PCR or antigen test) within a three month window.
@@ -416,9 +416,8 @@ ui <- fluidPage(
                       <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
                       County boundaries were taken from the Census Bureau and simplified for better rendering. 
                       COVID Between the Coasts interactive app is powered by
-                      <a href="https://www.shinyapps.io/">shinyapps.io</a>.
-                      </br></br>This interactive app was developed by Maya Frederick, Timmy Miller, 
-                      Ethan Morlock, and Pearl Muensterman, students at the
+                      <a href="https://www.shinyapps.io/">shinyapps.io</a> and was developed by Maya Frederick, 
+                      Timmy Miller, Ethan Morlock, and Pearl Muensterman, students at the
                       <a href="https://www.evansville.edu/">University of Evansville</a> 
                       led by Dr. Darrin Weber.'))
         )
@@ -568,7 +567,7 @@ server <- function(input, output) {
             options = leafletOptions(zoomSnap = 0,
                                      zoomDelta = 0.25)) %>%
       addProviderTiles(provider = "CartoDB.Positron") %>% 
-      setView(lat = 43.0445, lng = -87.9109, zoom = 5.7) %>%
+      setView(lat = 43.0445, lng = -87.9109, zoom = 5.5) %>%
       addPolygons(data = st_transform(states_map2, crs = "+init=epsg:4326"),
                   group = "state",
                   color = "black",
