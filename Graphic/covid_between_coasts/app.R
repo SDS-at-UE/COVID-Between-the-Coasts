@@ -337,8 +337,8 @@ ui <- fluidPage(
                                     max = max(covid_map_data$date),
                                     value = max(covid_map_data$date),
                                     timeFormat = "%m-%d-%Y",
-                                    step = 3,
-                                    animate = animationOptions(interval = 650))
+                                    step = 7,
+                                    animate = animationOptions(interval = 700))
                  ),column(width = 3, 
                           selectInput(inputId = "stat", "Choose a Statistic", 
                                       c("Total Cases" = "cases", 
