@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 ######################################################
 # Everything in this section is run only once for the 
 # whole application. Multiple users will take advantage
@@ -252,7 +243,8 @@ state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 #Combine county_name and new state column with a comma between them to match format of states_map
-covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ', '))
+covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ", "),
+                                    name = str_c(county_name, state, sep = ", "))
 
 #Creating character vector for layerID in leaflet
 layer_county <- unique(covid_data$NAME)
@@ -334,62 +326,107 @@ legendvalues<- c(1:200000)
 ui <- fluidPage(
   leafletjs, #incorporate https://github.com/rstudio/leaflet/pull/598 JavaScript
   
-  wellPanel(
-    fluidRow(
-      column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
-      column(width = 6,
-             sliderInput(inputId = "dates", "Timeline of COVID", 
-                         min = min(covid_map_data$date),
-                         max = max(covid_map_data$date),
-                         value = max(covid_map_data$date),
-                         timeFormat = "%m-%d-%Y",
-                         step = 3,
-                         animate = animationOptions(interval = 650))
-      ),column(width = 3, 
-               selectInput(inputId = "stat", "Choose a Statistic", 
-                           c("Total Cases" = "cases", 
-                             "Total Deaths" = "deaths", 
-                             "Case Rate per 100,000" = "case_rate",
-                             "Death Rate per 100,000" = "death_rate",
-                             "New Cases (Per Day)" = "new_cases",
-                             "7 Day Average" = "moving_7_day_avg",
-                             "7 Day Avg Rate" = "avg_7_day_rate")),
-               checkboxInput(inputId = "marker", "Show stories?",
-                             TRUE))
-    ),
-    fluidRow(
-      h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
+  tabsetPanel(
+    tabPanel("COVID Timeline",
+             wellPanel(
+               fluidRow(
+                 column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
+                 column(width = 6,
+                        sliderInput(inputId = "dates", "Timeline of COVID", 
+                                    min = min(covid_map_data$date),
+                                    max = max(covid_map_data$date),
+                                    value = max(covid_map_data$date),
+                                    timeFormat = "%m-%d-%Y",
+                                    step = 3,
+                                    animate = animationOptions(interval = 650))
+                 ),column(width = 3, 
+                          selectInput(inputId = "stat", "Choose a Statistic", 
+                                      c("Total Cases" = "cases", 
+                                        "Total Deaths" = "deaths", 
+                                        "Case Rate per 100,000" = "case_rate",
+                                        "Death Rate per 100,000" = "death_rate",
+                                        "New Cases (Per Day)" = "new_cases",
+                                        "7 Day Average" = "moving_7_day_avg",
+                                        "7 Day Avg Rate" = "avg_7_day_rate")),
+                          checkboxInput(inputId = "marker", "Show stories?",
+                                        TRUE))
+               ),
+               fluidRow(
+                 h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
           Click on any county to see COVID-19 information for the date selected. Click on the pin to 
           take you to one of our episodes.")
-    )),
-  
-  leafletOutput("map_cases", height = 550),
-  
-  helpText(HTML('A note on testing data: A case is defined as any individual
+               )),
+             
+             leafletOutput("map_cases", height = 550),
+             
+             helpText(HTML('A note on testing data: A case is defined as any individual
                 who tests positive (via a PCR or antigen test) within a three month window.
                 Serological tests do not count toward this total. For more on classifying cases,
                 see the 
                 <a href="https://wwwn.cdc.gov/nndss/conditions/coronavirus-disease-2019-covid-19/case-definition/2020/08/05/">
                 CDC COVID Case Classification Page</a>. Some cases were not attributed to a county. 
                 These are given in the table below.')),
-  
-  tableOutput("unallocated"),
-  
-  div(align = "center",
-      class = "footer",
-      wellPanel(
-        helpText(HTML('COVID-19 data was obtained from 
+             
+             tableOutput("unallocated")   
+    ),
+    tabPanel("COVID by County",
+             wellPanel(
+               fluidRow(
+                 column(width = 3, align = "center", tags$img(src = "CovidBetweentheCoastsLogo_crop.png", height = "90")),
+                 column(width = 3,
+                        selectInput("state1",
+                                    "Select State 1",
+                                    choices = c("Choose one" = "", unique(covid_data$State))),
+                        uiOutput("county1"),
+                 ),
+                 column(width = 3,
+                        selectInput("state2",
+                                    "Select State 2",
+                                    choices = c("Optional" = "", unique(covid_data$State)),
+                                    selectize = FALSE),
+                        uiOutput("county2"),
+                 ),
+                 column(width = 3, 
+                        selectInput(inputId = "stat2", "Choose a Statistic", 
+                                    c("Total Cases" = "cases", 
+                                      "Total Deaths" = "deaths", 
+                                      "Case Rate per 100,000" = "case_rate",
+                                      "Death Rate per 100,000" = "death_rate",
+                                      "New Cases (Per Day)" = "new_cases",
+                                      "7 Day Average" = "moving_7_day_avg",
+                                      "7 Day Avg Rate" = "avg_7_day_rate"))
+                 )
+               ),
+               fluidRow(
+                 h5("Select a state, a county, and a statistic to see its progression since the beginning of
+                    the pandemic. Want to compare two counties? Use the State 2 and County 2 dropdown menus.")
+               )
+             ),
+             conditionalPanel(
+               condition = "input.county1",
+               plotOutput("plot")
+             )
+             
+    ),
+    
+    div(align = "center",
+        class = "footer",
+        wellPanel(
+          helpText(HTML('COVID-19 data was obtained from 
                       <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
                       County boundaries were taken from the Census Bureau and simplified for better rendering. 
-                      COVID Between the Coasts interactive map is powered by
+                      COVID Between the Coasts interactive app is powered by
                       <a href="https://www.shinyapps.io/">shinyapps.io</a>.
-                      </br></br>This interactive map was developed by Maya Frederick, Timmy Miller, 
+                      </br></br>This interactive app was developed by Maya Frederick, Timmy Miller, 
                       Ethan Morlock, and Pearl Muensterman, students at the
                       <a href="https://www.evansville.edu/">University of Evansville</a> 
                       led by Dr. Darrin Weber.'))
-      )
+        )
+    ) 
   )
+  
 )
+
 
 
 
@@ -431,6 +468,81 @@ server <- function(input, output) {
            moving_7_day_avg = dates()$moving_7_day_avg,
            avg_7_day_rate = dates()$avg_7_day_rate,
            dates()$cases)
+  })
+  
+  output$county1 <- renderUI({
+    county1 <- filter(covid_data, State == input$state1) %>% 
+      ungroup() %>% 
+      select(county_name) %>% 
+      distinct() %>%
+      arrange(county_name) %>%  
+      pull()
+    selectInput("county1",
+                "Select County 1",
+                choices = county1,
+                selected = NULL)
+  })
+  
+  output$county2 <- renderUI({
+    county2 <- filter(covid_data, State == input$state2) %>% 
+      ungroup() %>% 
+      select(county_name) %>% 
+      distinct() %>%
+      arrange(county_name) %>%  
+      pull()
+    selectInput("county2",
+                "Select County 2",
+                choices = county2,
+                selected = NULL)
+  })
+  
+  counties <- reactive({
+    covid_data %>% 
+      filter(NAME %in% c(str_c(input$county1, input$state1, sep = ", "),
+                         str_c(input$county2, input$state2, sep = ", ")))
+  })
+  
+  reactive_title_for_county1 <- reactive({
+    switch(input$state1,
+           Illinois = "IL",
+           Indiana = "IN",
+           Kentucky = "KY",
+           Michigan = "MI",
+           Minnesota = "MN",
+           Ohio = "OH",
+           Wisconsin = "WI")
+  })
+  
+  reactive_title_for_county2 <- reactive({
+    switch(input$state2,
+           Illinois = "IL",
+           Indiana = "IN",
+           Kentucky = "KY",
+           Michigan = "MI",
+           Minnesota = "MN",
+           Ohio = "OH",
+           Wisconsin = "WI")
+  })
+  
+  reactive_data2_titles <-  reactive({
+    switch(input$stat2,
+           cases = "Total Number of Cases",
+           deaths = "Total Number of Deaths",
+           death_rate = "Number of Deaths per 100,000",
+           case_rate = "Number of Cases per 100,000",
+           new_cases = "Number of New Cases (by day)",
+           moving_7_day_avg = "Seven Day Average of New Cases",
+           avg_7_day_rate = "Seven Day Average of New Cases per 100,000",
+           "Total Number of Cases")
+  })
+  
+  plot_county_title <- reactive({
+    if(input$county2 == ""){
+      str_c("COVID in ", str_c(input$county1, reactive_title_for_county1(), sep = ", "))
+    } else{
+      str_c("COVID in ", str_c(input$county1, reactive_title_for_county1(), sep = ", "),
+            " and ", str_c(input$county2, reactive_title_for_county2(), sep = ", "))
+    }
   })
   
   pal_data <- reactive({
@@ -524,6 +636,30 @@ server <- function(input, output) {
     digits = 0,
     caption = table_caption,
     caption.placement = "top")
+  
+  output$plot <- renderPlot({
+    ggplot(counties(), aes(x = date, color = name)) +
+      geom_point(aes_string(y = input$stat2)) +
+      geom_smooth(aes_string(y = input$stat2),
+                  se = FALSE, 
+                  method = "gam", 
+                  formula = y ~ s(x, bs = "cs", k = 30)) +
+      scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
+      scale_y_continuous(n.breaks = 8) +
+      labs(x = "Date", 
+           y = reactive_data2_titles(),
+           title = plot_county_title(),
+           subtitle = reactive_data2_titles(),
+           color = "Selected Counties") +
+      theme(legend.position = "bottom",
+            axis.text.x = element_text(angle = 45,
+                                       hjust = 1),
+            axis.text = element_text(size = 12),
+            axis.title = element_text(size = 14),
+            plot.title = element_text(size = 18),
+            plot.subtitle = element_text(size = 16),
+            legend.text = element_text(size = 10))
+  })
   
   
 }
