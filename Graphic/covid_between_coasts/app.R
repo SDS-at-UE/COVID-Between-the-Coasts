@@ -307,14 +307,11 @@ marker_icons <- icons(
                                                                     "www/ep1.jpg"))))
                             )
                     )),
-  iconWidth = 38, iconHeight = 38,
-  iconAnchorX = 0.1, iconAnchorY = 38,
+  iconWidth = 45, iconHeight = 45,
+  iconAnchorX = 1, iconAnchorY = 45,
 )
 
 table_caption <- as.character(shiny::tags$b("Statewide Unallocated Cases"))
-
-
-legendvalues<- c(1:200000)
 
 
 ######################################################
@@ -353,7 +350,7 @@ ui <- fluidPage(
                ),
                fluidRow(
                  h5("Choose a COVID-19 statistic from the dropdown menu and see how it spread across our region.
-          Click on any county to see COVID-19 information for the date selected. Click on the pin to 
+          Click on any county to see COVID-19 information for the date selected. Click on an image to 
           take you to one of our episodes.")
                )),
              
