@@ -144,6 +144,3 @@ tweetfinal<-str_c(intro_to_tweet, sep="\n", tweetwithspace)
 post_tweet(tweetfinal)
 
 
-str_length(tweetfinal)
-
-
