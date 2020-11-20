@@ -11,13 +11,11 @@ setup_twitter_oauth( consumer_key="6WoyE8SKPd42xyX8cJA7PAAEo",
                      access_secret = "4fp5a0ulTGF8Oc5EQR6rSCwkNEjzhiZS60iVHZC2O5FGg")
 
 
-updateStatus(tweetfinal)
-
 ####new cases for 2020-11-01
 
 graphic_covid <- read_csv("Data/graphic_covid.csv")
 graphic_covid$date<- graphic_covid$date %>% as.character()
-new_cases_for_tweet<- filter(graphic_covid, date=="2020-11-02")
+new_cases_for_tweet<- filter(graphic_covid, date=="2020-11-17")
 new_cases_for_tweet<- new_cases_for_tweet %>% select(date, state, new_cases)
 new_cases_for_tweet<- new_cases_for_tweet %>% group_by(state) %>% summarize(sum(new_cases))
 new_cases_for_tweet$`sum(new_cases)`<- new_cases_for_tweet$`sum(new_cases)` %>%
