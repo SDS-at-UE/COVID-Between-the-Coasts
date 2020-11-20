@@ -139,7 +139,7 @@ states<- str_c(manual_tweet_data$state, sep=",")
 tweet_initial<- str_c( states, dailycases, sep=":")
 tweetwithspace<- str_c(tweet_initial, collapse="\n")
 intro_to_tweet<- "Daily Cases by State (0 cases means the state does not report case data on this day of the week)"
-tweetfinal<-str_c(intro_to_tweet, sep="\n", tweetwithspace)
+tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
 
 post_tweet(tweetfinal)
 
