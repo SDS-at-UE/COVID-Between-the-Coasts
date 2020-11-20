@@ -11,9 +11,6 @@ twitter_token <- create_token(
   access_secret = "4fp5a0ulTGF8Oc5EQR6rSCwkNEjzhiZS60iVHZC2O5FGg")
 
 
-post_tweet("test")
-
-
 covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/") %>% 
   html_nodes('a') %>%
   html_attr('href') %>% 
