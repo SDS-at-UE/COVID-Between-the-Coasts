@@ -452,15 +452,15 @@ server <- function(input, output) {
   })
   
   observe({
-    while(covid_map_data$is_hotspot == TRUE){
+    if(input$marker == TRUE){
+      leafletProxy("map_cases")  %>%
+        addMarkers(data = Marker,
+                   ~Long, ~Lat, 
+                   popup = ~as.character(Link), 
+                   label = ~as.character(City))
+    } else{
       leafletProxy("map_cases") %>% 
-        addCircles(covid_map_data,
-                   lat = ~lat,
-                   lng = ~lon,
-                   radius = 4,
-                   color = "black",
-                   opacity = .5,
-                   group = "hotspot")
+        clearMarkers()
     }
   })
   
