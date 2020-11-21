@@ -301,7 +301,7 @@ marker_icons <- icons(
                                             if_else(Marker$City == "Detroit",
                                                     "www/ep2.jpg",
                                                     if_else(Marker$City == "Louisville",
-                                                            "www/ep7.jpg",
+                                                            "www/ep7_new.jpg",
                                                             if_else(Marker$City == "Milwaukee",
                                                                     "www/ep5.png",
                                                                     "www/ep1.jpg"))))
