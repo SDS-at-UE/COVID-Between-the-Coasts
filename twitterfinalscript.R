@@ -1,6 +1,9 @@
-install.packages("rtweet")
+
 library(rtweet)
 library(tidyverse)
+library(rvest)
+library(lubridate)
+library(RcppRoll)
 
 
 twitter_token <- create_token(
@@ -100,42 +103,27 @@ final_covid <- final_covid %>%
   mutate(new_cases = if_else(new_cases < 0, 0, new_cases),
          avg_7_day_rate = moving_7_day_avg/population*100000)
 
-## simplifying county lines
-all_counties <- st_read("Data/All_counties.shp", type = 6)
-states_map <- ms_simplify(all_counties, keep = 0.02)
-
-## Getting states shape file data 
-states_map2 <- st_read("Data/All_states.shp", type = 6)
-
-
-#graphic_covid gives county_name as "Vanderburgh County" and a separate state column with "IN"
-graphic_covid <- final_covid %>% 
-  filter(!str_detect(county_name, "Statewide Unallocated"))
-
-state_unallocated_data <- final_covid %>% 
-  filter(str_detect(county_name, "Statewide Unallocated")) %>% 
-  ungroup()
 
 #state and their abbreviations
 state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
 
 #Left joining covid and state names by their abbreviations
-covid_data <- left_join(graphic_covid, state_abb_to_name, by = c("state"= "Abb"))
-
-#Combine county_name and new state column with a comma between them to match format of states_map
-covid_data <- covid_data %>% mutate(NAME = str_c(county_name, State, sep = ", "),
-                                    name = str_c(county_name, state, sep = ", "))
+covid_data <- left_join(final_covid, state_abb_to_name, by = c("state"= "Abb"))
 
 covid_data_for_tweets<- covid_data %>% select(date, state, new_cases) %>%
   group_by(date, state) %>% summarize(state_new_cases=sum(new_cases))
 
-manual_tweet_data<- covid_data_for_tweets %>% filter(date=="2020-11-18") 
-
+manual_tweet_data<- covid_data_for_tweets %>% filter(date==max(covid_data_for_tweets$date))
+manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
+                                            "Not Reported", 
+                                            as.character(manual_tweet_data$state_new_cases))
+display_date<-stamp_date("January 22, 2020")
 dailycases<-str_c(manual_tweet_data$state_new_cases, sep=",")
 states<- str_c(manual_tweet_data$state, sep=",")
-tweet_initial<- str_c( states, dailycases, sep=":")
+tweet_initial<- str_c( states, dailycases, sep=": ")
 tweetwithspace<- str_c(tweet_initial, collapse="\n")
-intro_to_tweet<- "Daily Cases by State (0 cases means the state does not report case data on this day of the week)"
+intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", 
+                       display_date(max(covid_data_for_tweets$date)))
 tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
 
 post_tweet(tweetfinal)
