@@ -121,18 +121,6 @@ manual_tweet_data<- covid_data_for_tweets %>% filter(date==max(covid_data_for_tw
 manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
                                             "Not Reported", 
                                             as.character(manual_tweet_data$state_new_cases))
-display_date<-stamp_date("January 22, 2020")
-dailycases<-str_c(manual_tweet_data$state_new_cases, sep=",")
-states<- str_c(manual_tweet_data$state, sep=",")
-tweet_initial<- str_c( states, dailycases, sep=": ")
-tweetwithspace<- str_c(tweet_initial, collapse="\n")
-intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", 
-                       display_date(max(covid_data_for_tweets$date)))
-tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
-
-post_tweet(tweetfinal)
-
-#rolling average tweet
 
 covid_data_for_tweets_rollingavg<- covid_data %>% select(date, state, moving_7_day_avg) %>%
   group_by(date, state) %>% summarize(state_rollingavg=round(sum(moving_7_day_avg)))
@@ -142,14 +130,18 @@ manual_tweet_data_rollingavg<- covid_data_for_tweets_rollingavg %>%
 
 display_date<-stamp_date("January 22, 2020")
 dailyrollingavg<-str_c(manual_tweet_data_rollingavg$state_rollingavg, sep=",")
-states_rollingavg<- str_c(manual_tweet_data_rollingavg$state, sep=",")
-tweet_initial_rollingavg<- str_c( states_rollingavg, dailyrollingavg, sep=": ")
-tweetwithspace_rollingavg<- str_c(tweet_initial_rollingavg, collapse="\n")
-intro_to_tweet_rollingavg<- str_c("Daily Case Rolling Average by State for ", 
-                                  display_date(max(covid_data_for_tweets_rollingavg$date)-6), " through ",
-                       display_date(max(covid_data_for_tweets_rollingavg$date)))
-tweetfinal_rollingavg<-str_c(intro_to_tweet_rollingavg, sep="\n\n", tweetwithspace_rollingavg)
 
-post_tweet(tweetfinal_rollingavg)
+display_date<-stamp_date("January 22, 2020")
+dailycases<-str_c(manual_tweet_data$state_new_cases, sep=",")
+states<- str_c(manual_tweet_data$state, sep=",")
+tweet_initial<- str_c( states, dailycases, sep=": ")
+tweetwithspace<- str_c(tweet_initial, collapse="\n", " (",dailyrollingavg,")")
+intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", 
+                       display_date(max(covid_data_for_tweets$date)), 
+                       " (Daily Rolling Average in Parentheses)")
+tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
+
+post_tweet(tweetfinal)
+
 
 
