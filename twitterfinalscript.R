@@ -118,6 +118,7 @@ covid_data_for_tweets<- covid_data %>% select(date, state, new_cases) %>%
   group_by(date, state) %>% summarize(state_new_cases=sum(new_cases))
 
 manual_tweet_data<- covid_data_for_tweets %>% filter(date==max(covid_data_for_tweets$date))
+# manual_tweet_data <- covid_data_for_tweets %>% filter(date == "2020-12-31")##############################################
 manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
                                             "Not Reported", 
                                             as.character(manual_tweet_data$state_new_cases))
@@ -127,6 +128,8 @@ covid_data_for_tweets_rollingavg<- covid_data %>% select(date, state, moving_7_d
 
 manual_tweet_data_rollingavg<- covid_data_for_tweets_rollingavg %>% 
   filter(date==max(covid_data_for_tweets_rollingavg$date))
+# manual_tweet_data_rollingavg <- covid_data_for_tweets_rollingavg %>% #####################################################
+#  filter(date == "2020-12-31")###########################################################################################
 
 display_date<-stamp_date("January 22, 2020")
 dailyrollingavg<-str_c(manual_tweet_data_rollingavg$state_rollingavg, sep=",")
@@ -139,9 +142,15 @@ tweetwithspace<- str_c(tweet_initial, collapse="\n", " (",dailyrollingavg,")")
 intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", 
                        display_date(max(covid_data_for_tweets$date)), 
                        " (7-day Moving Average in Parentheses)")
+# intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", ####################################################
+#                        display_date(as_date("2020-12-31")), ##########################################################
+#                        " (7-day Moving Average in Parentheses)")#####################################################
 tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
 
 post_tweet(tweetfinal)
 
+noupdatetweet <- "No updated data from usafacts.org today. Check back tomorrow."
+
+post_tweet(noupdatetweet)
 
 
