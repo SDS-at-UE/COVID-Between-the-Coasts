@@ -147,10 +147,20 @@ intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ",
 #                        " (7-day Moving Average in Parentheses)")#####################################################
 tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
 
-post_tweet(tweetfinal)
+
+
+
 
 noupdatetweet <- "No updated data from usafacts.org today. Check back tomorrow."
 
-post_tweet(noupdatetweet)
+### make date of tweet compatible with sys.date()
+
+date_check<-as.Date(pull(manual_tweet_data[1,1], date))
+
+ifelse(date_check==Sys.Date()-1, post_tweet(tweetfinal), post_tweet(noupdatetweet) )
+
+
+
+
 
 
