@@ -47,21 +47,21 @@ population <- read_csv(covid_html_data[3],
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
-cases <- cases[,-c(1,4)]
+cases <- select(cases, -ends_with("FIPS"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
-deaths <- deaths[,-c(1,4)]
+deaths <- select(deaths, -ends_with("FIPS"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
-population <- population[,-1]
+population <- select(population, -ends_with("FIPS"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
-  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases", names_transform = list(date = as_date))
 
 deaths <- deaths %>% 
-  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths", names_transform = list(date = as_date))
 
 # Converting cases and deaths to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
@@ -89,9 +89,9 @@ final_covid <- final_covid %>% rename(state = State)
 
 # Fixing the date
 
-final_covid$date <- as_date(final_covid$date, 
-                            tz = "America/Chicago", 
-                            format = "%m/%d/%y")
+# final_covid$date <- as_date(final_covid$date, 
+#                             tz = "America/Chicago", 
+#                             format = "%m/%d/%y")
 
 
 # creating new_cases, 7 day moving average, and 7 day average per 100K metric
@@ -117,16 +117,8 @@ covid_data <- left_join(final_covid, state_abb_to_name, by = c("state"= "Abb"))
 covid_data_for_tweets<- covid_data %>% select(date, state, new_cases) %>%
   group_by(date, state) %>% summarize(state_new_cases=sum(new_cases))
 
-####################################################################################
-####################################################################################
-tweet_date <- max(covid_data_for_tweets$date)
-###############
-#tweet_date <- as_date("2021-01-07")
-####################################################################################
-
-
-manual_tweet_data<- covid_data_for_tweets %>% filter(date == tweet_date)
-
+manual_tweet_data<- covid_data_for_tweets %>% filter(date==max(covid_data_for_tweets$date))
+# manual_tweet_data <- covid_data_for_tweets %>% filter(date == "2020-12-31")##############################################
 manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
                                             "Not Reported", 
                                             as.character(manual_tweet_data$state_new_cases))
@@ -135,8 +127,9 @@ covid_data_for_tweets_rollingavg<- covid_data %>% select(date, state, moving_7_d
   group_by(date, state) %>% summarize(state_rollingavg=round(sum(moving_7_day_avg)))
 
 manual_tweet_data_rollingavg<- covid_data_for_tweets_rollingavg %>% 
-  filter(date == tweet_date)
-
+  filter(date==max(covid_data_for_tweets_rollingavg$date))
+# manual_tweet_data_rollingavg <- covid_data_for_tweets_rollingavg %>% #####################################################
+#  filter(date == "2020-12-31")###########################################################################################
 
 display_date<-stamp_date("January 22, 2020")
 dailyrollingavg<-str_c(manual_tweet_data_rollingavg$state_rollingavg, sep=",")
@@ -146,14 +139,17 @@ dailycases<-str_c(manual_tweet_data$state_new_cases, sep=",")
 states<- str_c(manual_tweet_data$state, sep=",")
 tweet_initial<- str_c( states, dailycases, sep=": ")
 tweetwithspace<- str_c(tweet_initial, collapse="\n", " (",dailyrollingavg,")")
-
 intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", 
-                       display_date(tweet_date), 
+                       display_date(max(covid_data_for_tweets$date)), 
                        " (7-day Moving Average in Parentheses)")
-
-
-
+# intro_to_tweet<- str_c("Daily Newly Reported Cases by State for ", ####################################################
+#                        display_date(as_date("2020-12-31")), ##########################################################
+#                        " (7-day Moving Average in Parentheses)")#####################################################
 tweetfinal<-str_c(intro_to_tweet, sep="\n\n", tweetwithspace)
+
+
+
+
 
 noupdatetweet <- "No updated data from usafacts.org today. Check back tomorrow."
 
