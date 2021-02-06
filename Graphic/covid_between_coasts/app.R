@@ -164,21 +164,21 @@ population <- read_csv(covid_html_data[3],
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
-cases <- cases[,-c(1,4)]
+cases <- cases %>% select(-ends_with("FIPS"))
 cases <- cases %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
-deaths <- deaths[,-c(1,4)]
+deaths <- deaths %>% select(-ends_with("FIPS"))
 deaths <- deaths %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
-population <- population[,-1]
+population <- population %>% select(-ends_with("FIPS"))
 population <- population %>% filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
 
 # Formatting using the pivot_longer function
 cases <- cases %>% 
-  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "cases", names_transform = list(date = as_date))
 
 deaths <- deaths %>% 
-  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths")
+  pivot_longer(!c(county_name, State), names_to = "date", values_to = "deaths", names_transform = list(date = as_date))
 
 # Converting cases and deaths to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
@@ -206,9 +206,9 @@ final_covid <- final_covid %>% rename(state = State)
 
 # Fixing the date
 
-final_covid$date <- as_date(final_covid$date, 
-                            tz = "America/Chicago", 
-                            format = "%m/%d/%y")
+# final_covid$date <- as_date(final_covid$date, 
+#                             tz = "America/Chicago", 
+#                             format = "%m/%d/%y")
 
 
 # creating new_cases, 7 day moving average, and 7 day average per 100K metric
