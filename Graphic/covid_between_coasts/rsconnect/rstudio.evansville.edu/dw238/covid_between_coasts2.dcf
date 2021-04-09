@@ -1,0 +1,12 @@
+name: covid_between_coasts2
+title: covid_between_coasts
+username: dw238
+account: dw238
+server: rstudio.evansville.edu
+hostUrl: https://rstudio.evansville.edu/__api__
+appId: 2
+bundleId: 15
+url: https://rstudio.evansville.edu/content/2/
+when: 1618008337.32967
+asMultiple: FALSE
+asStatic: FALSE
