@@ -335,7 +335,7 @@ ui <- fluidPage(
                                     value = max(covid_map_data$date),
                                     timeFormat = "%m-%d-%Y",
                                     step = 4,
-                                    animate = animationOptions(interval = 250))
+                                    animate = animationOptions(interval = 300))
                  ),column(width = 3, 
                           selectInput(inputId = "stat", "Choose a Statistic", 
                                       c("Total Cases" = "cases", 
@@ -413,7 +413,7 @@ ui <- fluidPage(
                       <a href="https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/">USA Facts</a>.
                       County boundaries were taken from the Census Bureau and simplified for better rendering. 
                       COVID Between the Coasts interactive app is powered by
-                      <a href="https://www.shinyapps.io/">shinyapps.io</a> and was developed by Maya Frederick, 
+                      <a href="https://www.rstudio.com/products/connect/">RStudio Connect</a> and was developed by Maya Frederick, 
                       Timmy Miller, Ethan Morlock, and Pearl Muensterman, students at the
                       <a href="https://www.evansville.edu/">University of Evansville</a> 
                       led by Dr. Darrin Weber.'))
