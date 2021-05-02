@@ -19,6 +19,7 @@ library(lubridate)
 library(RColorBrewer)
 library(RcppRoll) #for the roll_mean calculation of the 7-day moving average
 library(rmapshaper)
+library(plotly)
 
 
 #########################################
@@ -401,7 +402,7 @@ ui <- fluidPage(
              ),
              conditionalPanel(
                condition = "input.county1",
-               plotOutput("plot")
+               plotlyOutput("plot", height = "500px")
              )
              
     ),
@@ -532,6 +533,18 @@ server <- function(input, output) {
            "Total Number of Cases")
   })
   
+  reactive_data2_y_axis_label <-  reactive({
+    switch(input$stat2,
+           cases = "Cases",
+           deaths = "Deaths",
+           death_rate = "Deaths per 100,000",
+           case_rate = "Cases per 100,000",
+           new_cases = "Cases",
+           moving_7_day_avg = "Cases",
+           avg_7_day_rate = "Cases per 100,000",
+           "Cases")
+  })
+  
   plot_county_title <- reactive({
     if(input$county2 == ""){
       str_c("COVID in ", str_c(input$county1, reactive_title_for_county1(), sep = ", "))
@@ -633,28 +646,37 @@ server <- function(input, output) {
     caption = table_caption,
     caption.placement = "top")
   
-  output$plot <- renderPlot({
-    ggplot(counties(), aes(x = date, color = name)) +
-      geom_point(aes_string(y = input$stat2)) +
-      geom_smooth(aes_string(y = input$stat2),
-                  se = FALSE, 
-                  method = "gam", 
-                  formula = y ~ s(x, bs = "cs", k = 30)) +
-      scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
-      scale_y_continuous(n.breaks = 8) +
-      labs(x = "Date", 
-           y = reactive_data2_titles(),
-           title = plot_county_title(),
-           subtitle = reactive_data2_titles(),
-           color = "Selected Counties") +
-      theme(legend.position = "bottom",
-            axis.text.x = element_text(angle = 45,
-                                       hjust = 1),
-            axis.text = element_text(size = 12),
-            axis.title = element_text(size = 14),
-            plot.title = element_text(size = 18),
-            plot.subtitle = element_text(size = 16),
-            legend.text = element_text(size = 10))
+  output$plot <- renderPlotly({
+    ggplotly(
+      ggplot(counties(), aes(x = date, color = name)) +
+        geom_point(aes_string(y = input$stat2)) +
+        geom_smooth(aes_string(y = input$stat2),
+                    se = FALSE, 
+                    method = "gam", 
+                    formula = y ~ s(x, bs = "cs", k = 30)) +
+        scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
+        scale_y_continuous(n.breaks = 8) +
+        labs(x = "Date", 
+             y = reactive_data2_y_axis_label(),
+             title = plot_county_title(),
+             subtitle = reactive_data2_titles(),
+             color = "Selected Counties") +
+        theme(legend.position = "bottom",
+              axis.text.x = element_text(angle = 45,
+                                         hjust = 1),
+              axis.text = element_text(size = 8),
+              axis.title = element_text(size = 14),
+              plot.title = element_text(size = 18),
+              plot.subtitle = element_text(size = 16),
+              legend.text = element_text(size = 10))
+    ) %>%
+      layout(legend = list(orientation = "h",  
+                           xanchor = "center",
+                           x = 0.5,
+                           y = -0.3),
+             title = list(text = paste0(plot_county_title(),
+                                        "<br>", "<sup>", reactive_data2_titles(), "</sup>"))) %>% 
+      config(modeBarButtonsToRemove = list("hoverCompareCartesian"))
   })
   
   
