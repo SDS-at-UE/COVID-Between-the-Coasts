@@ -648,10 +648,12 @@ server <- function(input, output) {
   
   output$plot <- renderPlotly({
     ggplotly(
-      ggplot(counties(), aes(x = date, color = name)) +
-        geom_point(aes_string(y = input$stat2)) +
-        geom_smooth(aes_string(y = input$stat2),
-                    se = FALSE, 
+      ggplot(counties(), 
+             aes_string(x = "date", 
+                        color = "name", 
+                        y = input$stat2)) +
+        geom_point() +
+        geom_smooth(se = FALSE, 
                     method = "gam", 
                     formula = y ~ s(x, bs = "cs", k = 30)) +
         scale_x_date(date_labels = "%m/%d/%y", date_breaks = "2 weeks") +
@@ -673,7 +675,7 @@ server <- function(input, output) {
       layout(legend = list(orientation = "h",  
                            xanchor = "center",
                            x = 0.5,
-                           y = -0.3),
+                           y = -0.25),
              title = list(text = paste0(plot_county_title(),
                                         "<br>", "<sup>", reactive_data2_titles(), "</sup>"))) %>% 
       config(modeBarButtonsToRemove = list("hoverCompareCartesian"))
