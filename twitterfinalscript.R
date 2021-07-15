@@ -4,14 +4,16 @@ library(tidyverse)
 library(rvest)
 library(lubridate)
 library(RcppRoll)
+library(dotenv)
 
+load_dot_env()
 
 twitter_token <- create_token(
-  app = "WNINCovidBetweentheCoasts",
-  consumer_key = "6WoyE8SKPd42xyX8cJA7PAAEo",
-  consumer_secret = "vBeKwvD8AvsGlAvSUZyZSCuquuwBja7VowOg0KtNVLYGVptIsL",
-  access_token = "1327467001850322944-tv4VeJdEAnMPZ8YnhxKDWr5FDeUzyM",
-  access_secret = "4fp5a0ulTGF8Oc5EQR6rSCwkNEjzhiZS60iVHZC2O5FGg")
+  app = Sys.getenv("TWITTER_APP"),
+  consumer_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
+  consumer_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
+  access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
+  access_secret = Sys.getenv("TWITTER_ACCESS_SECRET"))
 
 
 covid_html_data <- 

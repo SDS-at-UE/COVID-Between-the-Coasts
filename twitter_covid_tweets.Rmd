@@ -3,6 +3,8 @@ title: "Twitter COVID Tweets"
 author: "Timmy Miller and Darrin Weber"
 date: "5/20/2021"
 output: html_document
+resource_files:
+- .env
 ---
 
 ```{r setup, include=FALSE}
@@ -12,25 +14,27 @@ library(tidyverse)
 library(rvest)
 library(lubridate)
 library(RcppRoll)
+library(dotenv)
 ```
 
 
 ## Purpose
 
-The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and Que Pasa Midwest? It runs every day at 6:00 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
+The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and ¿Qué Pasa, Midwest? It runs every day at 6:00 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
 
 This script was created and written by Timmy Miller with minor edits by Darrin Weber. Darrin Weber also published the document to UE's RStudio Connect server. 
 
 ## Script
 
 ```{r}
-twitter_token <- create_token(
-  app = "WNINCovidBetweentheCoasts",
-  consumer_key = "6WoyE8SKPd42xyX8cJA7PAAEo",
-  consumer_secret = "vBeKwvD8AvsGlAvSUZyZSCuquuwBja7VowOg0KtNVLYGVptIsL",
-  access_token = "1327467001850322944-tv4VeJdEAnMPZ8YnhxKDWr5FDeUzyM",
-  access_secret = "4fp5a0ulTGF8Oc5EQR6rSCwkNEjzhiZS60iVHZC2O5FGg")
+load_dot_env()
 
+twitter_token <- create_token(
+  app = Sys.getenv("TWITTER_APP"),
+  consumer_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
+  consumer_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
+  access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
+  access_secret = Sys.getenv("TWITTER_ACCESS_SECRET"))
 
 covid_html_data <- 
   read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map") %>% 
@@ -204,7 +208,7 @@ noupdatetweet <- "No updated data from usafacts.org today. Check back tomorrow."
 
 date_check <- as.Date(pull(manual_tweet_data[1,1], date))
 
-ifelse(date_check == Sys.Date()-1, 
+ifelse(date_check %in% (Sys.Date()-c(1,2)), 
        post_tweet(tweetfinal), 
        post_tweet(noupdatetweet))
 ```

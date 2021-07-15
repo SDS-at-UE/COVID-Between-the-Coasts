@@ -1,0 +1,13 @@
+name: twitter_covid_tweets
+title: twitter_covid_tweets
+username: dw238
+account: dw238
+server: rstudio.evansville.edu
+hostUrl: https://rstudio.evansville.edu/__api__
+appId: 7
+bundleId: 32
+url: https://rstudio.evansville.edu/content/7/
+when: 1626306135.10483
+lastSyncTime: 1626306135.10483
+asMultiple: FALSE
+asStatic: FALSE

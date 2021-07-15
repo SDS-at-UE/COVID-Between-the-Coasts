@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+*.env
+twitter_covid_tweets_twitter_token.R
