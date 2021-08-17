@@ -1,0 +1,512 @@
+connectAPIKey <- "s5fA0XrlTVm3XoE8tzHXpEsjlEvDqVyr"
+resp <- httr::GET(connectServer,
+path = "/content/24/mean",
+query = list(smaples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "/content/24/mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = '/content/24/mean',
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "/content/24/mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "/content/24/mean",
+query = list(samples = 5))
+resp <- httr::GET(connectServer,
+path = qq("/content/24/mean"),
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "\content\24\mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "\content\24\mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "\content\24\mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- httr::GET(connectServer,
+path = "/content/24/mean",
+query = list(samples = 5),
+add_headers(Authorization = paste0("Key ", connectAPIKey)))
+resp <- GET(
+paste0(connectServer, "__api__/v1/instrumentation/shiny/usage?limit=25"),
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+connectServer <- "https://rstudio.evansville.edu/"
+connectAPIKey <- "s5fA0XrlTVm3XoE8tzHXpEsjlEvDqVyr"
+resp <- GET(
+paste0(connectServer, "__api__/v1/instrumentation/shiny/usage?limit=25"),
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+print(payload$results)
+while(!is.null(payload$paging[["next"]])) {
+resp <- GET(
+payload$paging[["next"]],
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+print(payload$results)
+}
+prefix <- "dw"
+response <- GET(
+paste0(connectServer, "__api__/v1/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+prefix <- ""
+response <- GET(
+paste0(connectServer, "__api__/v1/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+prefix <- "dw238"
+response <- GET(
+paste0(connectServer, "__api__/v1/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+prefix <- "dw238"
+response <- GET(
+paste0(connectServer, "__api__/vl/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+response <- GET(
+paste0(connectServer, "__api__/vl/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+content(response)
+response <- GET(
+paste0(connectServer, "__api__/v1/users/remote"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+content(response)
+response <- GET(
+paste0(connectServer, "__api__/v1/users"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+prefix <- ""
+response <- GET(
+paste0(connectServer, "__api__/v1/users"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+usage_data <- list()
+i <- 0
+resp <- GET(
+paste0(connectServer, "__api__/v1/instrumentation/shiny/usage?limit=25"),
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+print(payload$results)
+usage_data <- list()
+i <- 0
+while(!is.null(payload$paging[["next"]])) {
+i <- i+1
+resp <- GET(
+payload$paging[["next"]],
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+usage_date[[i]] <- payload$results
+}
+while(!is.null(payload$paging[["next"]])) {
+i <- i+1
+resp <- GET(
+payload$paging[["next"]],
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+usage_data[[i]] <- payload$results
+}
+resp <- GET(
+paste0(connectServer, "__api__/v1/instrumentation/shiny/usage?limit=1"),
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+print(payload$results)
+usage_data <- list()
+i <- 0
+while(!is.null(payload$paging[["next"]])) {
+i <- i+1
+resp <- GET(
+payload$paging[["next"]],
+add_headers(Authorization = paste("Key", connectAPIKey))
+)
+payload <- content(resp)
+usage_data[[i]] <- payload$results
+}
+test_data <- flatten(usage_data)
+test_data <- flatten(flatten(usage_data))
+str(test_data)
+str(usage_data)
+test_data2 <- unnest_longer(usage_data)
+test_data2 <- unnest_longer(usage_data, 1)
+names(usage_data[[1]])
+names(usage_data[[1]][[1]])
+column_names <- names(usage_data[[1]][[1]])
+column_names <- names(usage_data[[1]][[1]])
+usage <- usage_data %>%
+map_dfr(function(x) {
+x <- as.data.frame(x)
+colnames(x) <- column_names
+x
+}) %>%
+as_tibble()
+usage <- usage_data %>%
+map_dfr(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x}) %>%
+as_tibble()
+usage <- usage_data %>%
+map(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x}) %>%
+bind_rows() %>%
+as_tibble()
+str(letters[1:5])
+tail(usage_data)
+usage_data %>%
+map(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x})
+usage_data %>%
+map_dfr(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x})
+str(usage_data)
+usage <- usage_data %>%
+map_dfr(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x}) %>%
+as_tibble()
+usage_data[[1:3]]
+head(usage_data)
+usage_data[[1]]
+usage_data[[2]]
+usage_data[[1:2]]
+usage_data[1:2]
+usage <- usage_data[1:3] %>%
+map_dfr(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x}) %>%
+as_tibble()
+usage
+usage <- usage_data[1:4] %>%
+map_dfr(function(x) {x <- as.data.frame(x); colnames(x) <- column_names; x}) %>%
+as_tibble()
+usage <- map_df(usage_data, flatten)
+library(lubridate)
+usage <- map_df(usage_data, flatten) %>%
+mutate(started = as_datetime(started),
+ended = as_datetime(ended))
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc")
+usage
+prefix <- ""
+response <- GET(
+paste0(connectServer, "__api__/v1/users"),
+add_headers(Authorization = paste("Key", connectAPIKey)),
+query = list(prefix = prefix)
+)
+results <- content(response)$results
+formatGuid <- function(guid) {
+if (is.null(guid)) {
+"NULL"
+} else {
+guid
+}
+}
+cat(sprintf("FIRST\tLAST\tUSERNAME\tGUID\n"))
+for(user in results){
+cat(
+sprintf("%s\t%s\t%s\t\t%s\n",
+user$first_name,
+user$last_name,
+user$username,
+formatGuid(user$guid)
+)
+)
+}
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc",
+is.na(user_guid))
+cbc_app
+summary(cbc_app)
+usage <- map_df(usage_data, flatten) %>%
+mutate(started = as_datetime(started),
+ended = as_datetime(ended),
+data_version = as.logical(data_version))
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc",
+is.na(user_guid))
+summary(cbc_app)
+summary(usage)
+ggplot(cbc_app) +
+geom_density(aes(started))
+ggplot(cbc_app) +
+geom_dotplot(aes(started))
+ggplot(cbc_app) +
+geom_histogram(aes(started))
+usage <- map_df(usage_data, flatten) %>%
+mutate(started = as_datetime(started),
+ended = as_datetime(ended),
+data_version = as.logical(data_version),
+start_date = date(started))
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc",
+is.na(user_guid))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date))
+cbc_app
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+########################
+# Search for Users
+########################
+prefix <- ""
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1)
+cbc_app %>%
+group_by(start_date) %>%
+summarize(count = n())
+cbc_app %>%
+group_by(start_date) %>%
+summarize(count = n()) %>%
+summarize(sum = sum(count))
+usage <- map_df(usage_data, flatten) %>%
+mutate(started = as_datetime(started),
+ended = as_datetime(ended),
+data_version = as.logical(data_version),
+start_date = date(started),
+session_length = ended - started)
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc",
+is.na(user_guid))
+cbc_app
+View(cbc_app)
+usage <- map_df(usage_data, flatten) %>%
+mutate(started = as_datetime(started),
+ended = as_datetime(ended),
+data_version = as.logical(data_version),
+start_date = date(started),
+session_length = as.duration(ended - started))
+cbc_app <- usage %>%
+filter(content_guid == "6fb07c03-ccc0-4cda-b044-65948ff6b0fc",
+is.na(user_guid))
+cbc_app
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "1 week")
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks")
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors")
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axix.text.x = element_text(angle = 45))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 5, vjust = 5))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 5))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 0, vjust = 0))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "2 weeks") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "1 week") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "1 week") +
+labs(x = "Date",
+y = "Number of Visitors") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "1 week") +
+labs(x = "Date",
+y = "Number of Visitors",
+title = "Number of Browsers That Opened The Updated CBC App") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "1 week") +
+labs(x = "Date",
+y = "Number of Browsers",
+title = "Number of Browsers That Opened The Updated CBC App") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+ggplot(cbc_app) +
+geom_histogram(aes(start_date), binwidth = 1) +
+scale_x_date(date_labels = "%m/%d", date_breaks = "1 week") +
+labs(x = "Date",
+y = "Number of Browsers",
+title = "Number of Browsers that Opened the Updated CBC App") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+summary(cbc_app)
+ggplot(cbc_app) +
+geom_histogram(aes(session_length))
+6960/60
+ggplot(cbc_app) +
+geom_histogram(aes(session_length), bins = 116)
+3600/60
+ggplot(cbc_app) +
+geom_histogram(aes(session_length), bins = 116) +
+scale_x_continuous()
+ggplot(cbc_app) +
+geom_histogram(aes(session_length/60), bins = 116) +
+scale_x_continuous()
+ggplot(cbc_app) +
+geom_histogram(aes(session_length/60), bins = 116) +
+labs(x = "Session Duration (in minutes)",
+y = "Number of Sessions",
+title = "Breakdown of Session Duration for the Updated CBC App")
