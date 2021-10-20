@@ -20,7 +20,7 @@ library(dotenv)
 
 ## Purpose
 
-The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and ¿Qué Pasa, Midwest? It runs every day at 6:00 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
+The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and ¿Qué Pasa, Midwest? It runs every day at 6:30 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
 
 This script was created and written by Timmy Miller with minor edits by Darrin Weber. Darrin Weber also published the document to UE's RStudio Connect server. 
 
