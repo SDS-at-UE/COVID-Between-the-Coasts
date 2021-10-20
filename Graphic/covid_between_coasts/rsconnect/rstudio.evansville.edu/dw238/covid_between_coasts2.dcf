@@ -5,8 +5,9 @@ account: dw238
 server: rstudio.evansville.edu
 hostUrl: https://rstudio.evansville.edu/__api__
 appId: 2
-bundleId: 25
+bundleId: 33
 url: https://rstudio.evansville.edu/wnin/cbc/app/
-when: 1619938997.6721
+when: 1632240695.78006
+lastSyncTime: 1632240695.78006
 asMultiple: FALSE
 asStatic: FALSE

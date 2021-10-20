@@ -345,7 +345,8 @@ ui <- fluidPage(
                                         "Death Rate per 100,000" = "death_rate",
                                         "New Cases (Per Day)" = "new_cases",
                                         "7 Day Average" = "moving_7_day_avg",
-                                        "7 Day Avg Rate" = "avg_7_day_rate")),
+                                        "7 Day Avg Rate" = "avg_7_day_rate"),
+                                      selected = "avg_7_day_rate"),
                           checkboxInput(inputId = "marker", "Show stories?",
                                         TRUE))
                ),
@@ -392,7 +393,8 @@ ui <- fluidPage(
                                       "Death Rate per 100,000" = "death_rate",
                                       "New Cases (Per Day)" = "new_cases",
                                       "7 Day Average" = "moving_7_day_avg",
-                                      "7 Day Avg Rate" = "avg_7_day_rate"))
+                                      "7 Day Avg Rate" = "avg_7_day_rate"),
+                                    selected = "avg_7_day_rate")
                  )
                ),
                fluidRow(
