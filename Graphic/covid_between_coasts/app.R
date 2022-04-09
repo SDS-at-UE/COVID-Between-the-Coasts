@@ -139,21 +139,25 @@ covid_html_data <- read_html("https://usafacts.org/visualizations/coronavirus-co
 
 # Extracting the data from the csv files 
 
-cases <- read_csv(covid_html_data[1],
+locate_cases <- str_which(covid_html_data, "confirmed")[1]
+locate_deaths <- str_which(covid_html_data, "deaths")[1]
+locate_population <- str_which(covid_html_data, "population")[1]
+
+cases <- read_csv(covid_html_data[locate_cases],
                   col_types = cols(
                     .default = col_character(),
                     `County Name` = col_character(),
                     State = col_character()
                   )) %>% 
   rename(county_name = `County Name`)
-deaths <- read_csv(covid_html_data[2],
+deaths <- read_csv(covid_html_data[locate_deaths],
                    col_types = cols(
                      .default = col_character(),
                      `County Name` = col_character(),
                      State = col_character()
                    )) %>% 
   rename(county_name = `County Name`)
-population <- read_csv(covid_html_data[3],
+population <- read_csv(covid_html_data[locate_population],
                        col_types = cols(
                          countyFIPS = col_double(),
                          `County Name` = col_character(),
