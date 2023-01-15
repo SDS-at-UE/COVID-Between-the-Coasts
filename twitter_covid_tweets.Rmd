@@ -29,13 +29,25 @@ This script was created and written by Timmy Miller with minor edits by Darrin W
 ```{r}
 load_dot_env()
 
-twitter_token <- create_token(
-  app = Sys.getenv("TWITTER_APP"),
-  consumer_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
-  consumer_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
+# Grab Twitter data
+twitter_bot <- rtweet_bot(
+  # app = Sys.getenv("TWITTER_APP"),
+  api_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
+  api_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
   access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
   access_secret = Sys.getenv("TWITTER_ACCESS_SECRET"))
 
+past_tweets <- get_timeline("@WNINCovid", n = 100, token = twitter_bot)
+
+# Grab the date of the last legitimate updated COVID numbers
+last_update <- past_tweets %>% 
+  filter(str_detect(text, "^Daily")) %>% 
+  select(created_at) %>% 
+  pull() %>% 
+  max() %>% 
+  date()
+
+# Grab COVID data
 covid_html_data <- 
   read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map") %>% 
   html_nodes('a') %>%
@@ -168,7 +180,7 @@ covid_data_for_tweets <- covid_data %>%
   summarize(state_new_cases=sum(new_cases))
 
 manual_tweet_data <- covid_data_for_tweets %>% 
-  filter(date==max(covid_data_for_tweets$date))
+  filter(date == max(covid_data_for_tweets$date))
 # manual_tweet_data <- covid_data_for_tweets %>% ########################################################
 #   filter(date == "2021-05-17") ########################################################################
 manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
