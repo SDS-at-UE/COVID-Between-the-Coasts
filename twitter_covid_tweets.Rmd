@@ -88,16 +88,13 @@ population <- read_csv(covid_html_data[locate_population],
 ##### Data Cleaning #####
 
 # Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
-cases <- select(cases, -ends_with("FIPS"))
-cases <- cases %>% 
+cases <- select(cases, -ends_with("FIPS")) %>% 
   filter(State %in% cbc_states)
 
-deaths <- select(deaths, -ends_with("FIPS"))
-deaths <- deaths %>% 
+deaths <- select(deaths, -ends_with("FIPS")) %>% 
   filter(State %in% cbc_states)
 
-population <- select(population, -ends_with("FIPS"))
-population <- population %>% 
+population <- select(population, -ends_with("FIPS")) %>% 
   filter(State %in% cbc_states)
 
 # Formatting using the pivot_longer function
