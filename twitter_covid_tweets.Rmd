@@ -152,14 +152,15 @@ final_covid <- cases_deaths_pop %>%
 # creating new_cases, 7 day moving average, and 7 day average per 100K metric
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
-  mutate(new_cases = diff(c(0, cases)),
+  mutate(new_cases = if_else(diff(c(0, cases) < 0, 0, diff(c(0, cases)))),
          moving_7_day_avg = roll_mean(new_cases, 
                                       n = 7, 
                                       fill = NA, 
-                                      align = "right"))
-final_covid <- final_covid %>% 
-  mutate(new_cases = if_else(new_cases < 0, 0, new_cases),
+                                      align = "right"),
          avg_7_day_rate = moving_7_day_avg/population*100000)
+# final_covid <- final_covid %>% 
+#   mutate(new_cases = if_else(new_cases < 0, 0, new_cases),
+#          avg_7_day_rate = moving_7_day_avg/population*100000)
 
 
 #state and their abbreviations
@@ -184,12 +185,11 @@ covid_data_for_tweets <- covid_data %>%
   summarize(state_new_cases = sum(new_cases))
 
 manual_tweet_data <- covid_data_for_tweets %>% 
-  filter(date == max(covid_data_for_tweets$week))
-
-manual_tweet_data$state_new_cases <- 
-  if_else(manual_tweet_data$state_new_cases == 0,
-          "Not Reported",
-          as.character(manual_tweet_data$state_new_cases))
+  filter(date == max(covid_data_for_tweets$week)) %>% 
+  mutate(state_new_cases = 
+           if_else(manual_tweet_data$state_new_cases == 0,
+                   "Not Reported",
+                   as.character(manual_tweet_data$state_new_cases)))
 
 covid_data_for_tweets_rollingavg <- covid_data %>% 
   # select(date, state, moving_7_day_avg) %>%
