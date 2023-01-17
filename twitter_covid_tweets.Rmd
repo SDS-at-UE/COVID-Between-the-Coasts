@@ -182,11 +182,11 @@ covid_data_for_tweets <- covid_data %>%
   summarize(state_new_cases = sum(new_cases))
 
 manual_tweet_data <- covid_data_for_tweets %>% 
-  filter(date == max(covid_data_for_tweets$week)) %>% 
+  filter(week >= last_update) %>% 
   mutate(state_new_cases = 
-           if_else(manual_tweet_data$state_new_cases == 0,
+           if_else(state_new_cases == 0,
                    "Not Reported",
-                   as.character(manual_tweet_data$state_new_cases)))
+                   as.character(state_new_cases)))
 
 covid_data_for_tweets_rollingavg <- covid_data %>% 
   # select(date, state, moving_7_day_avg) %>%
