@@ -149,7 +149,7 @@ final_covid <- cases_deaths_pop %>%
 # creating new_cases, 7 day moving average, and 7 day average per 100K metric
 final_covid <- final_covid %>% 
   group_by(county_name, state) %>% 
-  mutate(new_cases = if_else(diff(c(0, cases) < 0, 0, diff(c(0, cases)))),
+  mutate(new_cases = if_else(diff(c(0, cases)) < 0, 0, diff(c(0, cases))),
          moving_7_day_avg = roll_mean(new_cases, 
                                       n = 7, 
                                       fill = NA, 
