@@ -43,10 +43,15 @@ past_tweets <- get_timeline("@WNINCovid", n = 100, token = twitter_bot)
 # Grab the date of the week of the last legitimate updated COVID numbers
 last_update <- past_tweets %>% 
   filter(str_detect(text, "^((Daily)|(New))")) %>% 
-  select(created_at) %>% 
-  pull() %>% 
-  max() %>% 
-  date() %>% 
+  select(text) %>% 
+  mutate(
+    date_extract = str_extract(text,
+                  "by State for ([:alpha:]+ \\d{2}, \\d{4}) \\(",
+                  group = 1),
+    date = mdy(date_extract)
+    ) %>% 
+  pull(date) %>%
+  max() %>%
   floor_date(unit = "week")
 
 # Grab COVID data
