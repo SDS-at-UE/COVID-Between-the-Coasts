@@ -1,7 +1,7 @@
 ---
 title: "Twitter COVID Tweets"
 author: "Timmy Miller and Darrin Weber"
-date: "5/20/2021"
+date: "5/20/2021, major update: 1/21/2023"
 output: html_document
 resource_files:
 - .env
@@ -20,33 +20,50 @@ library(dotenv)
 
 ## Purpose
 
-The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and ¿Qué Pasa, Midwest? It runs every day at 6:30 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
+The purpose of this markdown is to post the latest COVID case numbers for the seven midwestern states as part of the COVID Between the Coasts reporting in partnership with WNIN and ¿Qué Pasa, Midwest? It runs every Monday at 6:30 PM CT and grabs the latest information from [USAFacts.org](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map). 
 
-This script was created and written by Timmy Miller with minor edits by Darrin Weber. Darrin Weber also published the document to UE's RStudio Connect server. 
+This script was created and written by Timmy Miller and was updated by Darrin Weber. Darrin Weber also published the document to UE's RStudio Connect server. 
 
 ## Script
 
 ```{r}
 load_dot_env()
+cbc_states <- c("IN", "KY", "MI", "OH", "IL", "WI", "MN")
 
-twitter_token <- create_token(
-  app = Sys.getenv("TWITTER_APP"),
-  consumer_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
-  consumer_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
+# Grab Twitter data
+twitter_bot <- rtweet_bot(
+  api_key = Sys.getenv("TWITTER_CONSUMER_KEY"),
+  api_secret = Sys.getenv("TWITTER_CONSUMER_SECRET"),
   access_token = Sys.getenv("TWITTER_ACCESS_TOKEN"),
   access_secret = Sys.getenv("TWITTER_ACCESS_SECRET"))
 
+past_tweets <- get_timeline("@WNINCovid", n = 100, token = twitter_bot)
+
+# Grab the date of the week of the last legitimate updated COVID numbers
+last_update <- past_tweets %>% 
+  filter(str_detect(text, "^((Daily)|(New))")) %>% 
+  select(text) %>% 
+  mutate(
+    date_extract = str_extract(text,
+                               "by State for ([:alpha:]+ \\d{2}, \\d{4}) \\(",
+                               group = 1),
+    date = mdy(date_extract)
+  ) %>% 
+  pull(date) %>%
+  max() %>%
+  floor_date(unit = "week")
+
+# Grab COVID data
 covid_html_data <- 
-  read_html("https://usafacts.org/visualizations/coronavirus-covid-19-spread-map") %>% 
+  read_html(
+    "https://usafacts.org/visualizations/coronavirus-covid-19-spread-map"
+  ) %>% 
   html_nodes('a') %>%
   html_attr('href') %>% 
   str_subset("\\.csv$")
 
 # Extracting the data from the csv files 
-
 locate_cases <- str_which(covid_html_data, "confirmed")[1]
-locate_deaths <- str_which(covid_html_data, "deaths")[1]
-locate_population <- str_which(covid_html_data, "population")[1]
 
 cases <- read_csv(covid_html_data[locate_cases],
                   col_types = cols(
@@ -55,165 +72,101 @@ cases <- read_csv(covid_html_data[locate_cases],
                     State = col_character()
                   )) %>% 
   rename(county_name = `County Name`)
-deaths <- read_csv(covid_html_data[locate_deaths],
-                   col_types = cols(
-                     .default = col_character(),
-                     `County Name` = col_character(),
-                     State = col_character()
-                   )) %>% 
-  rename(county_name = `County Name`)
-population <- read_csv(covid_html_data[locate_population],
-                       col_types = cols(
-                         countyFIPS = col_double(),
-                         `County Name` = col_character(),
-                         State = col_character(),
-                         population = col_double()
-                       )) %>% 
-  rename(county_name = `County Name`)
 
 ##### Data Cleaning #####
 
-# Getting rid of unnecessary columns/rows and filtering to the 7 states we wants
-cases <- select(cases, -ends_with("FIPS"))
-cases <- cases %>% 
-  filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
+# Getting rid of unnecessary columns/rows and filtering to the 7 states we want
+cases <- select(cases, -ends_with("FIPS")) %>% 
+  filter(State %in% cbc_states)
 
-deaths <- select(deaths, -ends_with("FIPS"))
-deaths <- deaths %>% 
-  filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-
-population <- select(population, -ends_with("FIPS"))
-population <- population %>% 
-  filter(State %in% c("IN", "KY", "MI", "OH", "IL", "WI", "MN"))
-
-# Formatting using the pivot_longer function
 cases <- cases %>% 
   pivot_longer(!c(county_name, State), 
                names_to = "date", 
                values_to = "cases", 
                names_transform = list(date = as_date))
 
-deaths <- deaths %>% 
-  pivot_longer(!c(county_name, State), 
-               names_to = "date", 
-               values_to = "deaths", 
-               names_transform = list(date = as_date))
-
-# Converting cases and deaths to numeric. We imported as character because of 
+# Converting cases to numeric. We imported as character because of 
 # potential data entry errors that used a comma as a thousands-separator.
 cases$cases <- str_remove_all(cases$cases, "[:punct:]")
-deaths$deaths <- str_remove_all(deaths$deaths, "[:punct:]")
 cases$cases <- as.numeric(cases$cases)
-deaths$deaths <- as.numeric(deaths$deaths)
 
-# Fixing Lac qui Parle County in Minnesota
-cases$county_name <- str_replace_all(cases$county_name, 
-                                     "Lac Qui Parle", 
-                                     "Lac qui Parle")
-population$county_name <- str_replace_all(population$county_name, 
-                                          "Lac Qui Parle", 
-                                          "Lac qui Parle")
-
-
-# Joining the data
-cases_and_deaths <- left_join(cases, 
-                              deaths, 
-                              by = c("county_name", "State", "date"))
-cases_deaths_pop <- left_join(cases_and_deaths, 
-                              population,
-                              by = c("county_name", "State"))
-
-# Making the case rate and death rate columns and renaming variables 
-final_covid <- cases_deaths_pop %>% 
-  mutate(case_rate = cases/population*100000,
-         death_rate = deaths/population*100000)
-
-final_covid <- final_covid %>% rename(state = State)
-
-# Fixing the date
-
-# final_covid$date <- as_date(final_covid$date, 
-#                             tz = "America/Chicago", 
-#                             format = "%m/%d/%y")
-
-
-# creating new_cases, 7 day moving average, and 7 day average per 100K metric
-final_covid <- final_covid %>% 
+# Calculating the number of new cases and renaming variables 
+final_covid <- cases %>% 
+  rename(state = State) %>% 
   group_by(county_name, state) %>% 
-  mutate(new_cases = diff(c(0,cases)),
-         moving_7_day_avg = roll_mean(new_cases, 
-                                      n = 7, 
-                                      fill = NA, 
-                                      align = "right"))
-final_covid <- final_covid %>% 
-  mutate(new_cases = if_else(new_cases < 0, 0, new_cases),
-         avg_7_day_rate = moving_7_day_avg/population*100000)
+  mutate(new_cases = if_else(diff(c(0, cases)) < 0, 0, diff(c(0, cases))))
 
+### Tweet info
+# We'll calculate a 3-week moving average since we're reporting every week now
+# instead of every day.
+covid_data_for_tweets <- final_covid %>% 
+  group_by(state, week = floor_date(date, unit = "week")) %>% 
+  summarize(state_new_cases = sum(new_cases), .groups = "drop_last") %>%
+  mutate(moving_3wk_avg = roll_mean(state_new_cases,
+                                    n = 3,
+                                    fill = NA,
+                                    align = "right")) %>% 
+  ungroup()
 
-#state and their abbreviations
-state_abb_to_name <- tibble(State = state.name, Abb = state.abb)
-
-#Left joining covid and state names by their abbreviations
-covid_data <- left_join(final_covid, 
-                        state_abb_to_name, 
-                        by = c("state"= "Abb"))
-
-###tweet info
-
-##cases tweet
-
-covid_data_for_tweets <- covid_data %>% 
-  select(date, state, new_cases) %>%
-  group_by(date, state) %>% 
-  summarize(state_new_cases=sum(new_cases))
-
+# We'll only keep the dates that haven't been tweeted out yet.
 manual_tweet_data <- covid_data_for_tweets %>% 
-  filter(date==max(covid_data_for_tweets$date))
-# manual_tweet_data <- covid_data_for_tweets %>% ########################################################
-#   filter(date == "2021-05-17") ########################################################################
-manual_tweet_data$state_new_cases<- if_else(manual_tweet_data$state_new_cases==0, 
-                                            "Not Reported", 
-                                            as.character(manual_tweet_data$state_new_cases))
-
-covid_data_for_tweets_rollingavg <- covid_data %>% 
-  select(date, state, moving_7_day_avg) %>%
-  group_by(date, state) %>% 
-  summarize(state_rollingavg = round(sum(moving_7_day_avg)))
-
-manual_tweet_data_rollingavg <- covid_data_for_tweets_rollingavg %>% 
-  filter(date == max(covid_data_for_tweets_rollingavg$date))
-# manual_tweet_data_rollingavg <- covid_data_for_tweets_rollingavg %>% ###################################
-#  filter(date == "2021-05-17")##########################################################################
+  filter(week > last_update) %>% 
+  mutate(state_new_cases = 
+           if_else(state_new_cases == 0,
+                   "Not Reported",
+                   as.character(state_new_cases)))
 
 display_date <- stamp_date("January 22, 2020")
-dailyrollingavg <- str_c(manual_tweet_data_rollingavg$state_rollingavg, 
-                         sep = ",")
+no_update_tweet <- 
+  "No updated data from usafacts.org this week. Check back next week."
 
-display_date <- stamp_date("January 22, 2020")
-dailycases <- str_c(manual_tweet_data$state_new_cases, sep = ",")
-states <- str_c(manual_tweet_data$state, sep = ",")
-tweet_initial <- str_c(states, dailycases, sep = ": ")
-tweetwithspace <- str_c(tweet_initial, 
-                        collapse = "\n", 
-                        " (", 
-                        dailyrollingavg, 
-                        ")")
-intro_to_tweet <- str_c("Daily Newly Reported Cases by State for ", 
-                       display_date(max(covid_data_for_tweets$date)), 
-                       " (7-day Moving Average in Parentheses)")
-# intro_to_tweet <- str_c("Daily Newly Reported Cases by State for ", ##################################
-#                        display_date(as_date("2021-05-17")), ##########################################
-#                        " (7-day Moving Average in Parentheses)")######################################
-tweetfinal <- str_c(intro_to_tweet, sep = "\n\n", tweetwithspace)
-
-noupdatetweet <- "No updated data from usafacts.org today. Check back tomorrow."
-
-### make date of tweet compatible with sys.date()
-
-date_check <- as.Date(pull(manual_tweet_data[1,1], date))
-
-ifelse(date_check %in% (Sys.Date()-c(1,2)), 
-       post_tweet(tweetfinal), 
-       post_tweet(noupdatetweet))
+# We'll loop through each of the weeks that haven't been tweeted on yet,
+# but that we have data for. But before we do, we'll need to check that
+# we have new data to report on.
+if(nrow(manual_tweet_data) == 0){
+  post_tweet(no_update_tweet, token = twitter_bot)
+} else {
+  for(date_week in sort(unique(manual_tweet_data$week))){
+    individual_tweet_data <- manual_tweet_data %>% 
+      filter(week == date_week)
+    
+    if(all(str_detect(individual_tweet_data$state_new_cases, "Not")) == TRUE) {
+      post_tweet(no_update_tweet, token = twitter_bot)
+    } else {
+      individual_tweet_data_final <- individual_tweet_data %>% 
+        mutate(state_new_cases = if_else(
+          state_new_cases == "Not Reported" & moving_3wk_avg == 0,
+          "No longer reporting",
+          as.character(state_new_cases)
+        ),
+        moving_3wk_avg = if_else(
+          str_detect(state_new_cases, "^No") & moving_3wk_avg == 0,
+          "",
+          as.character(round(moving_3wk_avg))
+        ))
+      weekly_cases <- str_c(individual_tweet_data_final$state_new_cases, 
+                            sep = ",")
+      weekly_rolling_avg <- str_c(individual_tweet_data_final$moving_3wk_avg,
+                                  sep = ",")
+      states <- str_c(individual_tweet_data_final$state, sep = ",")
+      tweet_initial <- str_c(states, weekly_cases, sep = ": ")
+      tweet_with_space <- str_c(tweet_initial,
+                                collapse = "\n",
+                                " (",
+                                weekly_rolling_avg,
+                                ")")
+      intro_to_tweet <- 
+        str_c("New Weekly Reported Cases by State for ",
+              display_date(max(individual_tweet_data_final$week)),
+              " (3-week Moving Average in Parentheses)")
+      tweet_combine <- str_c(intro_to_tweet, sep = "\n\n", tweet_with_space)
+      tweet_final <- str_replace_all(tweet_combine, 
+                                     "reporting \\(\\)", 
+                                     "reporting")
+      post_tweet(tweet_final,
+                 token = twitter_bot)
+    }
+  }
+}
 ```
 
