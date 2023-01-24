@@ -125,13 +125,14 @@ no_update_tweet <-
 # we have new data to report on.
 if(nrow(manual_tweet_data) == 0){
   post_tweet(no_update_tweet, token = twitter_bot)
+  print(no_update_tweet)
 } else {
   for(date_week in sort(unique(manual_tweet_data$week))){
     individual_tweet_data <- manual_tweet_data %>% 
       filter(week == date_week)
-    
     if(all(str_detect(individual_tweet_data$state_new_cases, "Not")) == TRUE) {
       post_tweet(no_update_tweet, token = twitter_bot)
+      print(no_update_tweet)
     } else {
       individual_tweet_data_final <- individual_tweet_data %>% 
         mutate(state_new_cases = if_else(
@@ -165,6 +166,7 @@ if(nrow(manual_tweet_data) == 0){
                                      "reporting")
       post_tweet(tweet_final,
                  token = twitter_bot)
+      print(tweet_final)
     }
   }
 }
