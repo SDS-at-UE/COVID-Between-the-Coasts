@@ -118,7 +118,9 @@ manual_tweet_data <- covid_data_for_tweets %>%
 
 display_date <- stamp_date("January 22, 2020")
 no_update_tweet <- 
-  "No updated data from usafacts.org this week. Check back next week."
+  str_c("No updated data from ",
+  "https://usafacts.org/visualizations/coronavirus-covid-19-spread-map", 
+  " this week. Check back next week.")
 
 # We'll loop through each of the weeks that haven't been tweeted on yet,
 # but that we have data for. But before we do, we'll need to check that
