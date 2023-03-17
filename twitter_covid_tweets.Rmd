@@ -119,8 +119,8 @@ manual_tweet_data <- covid_data_for_tweets %>%
 display_date <- stamp_date("January 22, 2020")
 no_update_tweet <- 
   str_c("No updated data from ",
-  "https://usafacts.org/visualizations/coronavirus-covid-19-spread-map", 
-  " this week. Check back next week.")
+        "https://usafacts.org/visualizations/coronavirus-covid-19-spread-map", 
+        " this week. Check back next week.")
 
 # We'll loop through each of the weeks that haven't been tweeted on yet,
 # but that we have data for. But before we do, we'll need to check that
@@ -129,12 +129,29 @@ if(nrow(manual_tweet_data) == 0){
   post_tweet(no_update_tweet, token = twitter_bot)
   print(no_update_tweet)
 } else {
+  # We'll break out of for loop if we tweet at least once but subsequent
+  # tweets devolve into "Not Reported", and thus, "no update this week."
+  i <- 0 
   for(date_week in sort(unique(manual_tweet_data$week))){
+    i <- i + 1
     individual_tweet_data <- manual_tweet_data %>% 
       filter(week == date_week)
     if(all(str_detect(individual_tweet_data$state_new_cases, "Not")) == TRUE) {
-      post_tweet(no_update_tweet, token = twitter_bot)
-      print(no_update_tweet)
+      if(i == 1) {
+        post_tweet(no_update_tweet, token = twitter_bot)
+        print(no_update_tweet)
+      } else {
+        print(
+          str_c(
+            "No data for the week of ", 
+            as_date(date_week),
+            ". The max week we have is ",
+            max(sort(unique(manual_tweet_data$week)))
+          )
+        )
+        # We already had good tweets, so don't tweet out the "no update" tweet.
+        break() 
+      }
     } else {
       individual_tweet_data_final <- individual_tweet_data %>% 
         mutate(state_new_cases = if_else(
